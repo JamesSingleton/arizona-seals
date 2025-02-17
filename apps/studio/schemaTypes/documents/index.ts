@@ -1,4 +1,3 @@
-import { author } from "./author";
 import { blog } from "./blog";
 import { blogIndex } from "./blog-index";
 import { faq } from "./faq";
@@ -7,7 +6,8 @@ import { homePage } from "./home-page";
 import { navbar } from "./navbar";
 import { page } from "./page";
 import { settings } from "./settings";
+import { staff } from "./staff";
 
 export const singletons = [homePage, blogIndex, settings, footer, navbar];
 
-export const documents = [blog, page, faq, author, ...singletons];
+export const documents = [blog, page, faq, staff, ...singletons];

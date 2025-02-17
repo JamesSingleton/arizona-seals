@@ -84,5 +84,6 @@ export function getMetaData(data: MetaDataInput): Metadata {
       ],
       url: pageUrl,
     },
+    robots: "index, follow",
   };
 }

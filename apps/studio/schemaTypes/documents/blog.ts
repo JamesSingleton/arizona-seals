@@ -36,7 +36,7 @@ export const blog = defineType({
           type: "reference",
           to: [
             {
-              type: "author",
+              type: "staff",
               options: {
                 disableNew: true,
               },

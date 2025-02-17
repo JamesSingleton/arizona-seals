@@ -546,9 +546,9 @@ export type HomePage = {
   ogDescription?: string;
 };
 
-export type Author = {
+export type Staff = {
   _id: string;
-  _type: "author";
+  _type: "staff";
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
@@ -632,7 +632,7 @@ export type Blog = {
     _type: "reference";
     _weak?: boolean;
     _key: string;
-    [internalGroqTypeReferenceTo]?: "author";
+    [internalGroqTypeReferenceTo]?: "staff";
   }>;
   publishedAt?: string;
   image?: {
@@ -927,7 +927,7 @@ export type AllSanitySchemaTypes =
   | Settings
   | BlogIndex
   | HomePage
-  | Author
+  | Staff
   | Faq
   | Page
   | Blog

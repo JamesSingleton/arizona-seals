@@ -3626,7 +3626,7 @@
     }
   },
   {
-    "name": "author",
+    "name": "staff",
     "type": "document",
     "attributes": {
       "_id": {
@@ -3639,7 +3639,7 @@
         "type": "objectAttribute",
         "value": {
           "type": "string",
-          "value": "author"
+          "value": "staff"
         }
       },
       "_createdAt": {
@@ -4115,7 +4115,7 @@
                 "optional": true
               }
             },
-            "dereferencesTo": "author",
+            "dereferencesTo": "staff",
             "rest": {
               "type": "object",
               "attributes": {
