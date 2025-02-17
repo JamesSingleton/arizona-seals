@@ -11,8 +11,7 @@
     "lint": "eslint . --fix",
     "build": "sanity build",
     "deploy": "sanity deploy",
-    "type": "sanity schema extract && sanity typegen generate --enforce-required-fields",
-    "postinstall": "sanity exec scripts/create-data.ts --with-user-token"
+    "type": "sanity schema extract && sanity typegen generate --enforce-required-fields"
   },
   "keywords": [
     "sanity"
