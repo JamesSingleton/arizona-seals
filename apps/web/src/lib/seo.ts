@@ -46,33 +46,31 @@ export function getMetaData(data: MetaDataInput): Metadata {
   });
 
   return {
-    title: `${meta.title} | Roboto Studio Demo`,
+    title: `${meta.title} | Arizona Seals`,
     description: meta.description,
     metadataBase: new URL(baseUrl),
-    creator: "Roboto Studio Demo",
-    authors: [{ name: "Roboto" }],
+    creator: "Arizona Seals",
+    authors: [{ name: "Arizona Seals" }],
     icons: {
       icon: `${baseUrl}/favicon.ico`,
     },
     keywords: [
-      "roboto",
-      "studio",
-      "demo",
-      "sanity",
-      "next",
-      "react",
-      "template",
+      "Arizona Seals",
+      "Swim Club",
+      "Maricoap, AZ",
+      "Maricopa, AZ Swim Club",
+      "Arizona Seals Swimming Academy",
     ],
-    twitter: {
-      card: "summary_large_image",
-      images: [ogImage],
-      creator: "@studioroboto",
-      title: meta.title,
-      description: meta.description,
-    },
+    // twitter: {
+    //   card: "summary_large_image",
+    //   images: [ogImage],
+    //   creator: "@studioroboto",
+    //   title: meta.title,
+    //   description: meta.description,
+    // },
     openGraph: {
       type: "website",
-      countryName: "UK",
+      countryName: "US",
       description: meta.description,
       title: meta.title,
       images: [
