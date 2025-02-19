@@ -24,7 +24,6 @@ export const homePage = defineType({
       rows: 3,
       group: GROUP.MAIN_CONTENT,
       validation: (rule) => [
-        rule.required(),
         rule
           .min(140)
           .warning(
@@ -45,6 +44,7 @@ export const homePage = defineType({
         source: "title",
         slugify: createSlug,
       },
+      validation: (Rule) => Rule.required(),
     }),
     pageBuilderField,
     ...seoFields.filter(

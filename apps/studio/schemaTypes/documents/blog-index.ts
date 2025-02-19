@@ -30,6 +30,7 @@ export const blogIndex = defineType({
         slugify: createSlug,
         isUnique: isUnique,
       },
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "featured",

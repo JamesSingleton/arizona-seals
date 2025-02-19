@@ -68,13 +68,27 @@ export function PathnameFieldComponent(props: ObjectFieldProps<SlugValue>) {
     document?._id.replace(/^drafts\./, ""),
     document?._type,
   );
+
+  const slugValidationError = useMemo(
+    () =>
+      validation.validation.find(
+        (v) =>
+          (v?.path.includes("current") || v?.path.includes("slug")) &&
+          v.message,
+      ),
+    [validation.validation],
+  );
+
   const {
     inputProps: { onChange, value, readOnly },
     title,
     description,
   } = props;
 
-  const segments = value?.current?.split("/").filter(Boolean) || [];
+  const segments = useMemo(
+    () => value?.current?.split("/").filter(Boolean) || [],
+    [value],
+  );
   const [folderLocked, setFolderLocked] = useState(segments.length > 1);
 
   const fullPathInputRef = useRef<HTMLInputElement>(null);
@@ -263,7 +277,7 @@ export function PathnameFieldComponent(props: ObjectFieldProps<SlugValue>) {
       )}
 
       {pathInput}
-      {validation.validation.length > 0 ? (
+      {slugValidationError ? (
         <Badge
           tone="critical"
           padding={4}
@@ -274,7 +288,7 @@ export function PathnameFieldComponent(props: ObjectFieldProps<SlugValue>) {
           <Flex gap={4} align="center">
             <WarningOutlineIcon />
             <Text size={1} color="red">
-              {validation.validation[0].message}
+              {slugValidationError.message}
             </Text>
           </Flex>
         </Badge>

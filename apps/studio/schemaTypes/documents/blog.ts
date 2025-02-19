@@ -1,9 +1,10 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
 
+import { PathnameFieldComponent } from "../../components/slug-field-component";
 import { GROUP, GROUPS } from "../../utils/constant";
 import { ogFields } from "../../utils/og-fields";
 import { seoFields } from "../../utils/seo-fields";
-import { defineSlug } from "../../utils/slug";
+import { createSlug, isUnique } from "../../utils/slug";
 
 export const blog = defineType({
   name: "blog",
@@ -37,8 +38,19 @@ export const blog = defineType({
       ],
     }),
     defineField({
-      ...defineSlug(),
+      name: "slug",
+      type: "slug",
+      title: "URL",
       group: GROUP.MAIN_CONTENT,
+      components: {
+        field: PathnameFieldComponent,
+      },
+      options: {
+        source: "title",
+        slugify: createSlug,
+        isUnique,
+      },
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "authors",
