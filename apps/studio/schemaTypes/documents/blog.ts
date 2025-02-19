@@ -18,10 +18,23 @@ export const blog = defineType({
       group: GROUP.MAIN_CONTENT,
     }),
     defineField({
+      title: "Description",
       name: "description",
       type: "text",
-      title: "Description",
+      rows: 3,
       group: GROUP.MAIN_CONTENT,
+      validation: (rule) => [
+        rule
+          .min(140)
+          .warning(
+            "The meta description should be at least 140 characters for optimal SEO visibility in search results",
+          ),
+        rule
+          .max(160)
+          .warning(
+            "The meta description should not exceed 160 characters as it will be truncated in search results",
+          ),
+      ],
     }),
     defineField({
       ...defineSlug(),
