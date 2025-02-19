@@ -39,6 +39,7 @@ interface MenuItem {
   description: string;
   icon: JSX.Element;
   href?: string;
+  target?: string;
 }
 
 function MenuItemLink({
@@ -56,6 +57,7 @@ function MenuItemLink({
       aria-label={`Link to ${item.title ?? item.href}`}
       onClick={() => setIsOpen?.(false)}
       href={item.href ?? "/"}
+      target={item.target ?? undefined}
     >
       {item.icon}
       <div className="">
@@ -191,6 +193,7 @@ function NavbarColumnLink({
       )}
       aria-label={`Link to ${column.name ?? column.href}`}
       href={column.href ?? ""}
+      target={column.openInNewTab ? "_blank" : undefined}
     >
       {column.name}
     </Link>
@@ -215,6 +218,7 @@ function NavbarColumn({
                   item={{
                     description: item.description ?? "",
                     href: item.href ?? "",
+                    target: item.openInNewTab ? "_blank" : undefined,
                     icon: (
                       <SanityIcon
                         icon={item.icon}
@@ -241,26 +245,24 @@ export function DesktopNavbar({
   const { columns, buttons } = navbarData ?? {};
 
   return (
-    <div className="flex items-start justify-between w-full">
-      <div className="flex items-center">
-        <NavigationMenu>
-          {columns?.map((column) =>
-            column.type === "column" ? (
-              <NavbarColumn key={`column-${column._key}`} column={column} />
-            ) : (
-              <NavbarColumnLink
-                key={`column-link-${column.name}-${column._key}`}
-                column={column}
-              />
-            ),
-          )}
-        </NavigationMenu>
+    <div className="grid grid-cols-[1fr_auto] items-center gap-8">
+      <NavigationMenu className="">
+        {columns?.map((column) =>
+          column.type === "column" ? (
+            <NavbarColumn key={`nav-${column._key}`} column={column} />
+          ) : (
+            <NavbarColumnLink key={`nav-${column._key}`} column={column} />
+          ),
+        )}
+      </NavigationMenu>
+
+      <div className="justify-self-end">
+        <SanityButtons
+          buttons={buttons ?? []}
+          className="flex items-center gap-4"
+          buttonClassName="rounded-[10px]"
+        />
       </div>
-      <SanityButtons
-        buttons={buttons ?? []}
-        className="flex gap-2 ml-auto"
-        buttonClassName="rounded-[10px]"
-      />
     </div>
   );
 }
@@ -295,22 +297,25 @@ function SkeletonMobileNavbar() {
 
 function SkeletonDesktopNavbar() {
   return (
-    <div className="hidden md:flex items-center justify-between w-full">
-      <div className="flex items-center gap-6">
-        {Array.from({ length: 3 }).map((_, i) => (
+    <div className="hidden md:grid grid-cols-[1fr_auto] items-center gap-8 w-full">
+      <div className="justify-center flex max-w-max flex-1 items-center gap-2">
+        {Array.from({ length: 2 }).map((_, index) => (
           <div
-            key={`skeleton-desktop-navbar-${i.toString()}`}
-            className="h-8 w-24 bg-muted rounded animate-pulse"
+            key={`nav-item-skeleton-${index.toString()}`}
+            className="h-12 w-32 rounded bg-muted animate-pulse"
           />
         ))}
       </div>
-      <div className="flex gap-2">
-        {Array.from({ length: 2 }).map((_, i) => (
-          <div
-            key={`skeleton-desktop-navbar-${i.toString()}`}
-            className="h-12 w-32 bg-muted rounded animate-pulse"
-          />
-        ))}
+
+      <div className="justify-self-end">
+        <div className="flex items-center gap-4">
+          {Array.from({ length: 2 }).map((_, index) => (
+            <div
+              key={`nav-button-skeleton-${index.toString()}`}
+              className="h-12 w-32 rounded-[10px] bg-muted animate-pulse"
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
