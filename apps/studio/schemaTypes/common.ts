@@ -24,7 +24,6 @@ export const iconField = defineField({
   title: "Icon",
   options: {
     storeSvg: true,
-    providers: ["fi"],
   },
   type: "iconPicker",
 });
