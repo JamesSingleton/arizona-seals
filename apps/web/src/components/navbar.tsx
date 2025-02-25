@@ -14,7 +14,7 @@ export function Navbar({ navbarData }: { navbarData: QueryNavbarDataResult }) {
   const { logo, siteTitle } = navbarData ?? {};
 
   return (
-    <header className="h-[75px] py-4 md:border-b">
+    <section className="py-3 md:border-b">
       <div className="container mx-auto px-4 md:px-6">
         <nav className="grid grid-cols-[auto_1fr] items-center gap-4">
           <Logo src={logo} alt={siteTitle} priority />
@@ -22,7 +22,7 @@ export function Navbar({ navbarData }: { navbarData: QueryNavbarDataResult }) {
           <NavbarClient navbarData={navbarData} />
         </nav>
       </div>
-    </header>
+    </section>
   );
 }
 

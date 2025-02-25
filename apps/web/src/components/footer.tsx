@@ -1,4 +1,3 @@
-import { Facebook, Instagram } from "lucide-react";
 import Link from "next/link";
 
 import { sanityFetch } from "@/lib/sanity/live";
@@ -6,7 +5,13 @@ import { queryFooterData } from "@/lib/sanity/query";
 import type { QueryFooterDataResult } from "@/lib/sanity/sanity.types";
 
 import { Logo } from "./logo";
-import { LinkedinIcon, XIcon, YoutubeIcon } from "./social-icons";
+import {
+  FacebookIcon,
+  InstagramIcon,
+  LinkedinIcon,
+  XIcon,
+  YoutubeIcon,
+} from "./social-icons";
 
 interface SocialLinksProps {
   data: NonNullable<QueryFooterDataResult>["socialLinks"];
@@ -37,10 +42,10 @@ function SocialLinks({ data }: SocialLinksProps) {
   const socialLinks = [
     {
       url: instagram,
-      Icon: Instagram,
+      Icon: InstagramIcon,
       label: "Follow us on Instagram",
     },
-    { url: facebook, Icon: Facebook, label: "Follow us on Facebook" },
+    { url: facebook, Icon: FacebookIcon, label: "Follow us on Facebook" },
     { url: twitter, Icon: XIcon, label: "Follow us on Twitter" },
     { url: linkedin, Icon: LinkedinIcon, label: "Follow us on LinkedIn" },
     {
@@ -64,7 +69,7 @@ function SocialLinks({ data }: SocialLinksProps) {
             rel="noopener noreferrer"
             aria-label={label}
           >
-            <Icon className="size-6" />
+            <Icon />
             <span className="sr-only">{label}</span>
           </Link>
         </li>

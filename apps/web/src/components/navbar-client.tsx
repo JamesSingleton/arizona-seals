@@ -11,8 +11,10 @@ import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
+  NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
 } from "@workspace/ui/components/navigation-menu";
 import {
   SheetContent,
@@ -39,7 +41,6 @@ interface MenuItem {
   description: string;
   icon: JSX.Element;
   href?: string;
-  target?: string;
 }
 
 function MenuItemLink({
@@ -57,7 +58,6 @@ function MenuItemLink({
       aria-label={`Link to ${item.title ?? item.href}`}
       onClick={() => setIsOpen?.(false)}
       href={item.href ?? "/"}
-      target={item.target ?? undefined}
     >
       {item.icon}
       <div className="">
@@ -185,17 +185,16 @@ function NavbarColumnLink({
   if (column.type !== "link") return null;
   return (
     <Link
-      className={cn(
-        buttonVariants({
-          variant: "ghost",
-        }),
-        "text-muted-foreground",
-      )}
       aria-label={`Link to ${column.name ?? column.href}`}
       href={column.href ?? ""}
-      target={column.openInNewTab ? "_blank" : undefined}
+      legacyBehavior
+      passHref
     >
-      {column.name}
+      <NavigationMenuLink
+        className={cn(navigationMenuTriggerStyle(), "text-muted-foreground")}
+      >
+        {column.name}
+      </NavigationMenuLink>
     </Link>
   );
 }
@@ -218,7 +217,6 @@ function NavbarColumn({
                   item={{
                     description: item.description ?? "",
                     href: item.href ?? "",
-                    target: item.openInNewTab ? "_blank" : undefined,
                     icon: (
                       <SanityIcon
                         icon={item.icon}

@@ -23,9 +23,9 @@ export default async function BlogIndexPage() {
     data ?? {};
 
   return (
-    <main className="">
+    <main>
       <div className="container my-16 mx-auto px-4 md:px-6">
-        <div className="">
+        <div>
           <BlogHeader title={title} description={description} />
           <div className="mx-auto mt-8 sm:mt-12 md:mt-16 space-y-12 lg:space-y-20">
             {featuredBlog && (
@@ -41,7 +41,6 @@ export default async function BlogIndexPage() {
           </div>
         </div>
       </div>
-
       <PageBuilder pageBuilder={pageBuilder ?? []} id={_id} type={_type} />
     </main>
   );

@@ -26,7 +26,7 @@ export default defineConfig({
   name: "default",
   title: title ?? "Arizona Seals",
   projectId: projectId,
-  icon: Logo,
+  // icon: Logo,
   dataset: dataset ?? "production",
   plugins: [
     presentationTool({
