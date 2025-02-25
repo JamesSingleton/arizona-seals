@@ -97,6 +97,14 @@ const imageLinkCardsBlock = /* groq */ `
   }
 `;
 
+const teamBlock = /* groq */ `
+_type == "team" => {
+  teamMembers[]->{
+  ...
+  }
+}
+`;
+
 const heroBlock = /* groq */ `
   _type == "hero" => {
     ...,
@@ -153,7 +161,8 @@ const pageBuilderFragment = /* groq */ `
     ${heroBlock},
     ${faqAccordionBlock},
     ${subscribeNewsletterBlock},
-    ${imageLinkCardsBlock}
+    ${imageLinkCardsBlock},
+    ${teamBlock}
   }
 `;
 

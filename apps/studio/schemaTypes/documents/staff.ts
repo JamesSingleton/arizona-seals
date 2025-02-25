@@ -22,7 +22,7 @@ export const staff = defineType({
     }),
     defineField({
       name: "bio",
-      type: "text",
+      type: "richText",
       title: "Bio",
     }),
   ],

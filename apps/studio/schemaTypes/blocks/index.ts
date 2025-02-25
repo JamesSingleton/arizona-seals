@@ -4,6 +4,7 @@ import { featureCardsIcon } from "./feature-cards-icon";
 import { hero } from "./hero";
 import { imageLinkCards } from "./image-link-cards";
 import { subscribeNewsletter } from "./subscribe-newsletter";
+import { team } from "./team";
 
 export const pageBuilderBlocks = [
   hero,
@@ -12,4 +13,5 @@ export const pageBuilderBlocks = [
   faqAccordion,
   imageLinkCards,
   subscribeNewsletter,
+  team,
 ];
