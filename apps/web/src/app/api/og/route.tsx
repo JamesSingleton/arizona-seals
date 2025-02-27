@@ -81,7 +81,7 @@ const dominantColorSeoImageRender = ({
 
       <div tw="flex-1 p-10 flex flex-col justify-between relative z-10">
         <div tw="flex justify-between items-start w-full">
-          {logo && <img src={logo} alt="Logo" width={70} height={48} />}
+          {logo && <img src={logo} alt="Logo" height={48} />}
           <div tw="bg-white flex bg-opacity-20 text-white px-4 py-2 rounded-full text-sm font-medium">
             {new Date(date ?? new Date()).toLocaleDateString("en-US", {
               month: "long",

@@ -10,6 +10,7 @@ import { preconnect, prefetchDNS } from "react-dom";
 import { FooterServer, FooterSkeleton } from "@/components/footer";
 import { NavbarServer, NavbarSkeleton } from "@/components/navbar";
 import { PreviewBar } from "@/components/preview-bar";
+import { Providers } from "@/components/providers";
 import { SanityLive } from "@/lib/sanity/live";
 
 const fontGeist = Geist({
@@ -38,38 +39,40 @@ export default async function RootLayout({
       <body
         className={`${fontGeist.variable} ${fontMono.variable} font-geist antialiased`}
       >
-        <Suspense fallback={<NavbarSkeleton />}>
-          <NavbarServer />
-        </Suspense>
-        {(await draftMode()).isEnabled ? (
-          <>
-            {children}
-            <VisualEditing
-              refresh={async (payload) => {
-                "use server";
-                if (payload.source === "manual") {
-                  revalidatePath("/", "layout");
-                  return;
-                }
-                const id = payload?.document?._id?.startsWith("drafts.")
-                  ? payload?.document?._id.slice(7)
-                  : payload?.document?._id;
-                const slug = payload?.document?.slug?.current;
-                const type = payload?.document?._type;
-                for (const tag of [slug, id, type]) {
-                  if (tag) revalidateTag(tag);
-                }
-              }}
-            />
-            <PreviewBar />
-          </>
-        ) : (
-          children
-        )}
-        <Suspense fallback={<FooterSkeleton />}>
-          <FooterServer />
-        </Suspense>
-        <SanityLive />
+        <Providers>
+          <Suspense fallback={<NavbarSkeleton />}>
+            <NavbarServer />
+          </Suspense>
+          {(await draftMode()).isEnabled ? (
+            <>
+              {children}
+              <VisualEditing
+                refresh={async (payload) => {
+                  "use server";
+                  if (payload.source === "manual") {
+                    revalidatePath("/", "layout");
+                    return;
+                  }
+                  const id = payload?.document?._id?.startsWith("drafts.")
+                    ? payload?.document?._id.slice(7)
+                    : payload?.document?._id;
+                  const slug = payload?.document?.slug?.current;
+                  const type = payload?.document?._type;
+                  for (const tag of [slug, id, type]) {
+                    if (tag) revalidateTag(tag);
+                  }
+                }}
+              />
+              <PreviewBar />
+            </>
+          ) : (
+            children
+          )}
+          <Suspense fallback={<FooterSkeleton />}>
+            <FooterServer />
+          </Suspense>
+          <SanityLive />
+        </Providers>
       </body>
     </html>
   );

@@ -33,9 +33,9 @@ import { useIsMobile } from "@/hooks/use-is-mobile";
 import type { QueryNavbarDataResult } from "@/lib/sanity/sanity.types";
 
 import { Logo } from "./logo";
+import { ModeToggle } from "./mode-toggle";
 import { SanityButtons } from "./sanity-buttons";
 import { SanityIcon } from "./sanity-icon";
-
 interface MenuItem {
   title: string;
   description: string;
@@ -191,7 +191,10 @@ function NavbarColumnLink({
       passHref
     >
       <NavigationMenuLink
-        className={cn(navigationMenuTriggerStyle(), "text-muted-foreground")}
+        className={cn(
+          navigationMenuTriggerStyle(),
+          "text-muted-foreground dark:text-neutral-300",
+        )}
       >
         {column.name}
       </NavigationMenuLink>
@@ -207,7 +210,7 @@ function NavbarColumn({
   if (column.type !== "column") return null;
   return (
     <NavigationMenuList>
-      <NavigationMenuItem className="text-muted-foreground">
+      <NavigationMenuItem className="text-muted-foreground dark:text-neutral-300">
         <NavigationMenuTrigger>{column.title}</NavigationMenuTrigger>
         <NavigationMenuContent>
           <ul className="w-80 p-3">
@@ -254,7 +257,8 @@ export function DesktopNavbar({
         )}
       </NavigationMenu>
 
-      <div className="justify-self-end">
+      <div className="justify-self-end flex items-center gap-4">
+        <ModeToggle />
         <SanityButtons
           buttons={buttons ?? []}
           className="flex items-center gap-4"
