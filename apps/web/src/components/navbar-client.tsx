@@ -41,6 +41,7 @@ interface MenuItem {
   description: string;
   icon: JSX.Element;
   href?: string;
+  openInNewTab?: boolean;
 }
 
 function MenuItemLink({
@@ -58,6 +59,8 @@ function MenuItemLink({
       aria-label={`Link to ${item.title ?? item.href}`}
       onClick={() => setIsOpen?.(false)}
       href={item.href ?? "/"}
+      target={item.openInNewTab ? "_blank" : undefined}
+      rel={item.openInNewTab ? "noopener noreferrer" : undefined}
     >
       {item.icon}
       <div className="">
@@ -97,6 +100,7 @@ function MobileNavbarAccordionColumn({
               href: item.href ?? "",
               icon: <SanityIcon icon={item.icon} className="size-5 shrink-0" />,
               title: item.name ?? "",
+              openInNewTab: item.openInNewTab ?? false,
             }}
           />
         ))}
@@ -227,6 +231,7 @@ function NavbarColumn({
                       />
                     ),
                     title: item.name ?? "",
+                    openInNewTab: item.openInNewTab ?? false,
                   }}
                 />
               </li>
