@@ -55,7 +55,7 @@ export function TableOfContent<T>({ richText }: TableOfContentProps<T>) {
 
   return (
     <div className="sticky left-0 top-8 flex flex-col">
-      <details className="group mb-4 rounded-xl bg-zinc-100 p-8">
+      <details className="group mb-4 rounded-xl bg-zinc-100 dark:bg-zinc-800 p-8">
         <summary className="flex cursor-pointer items-center justify-between text-lg font-semibold">
           <span>Table of Contents</span>
           <ChevronDown

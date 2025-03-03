@@ -9,6 +9,7 @@ type SanityButtonsProps = {
   buttons: SanityButtonProps[] | null;
   className?: string;
   buttonClassName?: string;
+  size?: "sm" | "lg" | "default" | "icon" | null | undefined;
 };
 
 function SanityButton({
@@ -25,20 +26,21 @@ function SanityButton({
   }
 
   return (
-    <Link
-      href={href || "#"}
-      target={openInNewTab ? "_blank" : "_self"}
-      aria-label={`Navigate to ${text}`}
-      title={`Click to visit ${text}`}
+    <Button
+      variant={variant}
+      {...props}
+      asChild
+      className={cn("rounded-[10px]", className)}
     >
-      <Button
-        variant={variant}
-        {...props}
-        className={cn("rounded-[10px]", className)}
+      <Link
+        href={href || "#"}
+        target={openInNewTab ? "_blank" : "_self"}
+        aria-label={`Navigate to ${text}`}
+        title={`Click to visit ${text}`}
       >
         {text}
-      </Button>
-    </Link>
+      </Link>
+    </Button>
   );
 }
 
@@ -46,6 +48,7 @@ export function SanityButtons({
   buttons,
   className,
   buttonClassName,
+  size = "default",
 }: SanityButtonsProps) {
   if (!buttons?.length) return null;
 
@@ -54,6 +57,7 @@ export function SanityButtons({
       {buttons.map((button) => (
         <SanityButton
           key={`button-${button._key}`}
+          size={size}
           {...button}
           className={buttonClassName}
         />

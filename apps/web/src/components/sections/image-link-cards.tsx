@@ -34,7 +34,7 @@ export function ImageLinkCards({
                   key={card._key}
                   card={card}
                   className={cn(
-                    "bg-muted-foreground/10",
+                    "bg-muted-foreground/10 dark:bg-zinc-800",
                     idx === 0 && "lg:rounded-l-3xl lg:rounded-r-none",
                     idx === cards.length - 1 &&
                       "lg:rounded-r-3xl lg:rounded-l-none",
