@@ -36,10 +36,11 @@ import { Logo } from "./logo";
 import { ModeToggle } from "./mode-toggle";
 import { SanityButtons } from "./sanity-buttons";
 import { SanityIcon } from "./sanity-icon";
+
 interface MenuItem {
   title: string;
   description: string;
-  icon: JSX.Element;
+  icon: React.ReactNode;
   href?: string;
   openInNewTab?: boolean;
 }
