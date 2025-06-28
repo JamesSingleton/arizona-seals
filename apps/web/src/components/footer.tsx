@@ -147,7 +147,11 @@ function Footer({ data, settingsData }: FooterProps) {
             <div className="flex w-full max-w-96 shrink flex-col items-center justify-between gap-6 md:gap-8 lg:items-start">
               <div>
                 <span className="flex items-center justify-center gap-4 lg:justify-start">
-                  <Logo image={logo} alt={siteTitle} priority />
+                  <Logo
+                    image={logo && "alt" in logo ? logo : null}
+                    alt={siteTitle}
+                    priority
+                  />
                 </span>
                 {subtitle && (
                   <p className="mt-6 text-sm text-muted-foreground dark:text-zinc-400">

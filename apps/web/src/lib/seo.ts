@@ -1,92 +1,158 @@
 import type { Metadata } from "next";
 
-import { getBaseUrl } from "@/config";
 import type { Maybe } from "@/types";
+import { capitalize } from "@/utils";
 
-interface OgImageOptions {
+import { getBaseUrl } from "../config";
+
+// Site-wide configuration interface
+interface SiteConfig {
+  title: string;
+  description: string;
+  twitterHandle: string;
+  keywords: string[];
+}
+
+// Page-specific SEO data interface
+interface PageSeoData extends Metadata {
+  title?: string;
+  description?: string;
+  slug?: string;
+  contentId?: string;
+  contentType?: string;
+  keywords?: string[];
+  seoNoIndex?: boolean;
+  pageType?: Extract<Metadata["openGraph"], { type: string }>["type"];
+}
+
+// OpenGraph image generation parameters
+interface OgImageParams {
   type?: string;
   id?: string;
 }
 
-function getOgImage({ type, id }: OgImageOptions = {}): string {
-  const params = new URLSearchParams();
-  if (id) params.set("id", id);
-  if (type) params.set("type", type);
-  const baseUrl = getBaseUrl();
-  const logoUrl = `${baseUrl}/api/og?${params.toString()}`;
-  return logoUrl;
-}
+// Default site configuration
+const siteConfig: SiteConfig = {
+  title: "Roboto Studio Demo",
+  description: "Roboto Studio Demo",
+  twitterHandle: "@studioroboto",
+  keywords: ["roboto", "studio", "demo", "sanity", "next", "react", "template"],
+};
 
-interface MetaDataInput {
-  _type?: Maybe<string>;
-  seoDescription?: Maybe<string>;
-  seoTitle?: Maybe<string>;
-  slug?: Maybe<{ current: string | null }> | string | null;
-  title?: Maybe<string>;
-  description?: Maybe<string>;
-  _id?: Maybe<string>;
-}
+function generateOgImageUrl(params: OgImageParams = {}): string {
+  const { type, id } = params;
+  const searchParams = new URLSearchParams();
 
-export function getMetaData(data: MetaDataInput): Metadata {
-  const { _type, seoDescription, seoTitle, slug, title, description, _id } =
-    data ?? {};
+  if (id) searchParams.set("id", id);
+  if (type) searchParams.set("type", type);
 
   const baseUrl = getBaseUrl();
-  const pageSlug = typeof slug === "string" ? slug : (slug?.current ?? "");
-  const pageUrl = `${baseUrl}${pageSlug}`;
+  return `${baseUrl}/api/og?${searchParams.toString()}`;
+}
 
-  const meta = {
-    title: seoTitle ?? title ?? "",
-    description: seoDescription ?? description ?? "",
-  };
+function buildPageUrl({
+  baseUrl,
+  slug,
+}: {
+  baseUrl: string;
+  slug: string;
+}): string {
+  const normalizedSlug = slug.startsWith("/") ? slug : `/${slug}`;
+  return `${baseUrl}${normalizedSlug}`;
+}
 
-  const ogImage = getOgImage({
-    type: _type ?? undefined,
-    id: _id ?? undefined,
+function extractTitle({
+  pageTitle,
+  slug,
+  siteTitle,
+}: {
+  pageTitle?: Maybe<string>;
+  slug: string;
+  siteTitle: string;
+}): string {
+  if (pageTitle) return pageTitle;
+  if (slug && slug !== "/") return capitalize(slug.replace(/^\//, ""));
+  return siteTitle;
+}
+
+export function getSEOMetadata(page: PageSeoData = {}): Metadata {
+  const {
+    title: pageTitle,
+    description: pageDescription,
+    slug = "/",
+    contentId,
+    contentType,
+    keywords: pageKeywords = [],
+    seoNoIndex = false,
+    pageType = "website",
+    ...pageOverrides
+  } = page;
+
+  const baseUrl = getBaseUrl();
+  const pageUrl = buildPageUrl({ baseUrl, slug });
+
+  // Build default metadata values
+  const defaultTitle = extractTitle({
+    pageTitle,
+    slug,
+    siteTitle: siteConfig.title,
+  });
+  const defaultDescription = pageDescription || siteConfig.description;
+  const allKeywords = [...siteConfig.keywords, ...pageKeywords];
+
+  const ogImage = generateOgImageUrl({
+    type: contentType,
+    id: contentId,
   });
 
-  return {
-    title: `${meta.title} | Arizona Seals`,
-    description: meta.description,
+  const fullTitle =
+    defaultTitle === siteConfig.title
+      ? defaultTitle
+      : `${defaultTitle} | ${siteConfig.title}`;
+
+  // Build default metadata object
+  const defaultMetadata: Metadata = {
+    title: fullTitle,
+    description: defaultDescription,
     metadataBase: new URL(baseUrl),
-    creator: "Arizona Seals",
-    authors: [{ name: "Arizona Seals" }],
+    creator: siteConfig.title,
+    authors: [{ name: siteConfig.title }],
     icons: {
       icon: `${baseUrl}/favicon.ico`,
     },
-    keywords: [
-      "Arizona Seals",
-      "Swim Club",
-      "Maricoap, AZ",
-      "Maricopa, AZ Swim Club",
-      "Arizona Seals Swimming Academy",
-    ],
-    // twitter: {
-    //   card: "summary_large_image",
-    //   images: [ogImage],
-    //   creator: "@studioroboto",
-    //   title: meta.title,
-    //   description: meta.description,
-    // },
+    keywords: allKeywords,
+    robots: seoNoIndex ? "noindex, nofollow" : "index, follow",
+    twitter: {
+      card: "summary_large_image",
+      images: [ogImage],
+      creator: siteConfig.twitterHandle,
+      title: defaultTitle,
+      description: defaultDescription,
+    },
     alternates: {
       canonical: pageUrl,
     },
     openGraph: {
-      type: "website",
-      countryName: "US",
-      description: meta.description,
-      title: meta.title,
+      type: pageType ?? "website",
+      countryName: "UK",
+      description: defaultDescription,
+      title: defaultTitle,
       images: [
         {
           url: ogImage,
           width: 1200,
           height: 630,
-          alt: meta.title,
+          alt: defaultTitle,
           secureUrl: ogImage,
         },
       ],
       url: pageUrl,
     },
-    robots: "index, follow",
+  };
+
+  // Override any defaults with page-specific metadata
+  return {
+    ...defaultMetadata,
+    ...pageOverrides,
   };
 }

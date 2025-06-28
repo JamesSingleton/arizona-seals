@@ -139,7 +139,13 @@ function MobileNavbar({
       <SheetContent className="overflow-y-auto">
         <SheetHeader>
           <SheetTitle>
-            {logo && <Logo alt={siteTitle} priority image={logo} />}
+            {logo && (
+              <Logo
+                alt={siteTitle}
+                priority
+                image={logo && "alt" in logo ? logo : null}
+              />
+            )}
           </SheetTitle>
         </SheetHeader>
 

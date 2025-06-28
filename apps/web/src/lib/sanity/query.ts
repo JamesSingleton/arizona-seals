@@ -177,7 +177,7 @@ export const queryHomePageData =
     ${pageBuilderFragment}
   }`);
 
-export const querySlugPageData = defineQuery(/* groq */ `
+export const querySlugPageData = defineQuery(`
   *[_type == "page" && slug.current == $slug][0]{
     ...,
     "slug": slug.current,
@@ -189,21 +189,18 @@ export const querySlugPagePaths = defineQuery(/* groq */ `
   *[_type == "page" && defined(slug.current)].slug.current
 `);
 
-export const queryBlogIndexPageData = defineQuery(/* groq */ `
+export const queryBlogIndexPageData = defineQuery(`
   *[_type == "blogIndex"][0]{
     ...,
     _id,
     _type,
     title,
     description,
+    "displayFeaturedBlogs" : displayFeaturedBlogs == "yes",
+    "featuredBlogsCount" : featuredBlogsCount,
     ${pageBuilderFragment},
     "slug": slug.current,
-    "featuredBlog": featured[0]->{
-      ${blogCardFragment}
-    }
-  }{
-    ...@,
-    "blogs": *[_type == "blog" && (_id != ^.featuredBlog._id) && (seoHideFromLists != true)]{
+    "blogs": *[_type == "blog" && (seoHideFromLists != true)] | order(orderRank asc){
       ${blogCardFragment}
     }
   }
@@ -268,7 +265,7 @@ export const queryGenericPageOGData = defineQuery(/* groq */ `
   }
 `);
 
-export const queryFooterData = defineQuery(/* groq */ `
+export const queryFooterData = defineQuery(`
   *[_type == "footer" && _id == "footer"][0]{
     _id,
     subtitle,
@@ -285,10 +282,7 @@ export const queryFooterData = defineQuery(/* groq */ `
           url.href
         ),
       }
-    },
-    "logo": *[_type == "settings"][0].logo.asset->url + "?w=80&h=40&dpr=3&fit=max",
-    "siteTitle": *[_type == "settings"][0].siteTitle,
-    "socialLinks": *[_type == "settings"][0].socialLinks,
+    }
   }
 `);
 
@@ -364,4 +358,27 @@ export const queryGlobalSeoSettings = defineQuery(`
       youtube
     }
   }
+`);
+
+export const querySettingsData = defineQuery(`
+  *[_type == "settings"][0]{
+    _id,
+    _type,
+    siteTitle,
+    siteDescription,
+    "logo": logo.asset->url + "?w=80&h=40&dpr=3&fit=max",
+    "socialLinks": socialLinks,
+    "contactEmail": contactEmail,
+  }
+`);
+
+/**
+ * Query to extract a single image from a page document
+ * This is used as a type reference only and not for actual data fetching
+ * Helps with TypeScript inference for image objects
+ */
+export const queryImageType = defineQuery(`
+  *[_type == "page" && defined(image)][0]{
+    ${imageFragment}
+  }.image
 `);

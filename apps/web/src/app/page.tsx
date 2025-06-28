@@ -1,20 +1,31 @@
 import { PageBuilder } from "@/components/pagebuilder";
 import { sanityFetch } from "@/lib/sanity/live";
 import { queryHomePageData } from "@/lib/sanity/query";
-import { getMetaData } from "@/lib/seo";
+import { getSEOMetadata } from "@/lib/seo";
 
-async function fetchHomePageData() {
+import type { Metadata } from "next";
+
+async function fetchHomePageData(stega = true) {
   return await sanityFetch({
     query: queryHomePageData,
+    stega,
   });
 }
 
-export async function generateMetadata() {
-  const homePageData = await fetchHomePageData();
-  if (!homePageData.data) {
-    return getMetaData({});
-  }
-  return getMetaData(homePageData.data);
+export async function generateMetadata(): Promise<Metadata> {
+  const { data: homePageData } = await fetchHomePageData(false);
+  return getSEOMetadata(
+    homePageData
+      ? {
+          title: homePageData?.title ?? homePageData?.seoTitle ?? "",
+          description:
+            homePageData?.description ?? homePageData?.seoDescription ?? "",
+          slug: `/${homePageData?.slug}`,
+          contentId: homePageData?._id,
+          contentType: homePageData?._type,
+        }
+      : {},
+  );
 }
 
 export default async function Page() {

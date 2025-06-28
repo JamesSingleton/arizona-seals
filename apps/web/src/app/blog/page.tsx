@@ -1,47 +1,106 @@
+import { notFound } from "next/navigation";
+
 import { BlogCard, BlogHeader, FeaturedBlogCard } from "@/components/blog-card";
 import { PageBuilder } from "@/components/pagebuilder";
 import { sanityFetch } from "@/lib/sanity/live";
 import { queryBlogIndexPageData } from "@/lib/sanity/query";
-import { getMetaData } from "@/lib/seo";
+import { getSEOMetadata } from "@/lib/seo";
+import { handleErrors } from "@/utils";
+
+import type { Metadata } from "next";
 
 async function fetchBlogPosts() {
-  return await sanityFetch({
-    query: queryBlogIndexPageData,
-  });
+  return await handleErrors(sanityFetch({ query: queryBlogIndexPageData }));
 }
 
-export async function generateMetadata() {
-  const { data } = await fetchBlogPosts();
-  if (!data) return getMetaData({});
-  return getMetaData(data);
+export async function generateMetadata(): Promise<Metadata> {
+  const { data: result } = await sanityFetch({
+    query: queryBlogIndexPageData,
+    stega: false,
+  });
+  return getSEOMetadata(
+    result
+      ? {
+          title: result?.title ?? result?.seoTitle ?? "",
+          description: result?.description ?? result?.seoDescription ?? "",
+          slug: `/${result?.slug}`,
+          contentId: result?._id,
+          contentType: result?._type,
+        }
+      : {},
+  );
 }
 
 export default async function BlogIndexPage() {
-  const { data } = await fetchBlogPosts();
-  if (!data) return null;
-  const { featuredBlog, blogs, title, description, pageBuilder, _id, _type } =
-    data ?? {};
+  const [res, err] = await fetchBlogPosts();
+  if (err || !res?.data) notFound();
+
+  const {
+    blogs = [],
+    title,
+    description,
+    pageBuilder = [],
+    _id,
+    _type,
+    displayFeaturedBlogs,
+    featuredBlogsCount,
+  } = res.data;
+
+  const validFeaturedBlogsCount = featuredBlogsCount
+    ? Number.parseInt(featuredBlogsCount)
+    : 0;
+
+  if (!blogs.length) {
+    return (
+      <main className="container my-16 mx-auto px-4 md:px-6">
+        <BlogHeader title={title} description={description} />
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">
+            No blog posts available at the moment.
+          </p>
+        </div>
+        {pageBuilder && pageBuilder.length > 0 && (
+          <PageBuilder pageBuilder={pageBuilder} id={_id} type={_type} />
+        )}
+      </main>
+    );
+  }
+
+  const shouldDisplayFeaturedBlogs =
+    displayFeaturedBlogs && validFeaturedBlogsCount > 0;
+
+  const featuredBlogs = shouldDisplayFeaturedBlogs
+    ? blogs.slice(0, validFeaturedBlogsCount)
+    : [];
+  const remainingBlogs = shouldDisplayFeaturedBlogs
+    ? blogs.slice(validFeaturedBlogsCount)
+    : blogs;
 
   return (
-    <main>
+    <main className="bg-background">
       <div className="container my-16 mx-auto px-4 md:px-6">
-        <div>
-          <BlogHeader title={title} description={description} />
-          <div className="mx-auto mt-8 sm:mt-12 md:mt-16 space-y-12 lg:space-y-20">
-            {featuredBlog && (
-              <div className="w-full">
-                <FeaturedBlogCard blog={featuredBlog} />
-              </div>
-            )}
-            <div className="grid grid-cols-1 gap-8 md:gap-12 lg:grid-cols-2">
-              {blogs.map((blog, index) => (
-                <BlogCard key={`${blog?._id}-${index}`} blog={blog} />
-              ))}
-            </div>
+        <BlogHeader title={title} description={description} />
+
+        {featuredBlogs.length > 0 && (
+          <div className="mx-auto mt-8 sm:mt-12 md:mt-16 mb-12 lg:mb-20 grid grid-cols-1 gap-8 md:gap-12">
+            {featuredBlogs.map((blog) => (
+              <FeaturedBlogCard key={blog._id} blog={blog} />
+            ))}
           </div>
-        </div>
+        )}
+
+        {remainingBlogs.length > 0 && (
+          <div className="grid grid-cols-1 gap-8 md:gap-12 lg:grid-cols-2 mt-8">
+            {remainingBlogs.map((blog) => (
+              <BlogCard key={blog._id} blog={blog} />
+            ))}
+          </div>
+        )}
       </div>
-      <PageBuilder pageBuilder={pageBuilder ?? []} id={_id} type={_type} />
+
+      {pageBuilder && pageBuilder.length > 0 && (
+        <PageBuilder pageBuilder={pageBuilder} id={_id} type={_type} />
+      )}
     </main>
   );
 }
