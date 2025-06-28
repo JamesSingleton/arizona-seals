@@ -18,16 +18,16 @@
   ],
   "dependencies": {
     "@sanity/asset-utils": "^2.2.1",
-    "@sanity/assist": "^4.3.0",
-    "@sanity/icons": "^3.7.0",
+    "@sanity/assist": "^4.4.0",
+    "@sanity/icons": "^3.7.4",
     "@sanity/image-url": "^1.1.0",
     "@sanity/ui": "^2.16.2",
-    "@sanity/vision": "^3.93.0",
-    "lucide-react": "0.517.0",
+    "@sanity/vision": "^3.95.0",
+    "lucide-react": "0.525.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-is": "^19.1.0",
-    "sanity": "^3.93.0",
+    "sanity": "^3.95.0",
     "sanity-plugin-asset-source-unsplash": "^3.0.3",
     "sanity-plugin-icon-picker": "^4.0.0",
     "sanity-plugin-media": "^3.0.3",
@@ -36,12 +36,12 @@
   },
   "devDependencies": {
     "@sanity/eslint-config-studio": "^5.0.2",
-    "@types/node": "^24.0.3",
+    "@types/node": "^24.0.6",
     "@types/react": "^19.1.8",
     "@types/react-is": "^19.0.0",
-    "eslint": "^9.29.0",
-    "eslint-plugin-import": "^2.31.0",
-    "eslint-plugin-prettier": "^5.5.0",
+    "eslint": "^9.30.0",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-prettier": "^5.5.1",
     "eslint-plugin-simple-import-sort": "^12.1.1"
   }
 }
