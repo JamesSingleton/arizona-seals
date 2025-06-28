@@ -10,14 +10,27 @@ type ImageProps = {
   alt?: string;
 } & Omit<NextImageProps, "alt" | "src">;
 
-function getBlurDataURL(asset: SanityImageProps) {
-  if (asset?.blurData) {
-    return {
-      blurDataURL: asset.blurData,
-      placeholder: "blur" as const,
-    };
+function getImageConfig(asset: unknown) {
+  const config: {
+    blurDataURL?: string;
+    placeholder?: "blur";
+    alt?: string;
+  } = {};
+
+  if (asset && typeof asset === "object") {
+    // Add blur data if available
+    if ("blurData" in asset && asset.blurData) {
+      config.blurDataURL = asset.blurData as string;
+      config.placeholder = "blur";
+    }
+
+    // Add alt text if available
+    if ("alt" in asset && typeof asset.alt === "string") {
+      config.alt = asset.alt;
+    }
   }
-  return {};
+
+  return config;
 }
 
 export function SanityImage({
@@ -43,10 +56,12 @@ export function SanityImage({
     .quality(Number(quality))
     .url();
 
+  const imageConfig = getImageConfig(asset);
+
   // Base image props
   const imageProps = {
-    alt: alt ?? asset.alt ?? "Image",
-    "aria-label": alt ?? asset.alt ?? "Image",
+    alt: alt ?? imageConfig.alt ?? "Image",
+    "aria-label": alt ?? imageConfig.alt ?? "Image",
     src: url,
     className: cn(className),
     // Optimize image sizes for performance and LCP
@@ -59,7 +74,7 @@ export function SanityImage({
     // - Large desktop (>1200px): Image takes up 25% of viewport width
     sizes:
       "(max-width: 640px) 75vw, (max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw",
-    ...getBlurDataURL(asset),
+    ...imageConfig,
     ...props,
   };
 

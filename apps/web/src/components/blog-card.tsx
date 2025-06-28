@@ -5,8 +5,8 @@ import type { QueryBlogIndexPageDataResult } from "@/lib/sanity/sanity.types";
 import { SanityImage } from "./sanity-image";
 
 type Blog = NonNullable<
-  NonNullable<QueryBlogIndexPageDataResult>["featuredBlog"]
->;
+  NonNullable<QueryBlogIndexPageDataResult>["blogs"]
+>[number];
 
 interface BlogImageProps {
   image: Blog["image"];
@@ -68,7 +68,13 @@ function BlogMeta({ publishedAt }: { publishedAt: string | null }) {
   return (
     <div className="flex items-center gap-x-4 text-xs my-4">
       <time dateTime={publishedAt ?? ""} className="text-muted-foreground">
-        {publishedAt}
+        {publishedAt
+          ? new Date(publishedAt).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            })
+          : ""}
       </time>
     </div>
   );
@@ -122,23 +128,19 @@ function AuthorSection({ authors }: { authors: Blog["authors"] }) {
     </div>
   );
 }
-
 export function FeaturedBlogCard({ blog }: BlogCardProps) {
   const { title, publishedAt, slug, authors, description, image } = blog ?? {};
 
   return (
-    <article className="flex flex-col lg:flex-row items-start gap-x-8">
-      <div className="relative w-full lg:w-1/2">
-        <BlogImage image={image} title={title} />
-        <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10" />
-      </div>
-      <div className="w-full lg:w-1/2 mt-8 lg:mt-0">
+    <article className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full">
+      <BlogImage image={image} title={title} />
+      <div className="space-y-6">
         <BlogMeta publishedAt={publishedAt} />
         <BlogContent
           title={title}
           slug={slug}
           description={description}
-          isFeatured={true}
+          isFeatured
         />
         <AuthorSection authors={authors} />
       </div>
@@ -147,15 +149,28 @@ export function FeaturedBlogCard({ blog }: BlogCardProps) {
 }
 
 export function BlogCard({ blog }: BlogCardProps) {
+  if (!blog) {
+    return (
+      <article className="grid grid-cols-1 gap-4 w-full">
+        <div className="h-48 bg-muted rounded-2xl animate-pulse" />
+        <div className="space-y-2">
+          <div className="h-4 w-24 bg-muted rounded animate-pulse" />
+          <div className="h-6 w-full bg-muted rounded animate-pulse" />
+          <div className="h-4 w-3/4 bg-muted rounded animate-pulse" />
+        </div>
+      </article>
+    );
+  }
+
   const { title, publishedAt, slug, authors, description, image } = blog;
 
   return (
-    <article className="flex flex-col items-start w-full">
-      <div className="relative w-full">
+    <article className="grid grid-cols-1 gap-4 w-full">
+      <div className="relative w-full h-auto aspect-[16/9] overflow-hidden rounded-2xl">
         <BlogImage image={image} title={title} />
         <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10" />
       </div>
-      <div className="w-full sm:max-w-xl">
+      <div className="w-full space-y-4">
         <BlogMeta publishedAt={publishedAt} />
         <BlogContent title={title} slug={slug} description={description} />
         <AuthorSection authors={authors} />

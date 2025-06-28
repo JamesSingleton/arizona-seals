@@ -12,7 +12,6 @@ import { SanityImage } from "./sanity-image";
 
 const components: Partial<PortableTextReactComponents> = {
   block: {
-    normal: ({ children }) => <p>{children}</p>,
     h2: ({ children, value }) => {
       const slug = parseChildrenToSlug(value.children);
       return (
@@ -56,11 +55,10 @@ const components: Partial<PortableTextReactComponents> = {
         </h6>
       );
     },
-    inline: ({ children }) => <span>{children}</span>,
   },
   marks: {
     code: ({ children }) => (
-      <code className="rounded-md border-[1px] border-white border-opacity-10  bg-opacity-5 p-1 text-sm  lg:whitespace-nowrap">
+      <code className="rounded-md border border-white/10 bg-opacity-5 p-1 text-sm lg:whitespace-nowrap">
         {children}
       </code>
     ),
@@ -86,28 +84,17 @@ const components: Partial<PortableTextReactComponents> = {
       );
     },
   },
-  list: {
-    bullet: ({ children }) => <ul className="list-disc">{children}</ul>,
-    number: ({ children }) => <ol className="list-decimal">{children}</ol>,
-  },
-  listItem: {
-    bullet: ({ children }) => <li className="">{children}</li>,
-    number: ({ children }) => <li className="">{children}</li>,
-  },
   types: {
-    image: ({ value }) => {
-      return (
-        <div className="my-4">
-          <SanityImage
-            asset={value}
-            className="w-full h-auto rounded-lg"
-            width={1600}
-            height={900}
-            // priority
-          />
-        </div>
-      );
-    },
+    image: ({ value }) => (
+      <div className="my-4">
+        <SanityImage
+          asset={value}
+          className="w-full h-auto rounded-lg"
+          width={1600}
+          height={900}
+        />
+      </div>
+    ),
   },
   hardBreak: () => <br />,
 };
@@ -124,7 +111,7 @@ export function RichText<T>({
   return (
     <div
       className={cn(
-        "prose prose-slate prose-headings:scroll-m-24 prose-headings:font-bold prose-headings:text-opacity-90 prose-p:text-opacity-80 prose-a:underline prose-a:decoration-dotted prose-ol:list-decimal prose-ol:text-opacity-80 prose-ul:list-disc prose-ul:text-opacity-80 prose-h2:border-b prose-h2:pb-2 prose-h2:text-3xl prose-h2:font-semibold prose-h2:prose-h2:first:mt-0 max-w-none dark:prose-invert",
+        "prose prose-zinc prose-headings:scroll-m-24 prose-headings:text-opacity-90 prose-p:text-opacity-80 prose-a:decoration-dotted prose-ol:text-opacity-80 prose-ul:text-opacity-80 prose-h2:border-b prose-h2:pb-2 prose-h2:text-3xl prose-h2:font-semibold prose-h2:first:mt-0 max-w-none dark:prose-invert",
         className,
       )}
     >

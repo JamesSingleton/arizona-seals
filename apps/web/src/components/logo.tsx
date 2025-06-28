@@ -1,12 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
+import { stegaClean } from "next-sanity";
 
 import type { Maybe, SanityImageProps } from "@/types";
 
 import { SanityImage } from "./sanity-image";
 
 const LOGO_URL =
-  "https://cdn.sanity.io/images/s6kuy1ts/production/68c438f68264717e93c7ba1e85f1d0c4b58b33c2-1200x621.svg";
+  "https://cdn.sanity.io/images/nck2qq2n/production/91fe08287752bbb11f7155a6fc991309ce34edf1-2000x2000.png";
 
 interface LogoProps {
   src?: Maybe<string>;
@@ -26,14 +27,14 @@ export function Logo({
   priority = true,
 }: LogoProps) {
   return (
-    <Link href="/" className="flex items-center gap-2 w-fit">
+    <Link href="/" className="">
       {image ? (
         <SanityImage
           asset={image}
-          alt={alt ?? "logo"}
-          width={width}
-          className="w-[170px] h-[40px]"
-          height={height}
+          alt={stegaClean(alt) ?? "logo"}
+          // width={width}
+          // height={height}
+          className="w-[170px]"
           priority={priority}
           loading="eager"
           decoding="sync"
@@ -42,9 +43,9 @@ export function Logo({
       ) : (
         <Image
           src={src ?? LOGO_URL}
-          alt={alt ?? "logo"}
+          alt={stegaClean(alt) ?? "logo"}
           width={width}
-          className="w-[170px] h-[40px]"
+          className="w-[170px]"
           height={height}
           loading="eager"
           priority={priority}

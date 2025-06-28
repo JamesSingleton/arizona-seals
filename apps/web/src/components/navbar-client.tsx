@@ -27,22 +27,23 @@ import { Menu } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { useIsMobile } from "@/hooks/use-is-mobile";
-import type { QueryNavbarDataResult } from "@/lib/sanity/sanity.types";
+import type {
+  QueryGlobalSeoSettingsResult,
+  QueryNavbarDataResult,
+} from "@/lib/sanity/sanity.types";
 
 import { Logo } from "./logo";
 import { ModeToggle } from "./mode-toggle";
 import { SanityButtons } from "./sanity-buttons";
 import { SanityIcon } from "./sanity-icon";
-
 interface MenuItem {
   title: string;
   description: string;
   icon: React.ReactNode;
   href?: string;
-  openInNewTab?: boolean;
 }
 
 function MenuItemLink({
@@ -60,8 +61,6 @@ function MenuItemLink({
       aria-label={`Link to ${item.title ?? item.href}`}
       onClick={() => setIsOpen?.(false)}
       href={item.href ?? "/"}
-      target={item.openInNewTab ? "_blank" : undefined}
-      rel={item.openInNewTab ? "noopener noreferrer" : undefined}
     >
       {item.icon}
       <div className="">
@@ -101,7 +100,6 @@ function MobileNavbarAccordionColumn({
               href: item.href ?? "",
               icon: <SanityIcon icon={item.icon} className="size-5 shrink-0" />,
               title: item.name ?? "",
-              openInNewTab: item.openInNewTab ?? false,
             }}
           />
         ))}
@@ -110,8 +108,15 @@ function MobileNavbarAccordionColumn({
   );
 }
 
-function MobileNavbar({ navbarData }: { navbarData: QueryNavbarDataResult }) {
-  const { logo, siteTitle, columns, buttons } = navbarData ?? {};
+function MobileNavbar({
+  navbarData,
+  settingsData,
+}: {
+  navbarData: QueryNavbarDataResult;
+  settingsData: QueryGlobalSeoSettingsResult;
+}) {
+  const { siteTitle, logo } = settingsData ?? {};
+  const { columns, buttons } = navbarData ?? {};
   const [isOpen, setIsOpen] = useState(false);
 
   const path = usePathname();
@@ -120,6 +125,7 @@ function MobileNavbar({ navbarData }: { navbarData: QueryNavbarDataResult }) {
   useEffect(() => {
     setIsOpen(false);
   }, [path]);
+
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <div className="flex justify-end">
@@ -133,24 +139,24 @@ function MobileNavbar({ navbarData }: { navbarData: QueryNavbarDataResult }) {
       <SheetContent className="overflow-y-auto">
         <SheetHeader>
           <SheetTitle>
-            <Logo src={logo} alt={siteTitle} priority />
+            {logo && <Logo alt={siteTitle} priority image={logo} />}
           </SheetTitle>
         </SheetHeader>
 
         <div className="mb-8 mt-8 flex flex-col gap-4">
-          {columns?.map((column) => {
-            if (column.type === "link") {
+          {columns?.map((item) => {
+            if (item.type === "link") {
               return (
                 <Link
-                  key={`column-link-${column.name}-${column._key}`}
-                  href={column.href ?? ""}
+                  key={`column-link-${item.name}-${item._key}`}
+                  href={item.href ?? ""}
                   onClick={() => setIsOpen(false)}
                   className={cn(
                     buttonVariants({ variant: "ghost" }),
                     "justify-start",
                   )}
                 >
-                  {column.name}
+                  {item.name}
                 </Link>
               );
             }
@@ -159,10 +165,10 @@ function MobileNavbar({ navbarData }: { navbarData: QueryNavbarDataResult }) {
                 type="single"
                 collapsible
                 className="w-full"
-                key={column._key}
+                key={item._key}
               >
                 <MobileNavbarAccordionColumn
-                  column={column}
+                  column={item}
                   setIsOpen={setIsOpen}
                 />
               </Accordion>
@@ -185,44 +191,59 @@ function MobileNavbar({ navbarData }: { navbarData: QueryNavbarDataResult }) {
 function NavbarColumnLink({
   column,
 }: {
-  column: NonNullable<NonNullable<QueryNavbarDataResult>["columns"]>[number];
+  column: Extract<
+    NonNullable<NonNullable<QueryNavbarDataResult>["columns"]>[number],
+    { type: "link" }
+  >;
 }) {
-  if (column.type !== "link") return null;
   return (
     <Link
       aria-label={`Link to ${column.name ?? column.href}`}
       href={column.href ?? ""}
-      legacyBehavior
-      passHref
+      className={cn(
+        navigationMenuTriggerStyle(),
+        "text-muted-foreground dark:text-neutral-300",
+      )}
+      // passHref
     >
-      <NavigationMenuLink
-        className={cn(
-          navigationMenuTriggerStyle(),
-          "text-muted-foreground dark:text-neutral-300",
-        )}
-      >
-        {column.name}
-      </NavigationMenuLink>
+      {/* <NavigationMenuLink
+        > */}
+      {column.name}
+      {/* </NavigationMenuLink> */}
     </Link>
   );
 }
 
-function NavbarColumn({
+function getColumnLayoutClass(itemCount: number) {
+  if (itemCount <= 4) return "w-80";
+  if (itemCount <= 8) return "grid grid-cols-2 gap-2 w-[500px]";
+  return "grid grid-cols-3 gap-2 w-[700px]";
+}
+
+export function NavbarColumn({
   column,
 }: {
-  column: NonNullable<NonNullable<QueryNavbarDataResult>["columns"]>[number];
+  column: Extract<
+    NonNullable<NonNullable<QueryNavbarDataResult>["columns"]>[number],
+    { type: "column" }
+  >;
 }) {
-  if (column.type !== "column") return null;
+  const layoutClass = useMemo(
+    () => getColumnLayoutClass(column.links?.length ?? 0),
+    [column.links?.length],
+  );
+
   return (
     <NavigationMenuList>
       <NavigationMenuItem className="text-muted-foreground dark:text-neutral-300">
         <NavigationMenuTrigger>{column.title}</NavigationMenuTrigger>
         <NavigationMenuContent>
-          <ul className="w-80 p-3">
+          <ul className={cn("p-3", layoutClass)}>
             {column.links?.map((item) => (
               <li key={item._key}>
                 <MenuItemLink
                   item={{
+                    title: item.name ?? "",
                     description: item.description ?? "",
                     href: item.href ?? "",
                     icon: (
@@ -231,8 +252,6 @@ function NavbarColumn({
                         className="size-5 shrink-0"
                       />
                     ),
-                    title: item.name ?? "",
-                    openInNewTab: item.openInNewTab ?? false,
                   }}
                 />
               </li>
@@ -277,8 +296,10 @@ export function DesktopNavbar({
 
 const ClientSideNavbar = ({
   navbarData,
+  settingsData,
 }: {
   navbarData: QueryNavbarDataResult;
+  settingsData: QueryGlobalSeoSettingsResult;
 }) => {
   const isMobile = useIsMobile();
 
@@ -287,7 +308,7 @@ const ClientSideNavbar = ({
   }
 
   return isMobile ? (
-    <MobileNavbar navbarData={navbarData} />
+    <MobileNavbar navbarData={navbarData} settingsData={settingsData} />
   ) : (
     <DesktopNavbar navbarData={navbarData} />
   );
@@ -317,7 +338,7 @@ function SkeletonDesktopNavbar() {
 
       <div className="justify-self-end">
         <div className="flex items-center gap-4">
-          {Array.from({ length: 2 }).map((_, index) => (
+          {Array.from({ length: 1 }).map((_, index) => (
             <div
               key={`nav-button-skeleton-${index.toString()}`}
               className="h-12 w-32 rounded-[10px] bg-muted animate-pulse"
