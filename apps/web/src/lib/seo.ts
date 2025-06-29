@@ -33,10 +33,23 @@ interface OgImageParams {
 
 // Default site configuration
 const siteConfig: SiteConfig = {
-  title: "Roboto Studio Demo",
-  description: "Roboto Studio Demo",
-  twitterHandle: "@studioroboto",
-  keywords: ["roboto", "studio", "demo", "sanity", "next", "react", "template"],
+  title: "Arizona Seals Swimming Academy",
+  description: "Premier competitive swimming club in Arizona. Expert coaching, state-of-the-art facilities, and programs for all skill levels. Join the Arizona Seals family today!",
+  twitterHandle: "@ArizonaSeals",
+  keywords: [
+    "swimming", 
+    "competitive swimming", 
+    "swim club", 
+    "Arizona", 
+    "swim lessons", 
+    "swim coaching", 
+    "youth swimming", 
+    "swim team", 
+    "aquatics",
+    "swimming academy",
+    "swim training",
+    "Phoenix swimming"
+  ],
 };
 
 function generateOgImageUrl(params: OgImageParams = {}): string {
@@ -134,7 +147,7 @@ export function getSEOMetadata(page: PageSeoData = {}): Metadata {
     },
     openGraph: {
       type: pageType ?? "website",
-      countryName: "UK",
+      countryName: "US",
       description: defaultDescription,
       title: defaultTitle,
       images: [

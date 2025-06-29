@@ -27,11 +27,14 @@ export function Navbar({
 }) {
   const { siteTitle: settingsSiteTitle, logo } = settingsData ?? {};
   return (
-    <header className="py-3 md:border-b">
+    <header className="py-3 md:border-b bg-white/80 backdrop-blur-md sticky top-0 z-50 dark:bg-gray-900/80">
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid grid-cols-[auto_1fr] items-center gap-4">
-          {/* {logo && <Logo alt={settingsSiteTitle} priority image={logo} />} */}
-          Arizona Seals
+          <Logo 
+            alt={settingsSiteTitle || "Arizona Seals Swimming Academy"} 
+            priority 
+            image={logo && "alt" in logo ? logo : null} 
+          />
           <NavbarClient navbarData={navbarData} settingsData={settingsData} />
         </div>
       </div>
@@ -41,10 +44,10 @@ export function Navbar({
 
 export function NavbarSkeleton() {
   return (
-    <header className="h-[75px] py-4 md:border-b">
+    <header className="h-[75px] py-4 md:border-b bg-white/80 backdrop-blur-md sticky top-0 z-50 dark:bg-gray-900/80">
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid grid-cols-[auto_1fr] items-center gap-4">
-          <div className="h-[40px] w-[170px] rounded animate-pulse bg-muted" />
+          <div className="h-[50px] w-[200px] rounded animate-pulse bg-muted" />
           <NavbarSkeletonResponsive />
         </div>
       </div>
