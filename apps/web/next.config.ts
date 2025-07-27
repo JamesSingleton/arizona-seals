@@ -1,12 +1,12 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   /* config options here */
-  transpilePackages: ["@workspace/ui"],
+  transpilePackages: ['@workspace/ui'],
   experimental: {
     reactCompiler: true,
-    ppr: true,
-    // inlineCss: true,
+    // ppr: true,
+    inlineCss: true,
   },
   logging: {
     fetches: {},
@@ -15,11 +15,11 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 31536000,
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "cdn.sanity.io",
+        protocol: 'https',
+        hostname: 'cdn.sanity.io',
       },
     ],
   },
-};
+}
 
-export default nextConfig;
+export default nextConfig

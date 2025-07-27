@@ -3,9 +3,12 @@
  * @type {import("prettier").Config}
  */
 const config = {
-  printWidth: 80,
-  semi: true,
+  printWidth: 100,
+  semi: false,
   bracketSpacing: true,
-};
+  tabWidth: 2,
+  useTabs: false,
+  singleQuote: true,
+}
 
-export default config;
+export default config

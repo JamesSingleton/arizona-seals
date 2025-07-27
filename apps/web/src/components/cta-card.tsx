@@ -1,22 +1,22 @@
-import { cn } from "@workspace/ui/lib/utils";
-import Link from "next/link";
+import { cn } from '@workspace/ui/lib/utils'
+import Link from 'next/link'
 
-import type { PagebuilderType } from "@/types";
+import type { PagebuilderType } from '@/types'
 
-import { SanityImage } from "./sanity-image";
+import { SanityImage } from './sanity-image'
 
 export type CTACardProps = {
-  card: NonNullable<PagebuilderType<"imageLinkCards">["cards"]>[number];
-  className?: string;
-};
+  card: NonNullable<PagebuilderType<'imageLinkCards'>['cards']>[number]
+  className?: string
+}
 
 export function CTACard({ card, className }: CTACardProps) {
-  const { image, description, title, href } = card ?? {};
+  const { image, description, title, href } = card ?? {}
   return (
     <Link
-      href={href ?? "#"}
+      href={href ?? '#'}
       className={cn(
-        "rounded-3xl p-4 md:p-8 transition-colors relative overflow-hidden group flex flex-col justify-end xl:h-[400px]",
+        'rounded-3xl p-4 md:p-8 transition-colors relative overflow-hidden group flex flex-col justify-end xl:h-[400px]',
         className,
       )}
     >
@@ -39,5 +39,5 @@ export function CTACard({ card, className }: CTACardProps) {
         </p>
       </div>
     </Link>
-  );
+  )
 }

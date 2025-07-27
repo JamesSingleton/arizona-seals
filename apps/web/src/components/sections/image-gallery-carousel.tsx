@@ -1,15 +1,15 @@
-import { Badge } from "@workspace/ui/components/badge";
+import { Badge } from '@workspace/ui/components/badge'
 
-import CustomCarousel from "@/components/custom-carousel";
+import CustomCarousel from '@/components/custom-carousel'
 
 // import type { PagebuilderType } from "@/types";
 
 type ImageGalleryCarouselProps = {
-  eyebrow: string;
-  title: string;
-  subtitle: string;
-  images: any[];
-};
+  eyebrow: string
+  title: string
+  subtitle: string
+  images: any[]
+}
 
 export function ImageGalleryCarousel({
   eyebrow,
@@ -24,13 +24,11 @@ export function ImageGalleryCarousel({
           <div className="flex flex-col items-center space-y-4 text-center sm:space-y-6 md:text-center">
             {eyebrow && <Badge variant="secondary">{eyebrow}</Badge>}
             <h2 className="text-3xl font-semibold md:text-5xl">{title}</h2>
-            <h3 className="text-lg font-normal text-[#374151] text-balance">
-              {subtitle}
-            </h3>
+            <h3 className="text-lg font-normal text-[#374151] text-balance">{subtitle}</h3>
           </div>
         </div>
         <CustomCarousel images={images} />
       </div>
     </section>
-  );
+  )
 }

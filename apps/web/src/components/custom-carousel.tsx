@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import {
   Carousel,
@@ -6,13 +6,13 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@workspace/ui/components/carousel";
-import Autoplay from "embla-carousel-autoplay";
-import Image from "next/image";
-import { useRef } from "react";
+} from '@workspace/ui/components/carousel'
+import Autoplay from 'embla-carousel-autoplay'
+import Image from 'next/image'
+import { useRef } from 'react'
 
 const CustomCarousel = ({ images }: { images: any[] }) => {
-  const plugin = useRef(Autoplay({ delay: 2000, stopOnInteraction: true }));
+  const plugin = useRef(Autoplay({ delay: 2000, stopOnInteraction: true }))
 
   return (
     <Carousel
@@ -29,7 +29,7 @@ const CustomCarousel = ({ images }: { images: any[] }) => {
           <CarouselItem key={index}>
             <div className="aspect-[16/9] relative overflow-hidden rounded-lg">
               <Image
-                src={image.src || "/placeholder.svg"}
+                src={image.src || '/placeholder.svg'}
                 alt={image.alt}
                 fill
                 sizes="(min-width: 1024px) 1000px, 100vw"
@@ -44,7 +44,7 @@ const CustomCarousel = ({ images }: { images: any[] }) => {
       <CarouselPrevious />
       <CarouselNext />
     </Carousel>
-  );
-};
+  )
+}
 
-export default CustomCarousel;
+export default CustomCarousel

@@ -1,64 +1,58 @@
-import type { Metadata } from "next";
+import type { Metadata } from 'next'
 
-import type { Maybe } from "@/types";
-import { capitalize } from "@/utils";
+import type { Maybe } from '@/types'
+import { capitalize } from '@/utils'
 
-import { getBaseUrl } from "../config";
+import { getBaseUrl } from '../config'
 
 // Site-wide configuration interface
 interface SiteConfig {
-  title: string;
-  description: string;
-  twitterHandle: string;
-  keywords: string[];
+  title: string
+  description: string
+  twitterHandle: string
+  keywords: string[]
 }
 
 // Page-specific SEO data interface
 interface PageSeoData extends Metadata {
-  title?: string;
-  description?: string;
-  slug?: string;
-  contentId?: string;
-  contentType?: string;
-  keywords?: string[];
-  seoNoIndex?: boolean;
-  pageType?: Extract<Metadata["openGraph"], { type: string }>["type"];
+  title?: string
+  description?: string
+  slug?: string
+  contentId?: string
+  contentType?: string
+  keywords?: string[]
+  seoNoIndex?: boolean
+  pageType?: Extract<Metadata['openGraph'], { type: string }>['type']
 }
 
 // OpenGraph image generation parameters
 interface OgImageParams {
-  type?: string;
-  id?: string;
+  type?: string
+  id?: string
 }
 
 // Default site configuration
 const siteConfig: SiteConfig = {
-  title: "Roboto Studio Demo",
-  description: "Roboto Studio Demo",
-  twitterHandle: "@studioroboto",
-  keywords: ["roboto", "studio", "demo", "sanity", "next", "react", "template"],
-};
-
-function generateOgImageUrl(params: OgImageParams = {}): string {
-  const { type, id } = params;
-  const searchParams = new URLSearchParams();
-
-  if (id) searchParams.set("id", id);
-  if (type) searchParams.set("type", type);
-
-  const baseUrl = getBaseUrl();
-  return `${baseUrl}/api/og?${searchParams.toString()}`;
+  title: 'Roboto Studio Demo',
+  description: 'Roboto Studio Demo',
+  twitterHandle: '@studioroboto',
+  keywords: ['roboto', 'studio', 'demo', 'sanity', 'next', 'react', 'template'],
 }
 
-function buildPageUrl({
-  baseUrl,
-  slug,
-}: {
-  baseUrl: string;
-  slug: string;
-}): string {
-  const normalizedSlug = slug.startsWith("/") ? slug : `/${slug}`;
-  return `${baseUrl}${normalizedSlug}`;
+function generateOgImageUrl(params: OgImageParams = {}): string {
+  const { type, id } = params
+  const searchParams = new URLSearchParams()
+
+  if (id) searchParams.set('id', id)
+  if (type) searchParams.set('type', type)
+
+  const baseUrl = getBaseUrl()
+  return `${baseUrl}/api/og?${searchParams.toString()}`
+}
+
+function buildPageUrl({ baseUrl, slug }: { baseUrl: string; slug: string }): string {
+  const normalizedSlug = slug.startsWith('/') ? slug : `/${slug}`
+  return `${baseUrl}${normalizedSlug}`
 }
 
 function extractTitle({
@@ -66,49 +60,47 @@ function extractTitle({
   slug,
   siteTitle,
 }: {
-  pageTitle?: Maybe<string>;
-  slug: string;
-  siteTitle: string;
+  pageTitle?: Maybe<string>
+  slug: string
+  siteTitle: string
 }): string {
-  if (pageTitle) return pageTitle;
-  if (slug && slug !== "/") return capitalize(slug.replace(/^\//, ""));
-  return siteTitle;
+  if (pageTitle) return pageTitle
+  if (slug && slug !== '/') return capitalize(slug.replace(/^\//, ''))
+  return siteTitle
 }
 
 export function getSEOMetadata(page: PageSeoData = {}): Metadata {
   const {
     title: pageTitle,
     description: pageDescription,
-    slug = "/",
+    slug = '/',
     contentId,
     contentType,
     keywords: pageKeywords = [],
     seoNoIndex = false,
-    pageType = "website",
+    pageType = 'website',
     ...pageOverrides
-  } = page;
+  } = page
 
-  const baseUrl = getBaseUrl();
-  const pageUrl = buildPageUrl({ baseUrl, slug });
+  const baseUrl = getBaseUrl()
+  const pageUrl = buildPageUrl({ baseUrl, slug })
 
   // Build default metadata values
   const defaultTitle = extractTitle({
     pageTitle,
     slug,
     siteTitle: siteConfig.title,
-  });
-  const defaultDescription = pageDescription || siteConfig.description;
-  const allKeywords = [...siteConfig.keywords, ...pageKeywords];
+  })
+  const defaultDescription = pageDescription || siteConfig.description
+  const allKeywords = [...siteConfig.keywords, ...pageKeywords]
 
   const ogImage = generateOgImageUrl({
     type: contentType,
     id: contentId,
-  });
+  })
 
   const fullTitle =
-    defaultTitle === siteConfig.title
-      ? defaultTitle
-      : `${defaultTitle} | ${siteConfig.title}`;
+    defaultTitle === siteConfig.title ? defaultTitle : `${defaultTitle} | ${siteConfig.title}`
 
   // Build default metadata object
   const defaultMetadata: Metadata = {
@@ -121,9 +113,9 @@ export function getSEOMetadata(page: PageSeoData = {}): Metadata {
       icon: `${baseUrl}/favicon.ico`,
     },
     keywords: allKeywords,
-    robots: seoNoIndex ? "noindex, nofollow" : "index, follow",
+    robots: seoNoIndex ? 'noindex, nofollow' : 'index, follow',
     twitter: {
-      card: "summary_large_image",
+      card: 'summary_large_image',
       images: [ogImage],
       creator: siteConfig.twitterHandle,
       title: defaultTitle,
@@ -133,8 +125,8 @@ export function getSEOMetadata(page: PageSeoData = {}): Metadata {
       canonical: pageUrl,
     },
     openGraph: {
-      type: pageType ?? "website",
-      countryName: "UK",
+      type: pageType ?? 'website',
+      countryName: 'UK',
       description: defaultDescription,
       title: defaultTitle,
       images: [
@@ -148,11 +140,11 @@ export function getSEOMetadata(page: PageSeoData = {}): Metadata {
       ],
       url: pageUrl,
     },
-  };
+  }
 
   // Override any defaults with page-specific metadata
   return {
     ...defaultMetadata,
     ...pageOverrides,
-  };
+  }
 }

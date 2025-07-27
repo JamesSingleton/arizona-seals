@@ -1,70 +1,66 @@
-import { notFound } from "next/navigation";
-import { stegaClean } from "next-sanity";
+import { notFound } from 'next/navigation'
+import { stegaClean } from 'next-sanity'
 
-import { ArticleJsonLd } from "@/components/json-ld";
-import { RichText } from "@/components/richtext";
-import { SanityImage } from "@/components/sanity-image";
-import { TableOfContent } from "@/components/table-of-content";
-import { client } from "@/lib/sanity/client";
-import { sanityFetch } from "@/lib/sanity/live";
-import { queryBlogPaths, queryBlogSlugPageData } from "@/lib/sanity/query";
-import { getSEOMetadata } from "@/lib/seo";
+import { ArticleJsonLd } from '@/components/json-ld'
+import { RichText } from '@/components/richtext'
+import { SanityImage } from '@/components/sanity-image'
+import { TableOfContent } from '@/components/table-of-content'
+import { client } from '@/lib/sanity/client'
+import { sanityFetch } from '@/lib/sanity/live'
+import { queryBlogPaths, queryBlogSlugPageData } from '@/lib/sanity/query'
+import { getSEOMetadata } from '@/lib/seo'
 
-import type { Metadata } from "next";
+import type { Metadata } from 'next'
 
 async function fetchBlogSlugPageData(slug: string, stega = true) {
   return await sanityFetch({
     query: queryBlogSlugPageData,
     params: { slug: `/blog/${slug}` },
     stega,
-  });
+  })
 }
 
 async function fetchBlogPaths() {
-  const slugs = await client.fetch(queryBlogPaths);
-  const paths: { slug: string }[] = [];
+  const slugs = await client.fetch(queryBlogPaths)
+  const paths: { slug: string }[] = []
   for (const slug of slugs) {
-    if (!slug) continue;
-    const [, , path] = slug.split("/");
-    if (path) paths.push({ slug: path });
+    if (!slug) continue
+    const [, , path] = slug.split('/')
+    if (path) paths.push({ slug: path })
   }
-  return paths;
+  return paths
 }
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string }>
 }): Promise<Metadata> {
-  const { slug } = await params;
-  const { data } = await fetchBlogSlugPageData(slug, false);
+  const { slug } = await params
+  const { data } = await fetchBlogSlugPageData(slug, false)
   return getSEOMetadata(
     data
       ? {
-          title: data?.title ?? data?.seoTitle ?? "",
-          description: data?.description ?? data?.seoDescription ?? "",
+          title: data?.title ?? data?.seoTitle ?? '',
+          description: data?.description ?? data?.seoDescription ?? '',
           slug: `/${data?.slug}`,
           contentId: data?._id,
           contentType: data?._type,
-          pageType: "article",
+          pageType: 'article',
         }
       : {},
-  );
+  )
 }
 
 export async function generateStaticParams() {
-  return await fetchBlogPaths();
+  return await fetchBlogPaths()
 }
 
-export default async function BlogSlugPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
-  const { data } = await fetchBlogSlugPageData(slug);
-  if (!data) return notFound();
-  const { title, description, image, richText } = data ?? {};
+export default async function BlogSlugPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const { data } = await fetchBlogSlugPageData(slug)
+  if (!data) return notFound()
+  const { title, description, image, richText } = data ?? {}
 
   return (
     <div className="container my-16 mx-auto px-4 md:px-6">
@@ -98,5 +94,5 @@ export default async function BlogSlugPage({
         </div>
       </div>
     </div>
-  );
+  )
 }

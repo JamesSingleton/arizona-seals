@@ -1,18 +1,18 @@
-import { Badge } from "@workspace/ui/components/badge";
+import { Badge } from '@workspace/ui/components/badge'
 
-import type { PagebuilderType } from "@/types";
+import type { PagebuilderType } from '@/types'
 
-import { RichText } from "../richtext";
-import { SanityIcon } from "../sanity-icon";
+import { RichText } from '../richtext'
+import { SanityIcon } from '../sanity-icon'
 
-type FeatureCardsWithIconProps = PagebuilderType<"featureCardsIcon">;
+type FeatureCardsWithIconProps = PagebuilderType<'featureCardsIcon'>
 
 type FeatureCardProps = {
-  card: NonNullable<FeatureCardsWithIconProps["cards"]>[number];
-};
+  card: NonNullable<FeatureCardsWithIconProps['cards']>[number]
+}
 
 function FeatureCard({ card }: FeatureCardProps) {
-  const { icon, title, richText } = card ?? {};
+  const { icon, title, richText } = card ?? {}
   return (
     <div className="rounded-3xl bg-accent p-8 md:min-h-[300px] md:p-8">
       {icon && (
@@ -29,7 +29,7 @@ function FeatureCard({ card }: FeatureCardProps) {
         />
       </div>
     </div>
-  );
+  )
 }
 
 export function FeatureCardsWithIcon({
@@ -45,21 +45,15 @@ export function FeatureCardsWithIcon({
           <div className="flex flex-col items-center space-y-4 text-center sm:space-y-6 md:text-center">
             <Badge variant="secondary">{eyebrow}</Badge>
             <h2 className="text-3xl font-semibold md:text-5xl">{title}</h2>
-            <RichText
-              richText={richText}
-              className="text-base md:text-lg text-balance max-w-3xl"
-            />
+            <RichText richText={richText} className="text-base md:text-lg text-balance max-w-3xl" />
           </div>
         </div>
         <div className="mx-auto mt-20 grid gap-8 lg:grid-cols-3">
           {cards?.map((card, index) => (
-            <FeatureCard
-              key={`FeatureCard-${card?._key}-${index}`}
-              card={card}
-            />
+            <FeatureCard key={`FeatureCard-${card?._key}-${index}`} card={card} />
           ))}
         </div>
       </div>
     </section>
-  );
+  )
 }
