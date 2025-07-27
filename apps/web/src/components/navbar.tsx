@@ -25,6 +25,7 @@ export function Navbar({
     <header className="py-3 md:border-b">
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid grid-cols-[auto_1fr] items-center gap-4">
+          {/* @ts-expect-error for some reason there's a type diff */}
           {logo && <Logo alt={settingsSiteTitle} priority image={logo} />}
           <NavbarClient navbarData={navbarData} settingsData={settingsData} />
         </div>

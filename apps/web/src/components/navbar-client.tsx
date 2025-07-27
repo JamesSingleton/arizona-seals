@@ -207,6 +207,7 @@ function NavOverlay({ isOpen, onClose }: NavOverlayProps) {
 function NavPanelHeader({ logo, siteTitle, onClose }: NavPanelHeaderProps) {
   return (
     <div className="flex items-center justify-between mb-6">
+      {/* @ts-expect-error something weird with the typing from sanity */}
       <div>{logo && <Logo alt={siteTitle} priority image={logo} />}</div>
       <Button
         variant="ghost"
@@ -389,7 +390,7 @@ function MobileNavbar({ navbarData, settingsData }: MobileNavbarProps) {
         <NavPanel
           isOpen={navigation.isOpen}
           logo={logo}
-          siteTitle={siteTitle}
+          siteTitle={siteTitle!}
           columns={columns}
           buttons={buttons}
           onClose={navigation.handleClose}

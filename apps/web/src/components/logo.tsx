@@ -1,6 +1,5 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { stegaClean } from 'next-sanity'
 
 import type { Maybe, SanityImageProps } from '@/types'
 
@@ -31,10 +30,10 @@ export function Logo({
       {image ? (
         <SanityImage
           asset={image}
-          alt={stegaClean(alt) ?? 'logo'}
+          alt={alt ?? 'logo'}
           // width={width}
           // height={height}
-          className="w-[170px]"
+          className="w-[170px]  dark:invert"
           priority={priority}
           loading="eager"
           decoding="sync"
@@ -43,9 +42,9 @@ export function Logo({
       ) : (
         <Image
           src={src ?? LOGO_URL}
-          alt={stegaClean(alt) ?? 'logo'}
+          alt={alt ?? 'logo'}
           width={width}
-          className="w-[170px]"
+          className="w-[170px] h-[40px] dark:invert"
           height={height}
           loading="eager"
           priority={priority}
