@@ -2,8 +2,8 @@ import { Badge } from '@workspace/ui/components/badge'
 
 import type { PagebuilderType } from '@/types'
 
-import { RichText } from '../richtext'
-import { SanityButtons } from '../sanity-buttons'
+import { RichText } from '../elements/rich-text'
+import { SanityButtons } from '../elements/sanity-buttons'
 
 export type CTABlockProps = PagebuilderType<'cta'>
 

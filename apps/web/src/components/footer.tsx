@@ -41,9 +41,17 @@ function SocialLinks({ data }: SocialLinksProps) {
       Icon: InstagramIcon,
       label: 'Follow us on Instagram',
     },
-    { url: facebook, Icon: FacebookIcon, label: 'Follow us on Facebook' },
+    {
+      url: facebook,
+      Icon: FacebookIcon,
+      label: 'Follow us on Facebook',
+    },
     { url: twitter, Icon: XIcon, label: 'Follow us on Twitter' },
-    { url: linkedin, Icon: LinkedinIcon, label: 'Follow us on LinkedIn' },
+    {
+      url: linkedin,
+      Icon: LinkedinIcon,
+      label: 'Follow us on LinkedIn',
+    },
     {
       url: youtube,
       Icon: YoutubeIcon,
@@ -132,7 +140,8 @@ function Footer({ data, settingsData }: FooterProps) {
             <div className="flex w-full max-w-96 shrink flex-col items-center justify-between gap-6 md:gap-8 lg:items-start">
               <div>
                 <span className="flex items-center justify-center gap-4 lg:justify-start">
-                  <Logo image={logo && 'alt' in logo ? logo : null} alt={siteTitle} priority />
+                  {/* @ts-expect-error not sure why the types are not aligning */}
+                  <Logo alt={siteTitle} priority image={logo} />
                 </span>
                 {subtitle && (
                   <p className="mt-6 text-sm text-muted-foreground dark:text-zinc-400">

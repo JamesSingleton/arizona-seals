@@ -13,14 +13,13 @@ import type {
   WithContext,
 } from 'schema-dts'
 
-import { getBaseUrl } from '@/config'
 import { client, urlFor } from '@/lib/sanity/client'
 import { querySettingsData } from '@/lib/sanity/query'
 import type {
   QueryBlogSlugPageDataResult,
   QuerySettingsDataResult,
 } from '@/lib/sanity/sanity.types'
-import { handleErrors } from '@/utils'
+import { getBaseUrl, handleErrors } from '@/utils'
 
 interface RichTextChild {
   _type: string
@@ -99,11 +98,11 @@ export function FaqJsonLd({ faqs }: FaqJsonLdProps) {
   return <JsonLdScript data={faqJsonLd} id="faq-json-ld" />
 }
 
-function buildSafeImageUrl(image?: { asset?: { _ref: string } } | null) {
-  if (!image?.asset?._ref) {
+function buildSafeImageUrl(image?: { id?: string | null }) {
+  if (!image?.id) {
     return undefined
   }
-  return urlFor({ ...image, _id: image.asset?._ref })
+  return urlFor({ ...image, _id: image.id })
     .size(1920, 1080)
     .dpr(2)
     .auto('format')
@@ -121,6 +120,7 @@ export function ArticleJsonLd({ article, settings }: ArticleJsonLdProps) {
 
   const baseUrl = getBaseUrl()
   const articleUrl = `${baseUrl}${article.slug}`
+  // @ts-expect-error not sure why the types are not aligning
   const imageUrl = buildSafeImageUrl(article.image)
 
   const articleJsonLd: WithContext<Article> = {
@@ -185,8 +185,8 @@ export function OrganizationJsonLd({ settings }: OrganizationJsonLdProps) {
   const organizationJsonLd: WithContext<Organization> = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: settings.siteTitle || '',
-    description: settings.siteDescription || undefined,
+    name: settings.siteTitle!,
+    description: settings.siteDescription!,
     url: baseUrl,
     logo: settings.logo
       ? ({
@@ -220,7 +220,7 @@ export function WebSiteJsonLd({ settings }: WebSiteJsonLdProps) {
   const websiteJsonLd: WithContext<WebSite> = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: settings.siteTitle || '',
+    name: settings.siteTitle!,
     description: settings.siteDescription || undefined,
     url: baseUrl,
     publisher: {

@@ -4,10 +4,10 @@ import { ChevronRight, LoaderCircle } from 'lucide-react'
 import Form from 'next/form'
 import { useFormStatus } from 'react-dom'
 
-import { newsletterSubmission } from '@/action/newsletter-submission'
+// import { newsletterSubmission } from "@/action/newsletter-submission";
 import type { PagebuilderType } from '@/types'
 
-import { RichText } from '../richtext'
+import { RichText } from '../elements/rich-text'
 
 // const InteractiveGridPattern = dynamic(
 //   () =>
@@ -67,7 +67,8 @@ export function SubscribeNewsletter({ title, subTitle, helperText }: SubscribeNe
           )}
           <Form
             className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-2"
-            action={newsletterSubmission}
+            // action={newsletterSubmission}
+            action={() => {}}
           >
             <div className="flex bg-white dark:bg-zinc-200 items-center border rounded-xl p-2 drop-shadow-lg md:w-96 justify-between pl-4">
               <input

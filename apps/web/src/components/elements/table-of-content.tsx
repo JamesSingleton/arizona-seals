@@ -1,3 +1,4 @@
+'use client'
 import { cn } from '@workspace/ui/lib/utils'
 import { ChevronDown, Circle } from 'lucide-react'
 import Link from 'next/link'
@@ -231,7 +232,10 @@ function buildHeadingHierarchy(
     return result
   } catch (error) {
     console.error('Failed to build heading hierarchy:', error)
-    return flatHeadings.map((heading) => ({ ...heading, children: [] }))
+    return flatHeadings.map((heading) => ({
+      ...heading,
+      children: [],
+    }))
   }
 }
 
@@ -442,7 +446,7 @@ export const TableOfContent: FC<TableOfContentProps> = ({
         className,
       )}
       aria-labelledby="toc-heading"
-      role="complementary"
+      //   role="complementary"
     >
       <details className="group" open>
         <summary

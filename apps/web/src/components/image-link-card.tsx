@@ -3,10 +3,12 @@ import Link from 'next/link'
 
 import type { PagebuilderType } from '@/types'
 
-import { SanityImage } from './sanity-image'
+import { SanityImage } from './elements/sanity-image'
+
+type ImageLinkCard = NonNullable<NonNullable<PagebuilderType<'imageLinkCards'>['cards']>>[number]
 
 export type CTACardProps = {
-  card: NonNullable<PagebuilderType<'imageLinkCards'>['cards']>[number]
+  card: ImageLinkCard
   className?: string
 }
 
@@ -20,14 +22,13 @@ export function CTACard({ card, className }: CTACardProps) {
         className,
       )}
     >
-      {image?.asset && (
+      {image?.id && (
         <div className="absolute inset-0 z-[1] mix-blend-multiply">
           <SanityImage
-            asset={image}
+            image={image}
             loading="eager"
-            priority
-            quality={100}
-            fill
+            width={1920}
+            height={1080}
             className="object-cover grayscale pointer-events-none group-hover:opacity-100 group-hover:transition-opacity duration-1000 opacity-40 dark:opacity-60 dark:hover:opacity-[2] dark:saturate-200"
           />
         </div>

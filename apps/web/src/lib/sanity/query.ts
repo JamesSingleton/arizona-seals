@@ -1,12 +1,27 @@
 import { defineQuery } from 'next-sanity'
 
+const imageFields = /* groq */ `
+  "id": asset._ref,
+  "preview": asset->metadata.lqip,
+  hotspot {
+    x,
+    y
+  },
+  crop {
+    bottom,
+    left,
+    right,
+    top
+  },
+  "alt": coalesce(asset->altText, asset->originalFilename, "Image-Broken"),
+  "blurData": asset->metadata.lqip,
+  "dominantColor": asset->metadata.palette.dominant.background,
+`
+
 // Base fragments for reusable query parts
 const imageFragment = /* groq */ `
-  image{
-    ...,
-    "alt": coalesce(asset->altText, asset->originalFilename, "Image-Broken"),
-    "blurData": asset->metadata.lqip,
-    "dominantColor": asset->metadata.palette.dominant.background,
+  image {
+    ${imageFields}
   }
 `
 
@@ -166,8 +181,7 @@ const pageBuilderFragment = /* groq */ `
   }
 `
 
-export const queryHomePageData =
-  defineQuery(/* groq */ `*[_type == "homePage" && _id == "homePage"][0]{
+export const queryHomePageData = defineQuery(`*[_type == "homePage" && _id == "homePage"][0]{
     ...,
     _id,
     _type,

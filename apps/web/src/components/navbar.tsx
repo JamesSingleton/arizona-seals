@@ -21,12 +21,13 @@ export function Navbar({
   settingsData: QueryGlobalSeoSettingsResult
 }) {
   const { siteTitle: settingsSiteTitle, logo } = settingsData ?? {}
+
   return (
     <header className="py-3 md:border-b">
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid grid-cols-[auto_1fr] items-center gap-4">
-          {/* @ts-expect-error for some reason there's a type diff */}
-          {logo && <Logo alt={settingsSiteTitle} priority image={logo} />}
+          {/* @ts-expect-error not sure why the types are not aligning */}
+          {logo && <Logo alt={settingsSiteTitle} priority image={logo} className="size-10" />}
           <NavbarClient navbarData={navbarData} settingsData={settingsData} />
         </div>
       </div>

@@ -2,8 +2,8 @@ import { Badge } from '@workspace/ui/components/badge'
 
 import type { PagebuilderType } from '@/types'
 
-import { RichText } from '../richtext'
-import { SanityIcon } from '../sanity-icon'
+import { RichText } from '../elements/rich-text'
+import { SanityIcon } from '../elements/sanity-icon'
 
 type FeatureCardsWithIconProps = PagebuilderType<'featureCardsIcon'>
 

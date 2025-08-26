@@ -1,7 +1,7 @@
 import type { PagebuilderType } from '@/types'
 
-import { RichText } from '../richtext'
-import { SanityImage } from '../sanity-image'
+import { SanityImage } from '@/components/elements/sanity-image'
+import { RichText } from '@/components/elements/rich-text'
 
 export type TeamBlockProps = PagebuilderType<'team'>
 

@@ -2,9 +2,9 @@ import { Badge } from '@workspace/ui/components/badge'
 
 import type { PagebuilderType } from '@/types'
 
-import { RichText } from '../richtext'
-import { SanityButtons } from '../sanity-buttons'
-import { SanityImage } from '../sanity-image'
+import { RichText } from '../elements/rich-text'
+import { SanityButtons } from '../elements/sanity-buttons'
+import { SanityImage } from '../elements/sanity-image'
 
 type HeroBlockProps = PagebuilderType<'hero'>
 
@@ -30,12 +30,10 @@ export function HeroBlock({ title, buttons, badge, image, richText }: HeroBlockP
           {image && (
             <div className="h-96 w-full">
               <SanityImage
-                asset={image}
+                image={image}
                 loading="eager"
                 width={800}
                 height={800}
-                priority
-                quality={80}
                 className="max-h-96 w-full rounded-3xl object-cover"
               />
             </div>

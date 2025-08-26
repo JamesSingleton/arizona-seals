@@ -1,8 +1,9 @@
+'use client'
 import Link from 'next/link'
 
 import type { QueryBlogIndexPageDataResult } from '@/lib/sanity/sanity.types'
 
-import { SanityImage } from './sanity-image'
+import { SanityImage } from './elements/sanity-image'
 
 type Blog = NonNullable<NonNullable<QueryBlogIndexPageDataResult>['blogs']>[number]
 
@@ -12,11 +13,11 @@ interface BlogImageProps {
 }
 
 function BlogImage({ image, title }: BlogImageProps) {
-  if (!image?.asset) return null
+  if (!image?.id) return null
 
   return (
     <SanityImage
-      asset={image}
+      image={image}
       width={800}
       height={400}
       alt={title ?? 'Blog post image'}
@@ -34,7 +35,7 @@ function AuthorImage({ author }: AuthorImageProps) {
 
   return (
     <SanityImage
-      asset={author.image}
+      image={author.image}
       width={40}
       height={40}
       alt={author.name ?? 'Author image'}
@@ -124,6 +125,7 @@ function AuthorSection({ authors }: { authors: Blog['authors'] }) {
     </div>
   )
 }
+
 export function FeaturedBlogCard({ blog }: BlogCardProps) {
   const { title, publishedAt, slug, authors, description, image } = blog ?? {}
 
@@ -133,7 +135,7 @@ export function FeaturedBlogCard({ blog }: BlogCardProps) {
       <div className="space-y-6">
         <BlogMeta publishedAt={publishedAt} />
         <BlogContent title={title} slug={slug} description={description} isFeatured />
-        <AuthorSection authors={authors} />
+        {/* <AuthorSection authors={authors} /> */}
       </div>
     </article>
   )
@@ -164,7 +166,7 @@ export function BlogCard({ blog }: BlogCardProps) {
       <div className="w-full space-y-4">
         <BlogMeta publishedAt={publishedAt} />
         <BlogContent title={title} slug={slug} description={description} />
-        <AuthorSection authors={authors} />
+        {/* <AuthorSection authors={authors} /> */}
       </div>
     </article>
   )

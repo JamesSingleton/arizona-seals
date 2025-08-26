@@ -3,8 +3,8 @@ import { cn } from '@workspace/ui/lib/utils'
 
 import type { PagebuilderType } from '@/types'
 
+import { RichText } from '../elements/rich-text'
 import { CTACard } from '../image-link-card'
-import { RichText } from '../richtext'
 
 export type ImageLinkCardsProps = PagebuilderType<'imageLinkCards'>
 

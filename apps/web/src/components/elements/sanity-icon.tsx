@@ -30,9 +30,7 @@ export const SanityIcon = memo(function SanityIconUnmemorized({
     <span
       {...props}
       className={cn('flex size-12 items-center justify-center sanity-icon', className)}
-      // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
       dangerouslySetInnerHTML={{ __html: svg }}
-      role="img"
       aria-label={alt}
       title={alt}
     />

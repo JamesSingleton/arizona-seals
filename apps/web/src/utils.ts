@@ -1,6 +1,25 @@
 import type { PortableTextBlock } from 'next-sanity'
 import slugify from 'slugify'
 
+export function assertValue<T>(v: T | undefined, errorMessage: string): T {
+  if (v === undefined) {
+    throw new Error(errorMessage)
+  }
+
+  return v
+}
+
+export const getBaseUrl = () => {
+  if (process.env.VERCEL_ENV === 'production') {
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+  }
+  if (process.env.VERCEL_ENV === 'preview') {
+    return `https://${process.env.VERCEL_URL}`
+  }
+
+  return 'http://localhost:3000'
+}
+
 export const isRelativeUrl = (url: string) =>
   url.startsWith('/') || url.startsWith('#') || url.startsWith('?')
 
