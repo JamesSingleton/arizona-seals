@@ -1,9 +1,8 @@
 import '@workspace/ui/globals.css'
 
-import { revalidatePath, revalidateTag } from 'next/cache'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { draftMode } from 'next/headers'
-import { VisualEditing } from 'next-sanity'
+import { VisualEditing } from 'next-sanity/visual-editing'
 import { Suspense } from 'react'
 import { preconnect, prefetchDNS } from 'react-dom'
 
@@ -44,24 +43,8 @@ export default async function RootLayout({
           {(await draftMode()).isEnabled ? (
             <>
               {children}
-              <VisualEditing
-                refresh={async (payload) => {
-                  'use server'
-                  if (payload.source === 'manual') {
-                    revalidatePath('/', 'layout')
-                    return
-                  }
-                  const id = payload?.document?._id?.startsWith('drafts.')
-                    ? payload?.document?._id.slice(7)
-                    : payload?.document?._id
-                  const slug = payload?.document?.slug?.current
-                  const type = payload?.document?._type
-                  for (const tag of [slug, id, type]) {
-                    if (tag) revalidateTag(tag)
-                  }
-                }}
-              />
               <PreviewBar />
+              <VisualEditing />
             </>
           ) : (
             children

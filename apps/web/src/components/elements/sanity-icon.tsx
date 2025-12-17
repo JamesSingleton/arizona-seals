@@ -27,6 +27,7 @@ export const SanityIcon = memo(function SanityIconUnmemorized({
   }
 
   return (
+    // @ts-expect-error need to fix
     <span
       {...props}
       className={cn('flex size-12 items-center justify-center sanity-icon', className)}
