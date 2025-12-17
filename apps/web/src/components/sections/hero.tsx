@@ -19,7 +19,6 @@ export function HeroBlock({ title, buttons, badge, image, richText }: HeroBlockP
               <h1 className="text-4xl lg:text-6xl font-semibold text-balance">{title}</h1>
               <RichText richText={richText} className="text-base md:text-lg font-normal" />
             </div>
-
             <SanityButtons
               buttons={buttons}
               buttonClassName="w-full sm:w-auto"
@@ -34,6 +33,7 @@ export function HeroBlock({ title, buttons, badge, image, richText }: HeroBlockP
                 loading="eager"
                 width={800}
                 height={800}
+                fetchPriority="high"
                 className="max-h-96 w-full rounded-3xl object-cover"
               />
             </div>

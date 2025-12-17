@@ -5,9 +5,10 @@ import { footer } from "./footer";
 import { homePage } from "./home-page";
 import { navbar } from "./navbar";
 import { page } from "./page";
+import { redirect } from "./redirect";
 import { settings } from "./settings";
 import { staff } from "./staff";
 
 export const singletons = [homePage, blogIndex, settings, footer, navbar];
 
-export const documents = [blog, page, faq, staff, ...singletons];
+export const documents = [blog, page, faq, redirect, staff, ...singletons];

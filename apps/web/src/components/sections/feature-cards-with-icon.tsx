@@ -15,11 +15,9 @@ function FeatureCard({ card }: FeatureCardProps) {
   const { icon, title, richText } = card ?? {}
   return (
     <div className="rounded-3xl bg-accent p-8 md:min-h-[300px] md:p-8">
-      {icon && (
-        <span className="mb-9 flex w-fit p-3 items-center justify-center rounded-full bg-background drop-shadow-xl">
-          <SanityIcon icon={icon} />
-        </span>
-      )}
+      <span className="mb-9 flex w-fit p-3 items-center justify-center rounded-full bg-background drop-shadow-xl">
+        <SanityIcon icon={icon} />
+      </span>
 
       <div>
         <h3 className="text-lg font-medium md:text-2xl mb-2">{title}</h3>
