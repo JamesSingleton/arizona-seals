@@ -1,10 +1,145 @@
+import {
+  type DynamicFetchOptions,
+  getDynamicFetchOptions,
+  sanityFetch,
+} from "@workspace/sanity/live";
+import {
+  queryFooterData,
+  querySettingsData,
+} from "@workspace/sanity/query";
 import { Mail, MapPin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { draftMode } from "next/headers";
+import { Suspense } from "react";
 
 import { FacebookIcon, InstagramIcon } from "@/components/icons";
 
-export function SiteFooter() {
+const FALLBACK_QUICK_LINKS = [
+  { label: "Home", href: "/" },
+  { label: "About Us", href: "/about" },
+  { label: "Coaches", href: "/coaches" },
+  { label: "Programs", href: "/programs" },
+  { label: "Facilities", href: "/facilities" },
+  { label: "Sponsors", href: "/sponsors" },
+  { label: "Contact", href: "/contact" },
+];
+
+const FALLBACK_PROGRAMS = [
+  { label: "Blue Group", href: "/programs#blue" },
+  { label: "Red Group", href: "/programs#red" },
+  { label: "White Group", href: "/programs#white" },
+  { label: "Rising Group", href: "/programs#rising" },
+];
+
+export async function SiteFooter() {
+  const { isEnabled: isDraftMode } = await draftMode();
+  if (isDraftMode) {
+    return (
+      <Suspense fallback={<SiteFooterView />}>
+        <DynamicSiteFooter />
+      </Suspense>
+    );
+  }
+  return <CachedSiteFooter perspective="published" stega={false} />;
+}
+
+async function DynamicSiteFooter() {
+  const options = await getDynamicFetchOptions();
+  return <CachedSiteFooter {...options} />;
+}
+
+async function CachedSiteFooter({ perspective, stega }: DynamicFetchOptions) {
+  "use cache";
+  const [footerResult, settingsResult] = await Promise.all([
+    sanityFetch({ query: queryFooterData, perspective, stega }),
+    sanityFetch({ query: querySettingsData, perspective, stega }),
+  ]);
+
+  return (
+    <SiteFooterView
+      subtitle={footerResult.data?.subtitle}
+      columns={footerResult.data?.columns}
+      email={settingsResult.data?.contactEmail}
+      address={settingsResult.data?.primaryAddress}
+      socialLinks={settingsResult.data?.socialLinks}
+    />
+  );
+}
+
+function SiteFooterView({
+  subtitle = "Developing competitive swimmers and champions in and out of the pool since 2005.",
+  columns,
+  email = "arizonaseals@gmail.com",
+  address,
+  socialLinks,
+}: {
+  subtitle?: string | null;
+  columns?:
+    | {
+        _key?: string;
+        title?: string | null;
+        links?:
+          | {
+              _key?: string;
+              name?: string | null;
+              href?: string | null;
+            }[]
+          | null;
+      }[]
+    | null;
+  email?: string | null;
+  address?: {
+    street?: string | null;
+    city?: string | null;
+    state?: string | null;
+    zip?: string | null;
+  } | null;
+  socialLinks?: {
+    facebook?: string | null;
+    instagram?: string | null;
+  } | null;
+}) {
+  const quickLinks =
+    columns?.find((c) => c.title?.toLowerCase().includes("quick") || c.title?.toLowerCase().includes("explore"))
+      ?.links?.map((l) => ({
+        label: l.name ?? "",
+        href: l.href ?? "#",
+      }))
+      .filter((l) => l.label) ?? FALLBACK_QUICK_LINKS;
+
+  const programLinks =
+    columns
+      ?.find((c) => c.title?.toLowerCase().includes("program"))
+      ?.links?.map((l) => ({
+        label: l.name ?? "",
+        href: l.href ?? "#",
+      }))
+      .filter((l) => l.label) ?? FALLBACK_PROGRAMS;
+
+  const street = address?.street || "44345 M.L.K. Jr. Blvd";
+  const cityLine = [
+    address?.city || "Maricopa",
+    address?.state || "AZ",
+  ]
+    .filter(Boolean)
+    .join(", ");
+  const zip = address?.zip || "85138";
+  const resolvedEmail = email || "arizonaseals@gmail.com";
+
+  const social = [
+    {
+      icon: FacebookIcon,
+      href: socialLinks?.facebook || "https://www.facebook.com/azseals",
+      ariaLabel: "Facebook",
+    },
+    {
+      icon: InstagramIcon,
+      href: socialLinks?.instagram || "https://www.instagram.com/arizonaseals",
+      ariaLabel: "Instagram",
+    },
+  ];
+
   return (
     <footer className="bg-navy text-white">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
@@ -28,22 +163,10 @@ export function SiteFooter() {
               </div>
             </Link>
             <p className="mb-5 text-sm leading-relaxed text-white/70">
-              Developing competitive swimmers and champions in and out of the
-              pool since 2005.
+              {subtitle}
             </p>
             <div className="flex items-center gap-3">
-              {[
-                {
-                  icon: FacebookIcon,
-                  href: "https://www.facebook.com/azseals",
-                  ariaLabel: "Facebook",
-                },
-                {
-                  icon: InstagramIcon,
-                  href: "https://www.instagram.com/arizonaseals",
-                  ariaLabel: "Instagram",
-                },
-              ].map((s) => (
+              {social.map((s) => (
                 <a
                   key={s.ariaLabel}
                   href={s.href}
@@ -63,15 +186,7 @@ export function SiteFooter() {
               Quick Links
             </h4>
             <ul className="space-y-2">
-              {[
-                { label: "Home", href: "/" },
-                { label: "About Us", href: "/about" },
-                { label: "Coaches", href: "/coaches" },
-                { label: "Programs", href: "/programs" },
-                { label: "Facilities", href: "/facilities" },
-                { label: "Sponsors", href: "/sponsors" },
-                { label: "Contact", href: "/contact" },
-              ].map((l) => (
+              {quickLinks.map((l) => (
                 <li key={l.href}>
                   <Link
                     href={l.href}
@@ -89,12 +204,7 @@ export function SiteFooter() {
               Programs
             </h4>
             <ul className="space-y-2">
-              {[
-                { label: "Blue Group", href: "/programs#blue" },
-                { label: "Red Group", href: "/programs#red" },
-                { label: "White Group", href: "/programs#white" },
-                { label: "Rising Group", href: "/programs#rising" },
-              ].map((l) => (
+              {programLinks.map((l) => (
                 <li key={l.label}>
                   <Link
                     href={l.href}
@@ -115,18 +225,18 @@ export function SiteFooter() {
               <li className="flex items-start gap-3">
                 <MapPin size={16} className="mt-0.5 shrink-0 text-cyan-brand" />
                 <span className="text-sm text-white/70">
-                  44345 M.L.K. Jr. Blvd
+                  {street}
                   <br />
-                  Maricopa, AZ 85138
+                  {cityLine} {zip}
                 </span>
               </li>
               <li className="flex items-center gap-3">
                 <Mail size={16} className="shrink-0 text-cyan-brand" />
                 <a
-                  href="mailto:arizonaseals@gmail.com"
+                  href={`mailto:${resolvedEmail}`}
                   className="text-sm text-white/70 transition-colors hover:text-cyan-brand"
                 >
-                  arizonaseals@gmail.com
+                  {resolvedEmail}
                 </a>
               </li>
             </ul>
@@ -146,8 +256,7 @@ export function SiteFooter() {
       <div className="border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-5 sm:flex-row sm:px-6 lg:px-8">
           <p className="text-xs text-white/70">
-            &copy; {new Date().getFullYear()} Arizona Seals Swimming. All rights
-            reserved.
+            &copy; 2026 Arizona Seals Swimming. All rights reserved.
           </p>
           <div className="flex items-center gap-4">
             <Link

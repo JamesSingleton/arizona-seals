@@ -1,6 +1,5 @@
 "use server";
 
-export async function newsletterSubmission(formData: FormData) {
-  const email = formData.get("email");
-  console.log("🚀 ~ newsletterSubmission ~ email:", email);
+export async function newsletterSubmission(_formData: FormData) {
+  // Wire to your email provider when ready.
 }

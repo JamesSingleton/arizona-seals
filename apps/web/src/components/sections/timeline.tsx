@@ -5,18 +5,25 @@ import { Card, CardContent, CardTitle } from "@workspace/ui/components/card";
 import { cn } from "@workspace/ui/lib/utils";
 import { useEffect, useRef, useState } from "react";
 
-import { type Milestone, milestones } from "@/content/about";
-
-export type TimelineProps = {
-  eyebrow?: string;
-  title?: string;
-  items?: Milestone[];
+export type TimelineItem = {
+  _key?: string;
+  year?: string | null;
+  title?: string | null;
+  description?: string | null;
+  event?: string | null;
 };
 
-function normalizeItem(item: Milestone) {
+export type TimelineProps = {
+  eyebrow?: string | null;
+  title?: string | null;
+  items?: TimelineItem[] | null;
+};
+
+function normalizeItem(item: TimelineItem) {
   return {
-    year: item.year,
-    title: item.title ?? item.year,
+    key: item._key ?? `${item.year}-${item.title}`,
+    year: item.year ?? "",
+    title: item.title ?? item.year ?? "",
     description: item.description ?? item.event ?? "",
   };
 }
@@ -24,18 +31,18 @@ function normalizeItem(item: Milestone) {
 export function Timeline({
   eyebrow = "Where We've Been",
   title = "Club History",
-  items = milestones,
+  items,
 }: TimelineProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [lineHeight, setLineHeight] = useState(0);
   const [progressHeight, setProgressHeight] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const normalized = items.map(normalizeItem);
+  const normalized = items?.map(normalizeItem) ?? [];
 
   useEffect(() => {
     const container = containerRef.current;
-    if (!container) return;
+    if (!container || normalized.length === 0) return;
 
     const dots = Array.from(
       container.querySelectorAll<HTMLElement>("[data-timeline-dot]"),
@@ -82,6 +89,8 @@ export function Timeline({
     };
   }, [normalized.length]);
 
+  if (!normalized.length) return null;
+
   return (
     <section className="bg-muted py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -104,7 +113,7 @@ export function Timeline({
 
             return (
               <div
-                key={`${item.year}-${item.title}`}
+                key={item.key}
                 data-timeline-item="true"
                 className={cn(
                   "flex items-start",

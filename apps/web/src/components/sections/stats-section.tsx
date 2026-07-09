@@ -1,8 +1,9 @@
+import { urlFor } from "@workspace/sanity/client";
 import Image from "next/image";
 
-import { type Stat, stats } from "@/content/stats";
-import { urlFor } from "@/lib/sanity/client";
+import type { SanityImageProps } from "@/types";
 
+/** Original stats side image used on the hardcoded homepage. */
 const DEFAULT_STATS_IMAGE = urlFor({
   _id: "image-5eab7ec38166ec7e22db4124e92ff6db561278dc-6000x4000-avif",
 })
@@ -12,21 +13,41 @@ const DEFAULT_STATS_IMAGE = urlFor({
   .quality(80)
   .url();
 
-export type StatsSectionProps = {
-  eyebrow?: string;
-  title?: string;
-  items?: Stat[];
-  image?: string;
-  imageAlt?: string;
+export type StatsItem = {
+  _key?: string;
+  number?: string | null;
+  label?: string | null;
 };
+
+export type StatsSectionProps = {
+  eyebrow?: string | null;
+  title?: string | null;
+  stats?: StatsItem[] | null;
+  image?: SanityImageProps | null;
+};
+
+function resolveStatsSrc(image?: SanityImageProps | null): string {
+  if (image?.id) {
+    return urlFor({ _id: image.id })
+      .width(1200)
+      .height(1040)
+      .fit("crop")
+      .quality(80)
+      .url();
+  }
+  return DEFAULT_STATS_IMAGE;
+}
 
 export function StatsSection({
   eyebrow = "By the Numbers",
   title = "We've Got a Lot to Be Proud About",
-  items = stats,
-  image = DEFAULT_STATS_IMAGE,
-  imageAlt = "Arizona Seals swimmer competing at a meet",
+  stats,
+  image,
 }: StatsSectionProps) {
+  if (!stats?.length) return null;
+
+  const src = resolveStatsSrc(image);
+
   return (
     <section className="bg-navy py-20 md:py-28">
       <div className="mx-auto max-w-7xl px-6 sm:px-10 lg:px-16">
@@ -48,8 +69,11 @@ export function StatsSection({
 
         <div className="grid grid-cols-1 items-center gap-0 lg:grid-cols-2 lg:gap-16">
           <div className="divide-y divide-white/10">
-            {items.map((s) => (
-              <div key={s.label} className="flex items-center gap-6 py-5">
+            {stats.map((s) => (
+              <div
+                key={s._key ?? `${s.number}-${s.label}`}
+                className="flex items-center gap-6 py-5"
+              >
                 <span
                   className="w-32 shrink-0 text-right font-display leading-none font-black text-white"
                   style={{ fontSize: "clamp(2.5rem, 7vw, 5rem)" }}
@@ -67,8 +91,8 @@ export function StatsSection({
           <div className="mt-12 lg:mt-0 lg:sticky lg:top-24 lg:self-start">
             <div className="relative h-64 overflow-hidden lg:h-[520px]">
               <Image
-                src={image}
-                alt={imageAlt}
+                src={src}
+                alt="Arizona Seals swimmer competing at a meet"
                 fill
                 sizes="(min-width: 1024px) 50vw, 100vw"
                 className="object-cover object-top"

@@ -33,7 +33,7 @@ import { useIsMobile } from "@/hooks/use-is-mobile";
 import type {
   QueryGlobalSeoSettingsResult,
   QueryNavbarDataResult,
-} from "@/lib/sanity/sanity.types";
+} from "@workspace/sanity/types";
 import { SanityButtons } from "./elements/sanity-buttons";
 import { SanityIcon } from "./elements/sanity-icon";
 import { Logo } from "./logo";

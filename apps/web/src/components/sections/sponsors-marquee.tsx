@@ -1,23 +1,89 @@
+"use client";
+
 import { Marquee } from "@workspace/ui/components/marquee";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
-import { type MarqueeSponsor, marqueeSponsors } from "@/content/sponsors";
+import type { SanityImageProps } from "@/types";
+import { SanityImage } from "../elements/sanity-image";
+
+export type SponsorsMarqueeSponsor = {
+  _id?: string;
+  name?: string | null;
+  url?: string | null;
+  image?: SanityImageProps | null;
+};
 
 export type SponsorsMarqueeProps = {
-  eyebrow?: string;
-  title?: string;
-  viewAllHref?: string;
-  viewAllLabel?: string;
-  sponsors?: MarqueeSponsor[];
+  eyebrow?: string | null;
+  title?: string | null;
+  viewAllLabel?: string | null;
+  viewAllUrl?: { href?: string | null } | null;
+  sponsors?: SponsorsMarqueeSponsor[] | null;
 };
+
+function SponsorLogo({ sponsor }: { sponsor: SponsorsMarqueeSponsor }) {
+  if (!sponsor.image?.id) {
+    return (
+      <span className="font-display text-sm font-bold tracking-wide text-seal-gray uppercase opacity-50">
+        {sponsor.name}
+      </span>
+    );
+  }
+
+  return (
+    <SanityImage
+      image={sponsor.image}
+      alt={sponsor.name ?? "Sponsor"}
+      className="h-10 w-auto object-contain opacity-50 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0"
+    />
+  );
+}
+
+function SponsorItem({ sponsor }: { sponsor: SponsorsMarqueeSponsor }) {
+  const content = (
+    <div className="mx-8 flex h-14 items-center justify-center">
+      <SponsorLogo sponsor={sponsor} />
+    </div>
+  );
+
+  if (sponsor.url) {
+    return (
+      <a
+        href={sponsor.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={sponsor.name ?? "Sponsor"}
+      >
+        {content}
+      </a>
+    );
+  }
+
+  return content;
+}
 
 export function SponsorsMarquee({
   eyebrow = "Proudly Supported By",
   title = "Our Sponsors & Partners",
-  viewAllHref = "/sponsors",
   viewAllLabel = "View All Sponsors →",
-  sponsors = marqueeSponsors,
+  viewAllUrl,
+  sponsors,
 }: SponsorsMarqueeProps) {
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReducedMotion(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
+  if (!sponsors?.length) return null;
+
+  const viewAllHref = viewAllUrl?.href || "/sponsors";
+
   return (
     <section className="overflow-hidden border-t border-border bg-muted py-16">
       <div className="mx-auto mb-8 flex max-w-7xl flex-col items-center justify-between gap-4 px-4 sm:flex-row sm:px-6 lg:px-8">
@@ -38,23 +104,21 @@ export function SponsorsMarquee({
       </div>
 
       <div className="relative">
-        <Marquee pauseOnHover className="[--duration:35s]">
-          {sponsors.map((sponsor) => (
-            <div
-              key={sponsor.name}
-              className="mx-8 flex h-14 items-center justify-center"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={sponsor.logo}
-                alt={sponsor.name}
-                className="h-10 w-auto object-contain opacity-50 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0"
-              />
-            </div>
-          ))}
-        </Marquee>
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-muted to-transparent" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-muted to-transparent" />
+        {reducedMotion ? (
+          <div className="flex flex-wrap items-center justify-center gap-y-4 px-4">
+            {sponsors.map((sponsor) => (
+              <SponsorItem key={sponsor._id ?? sponsor.name} sponsor={sponsor} />
+            ))}
+          </div>
+        ) : (
+          <Marquee pauseOnHover className="[--duration:35s]">
+            {sponsors.map((sponsor) => (
+              <SponsorItem key={sponsor._id ?? sponsor.name} sponsor={sponsor} />
+            ))}
+          </Marquee>
+        )}
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-32 bg-linear-to-r from-muted to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-32 bg-linear-to-l from-muted to-transparent" />
       </div>
     </section>
   );

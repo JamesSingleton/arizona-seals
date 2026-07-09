@@ -49,6 +49,19 @@ export const featureCardsIcon = defineType({
       type: "array",
       of: [featureCardIcon],
     }),
+    defineField({
+      name: "variant",
+      type: "string",
+      title: "Variant",
+      options: {
+        list: [
+          { title: "Default", value: "default" },
+          { title: "Navy", value: "navy" },
+        ],
+        layout: "radio",
+      },
+      initialValue: "default",
+    }),
   ],
   preview: {
     select: {
@@ -60,3 +73,4 @@ export const featureCardsIcon = defineType({
     }),
   },
 });
+

@@ -1,38 +1,44 @@
+import { isSanityConfigured } from "@workspace/sanity/api";
+import {
+  type DynamicFetchOptions,
+  getDynamicFetchOptions,
+  sanityFetch,
+  sanityFetchMetadata,
+  sanityFetchStaticParams,
+} from "@workspace/sanity/live";
+import { querySlugPageData, querySlugPagePaths } from "@workspace/sanity/query";
 import type { Metadata } from "next";
+import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
 import { PageBuilder } from "@/components/pagebuilder";
-import { isSanityConfigured } from "@/lib/sanity/api";
-import { client } from "@/lib/sanity/client";
-import { sanityFetch } from "@/lib/sanity/live";
-import { querySlugPageData, querySlugPagePaths } from "@/lib/sanity/query";
-import type { QuerySlugPageDataResult } from "@/lib/sanity/sanity.types";
 import { getSEOMetadata } from "@/lib/seo";
 
-async function fetchSlugPageData(slug: string, stega = true) {
-  // Cast until TypeGen is regenerated after Seals page-builder GROQ updates
-  return (await sanityFetch({
-    query: querySlugPageData,
-    params: { slug: `/${slug}` },
-    stega,
-  })) as { data: QuerySlugPageDataResult };
+function toSlugParam(slug: string[]) {
+  return `/${slug.join("/")}`;
 }
 
-async function fetchSlugPagePaths() {
-  if (!isSanityConfigured) return [];
+export async function generateStaticParams() {
+  // Cache Components requires at least one static param for build-time validation.
+  const fallback = [{ slug: ["about"] }];
+  if (!isSanityConfigured) return fallback;
   try {
-    const slugs = await client.fetch(querySlugPagePaths);
+    const { data: slugs } = await sanityFetchStaticParams({
+      query: querySlugPagePaths,
+    });
     const paths: { slug: string[] }[] = [];
-    for (const slug of slugs) {
+    for (const slug of slugs ?? []) {
       if (!slug) continue;
       const parts = slug.split("/").filter(Boolean);
-      paths.push({ slug: parts });
+      if (parts.length) paths.push({ slug: parts });
     }
-    return paths;
+    return paths.length > 0 ? paths : fallback;
   } catch {
-    return [];
+    return fallback;
   }
 }
+
 
 export async function generateMetadata({
   params,
@@ -40,33 +46,37 @@ export async function generateMetadata({
   params: Promise<{ slug: string[] }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const slugString = slug.join("/");
+  const slugString = toSlugParam(slug);
+  const { isEnabled: isDraftMode } = await draftMode();
 
   if (!isSanityConfigured) {
-    return getSEOMetadata({ slug: `/${slugString}` });
+    return getSEOMetadata({ slug: slugString });
   }
 
   try {
-    const { data: pageData } = await fetchSlugPageData(slugString, false);
+    const { data: pageData } = await sanityFetchMetadata({
+      query: querySlugPageData,
+      params: { slug: slugString },
+      perspective: isDraftMode ? "drafts" : "published",
+    });
     return getSEOMetadata(
       pageData
         ? {
-            title: pageData?.title ?? pageData?.seoTitle ?? "",
+            title: pageData.seoTitle ?? pageData.title ?? "",
             description:
-              pageData?.description ?? pageData?.seoDescription ?? "",
-            slug: `/${pageData?.slug}`,
-            contentId: pageData?._id,
-            contentType: pageData?._type,
+              pageData.seoDescription ?? pageData.description ?? "",
+            slug: pageData.slug?.startsWith("/")
+              ? pageData.slug
+              : `/${pageData.slug}`,
+            contentId: pageData._id,
+            contentType: pageData._type,
+            seoNoIndex: pageData.seoNoIndex ?? false,
           }
-        : { slug: `/${slugString}` },
+        : { slug: slugString },
     );
   } catch {
-    return getSEOMetadata({ slug: `/${slugString}` });
+    return getSEOMetadata({ slug: slugString });
   }
-}
-
-export async function generateStaticParams() {
-  return await fetchSlugPagePaths();
 }
 
 export default async function SlugPage({
@@ -74,33 +84,74 @@ export default async function SlugPage({
 }: {
   params: Promise<{ slug: string[] }>;
 }) {
-  if (!isSanityConfigured) {
-    return notFound();
+  if (!isSanityConfigured) notFound();
+
+  const { isEnabled: isDraftMode } = await draftMode();
+  if (isDraftMode) {
+    return (
+      <Suspense fallback={<PageFallback />}>
+        <DynamicSlugPage params={params} />
+      </Suspense>
+    );
   }
 
   const { slug } = await params;
-  const slugString = slug.join("/");
+  return (
+    <CachedSlugPage
+      slug={toSlugParam(slug)}
+      perspective="published"
+      stega={false}
+    />
+  );
+}
 
-  try {
-    const { data: pageData } = await fetchSlugPageData(slugString);
+async function DynamicSlugPage({
+  params,
+}: {
+  params: Promise<{ slug: string[] }>;
+}) {
+  const [{ slug }, options] = await Promise.all([
+    params,
+    getDynamicFetchOptions(),
+  ]);
+  return <CachedSlugPage slug={toSlugParam(slug)} {...options} />;
+}
 
-    if (!pageData) {
-      return notFound();
-    }
+async function CachedSlugPage({
+  slug,
+  perspective,
+  stega,
+}: { slug: string } & DynamicFetchOptions) {
+  "use cache";
+  const { data: pageData } = await sanityFetch({
+    query: querySlugPageData,
+    params: { slug },
+    perspective,
+    stega,
+  });
 
-    const { title, pageBuilder, _id, _type } = pageData ?? {};
+  if (!pageData) notFound();
 
-    return !Array.isArray(pageBuilder) || pageBuilder?.length === 0 ? (
+  const { title, pageBuilder, _id, _type } = pageData;
+
+  if (!Array.isArray(pageBuilder) || pageBuilder.length === 0) {
+    return (
       <div className="flex min-h-[50vh] flex-col items-center justify-center p-4 text-center">
-        <h1 className="mb-4 text-2xl font-semibold capitalize">{title}</h1>
+        <h1 className="mb-4 font-display text-2xl font-semibold capitalize">
+          {title}
+        </h1>
         <p className="mb-6 text-muted-foreground">
           This page has no content blocks yet.
         </p>
       </div>
-    ) : (
-      <PageBuilder pageBuilder={pageBuilder} id={_id} type={_type} />
     );
-  } catch {
-    return notFound();
   }
+
+  return (
+    <PageBuilder pageBuilder={pageBuilder as never} id={_id} type={_type} />
+  );
+}
+
+function PageFallback() {
+  return <div className="min-h-[50vh] animate-pulse bg-muted" aria-hidden />;
 }

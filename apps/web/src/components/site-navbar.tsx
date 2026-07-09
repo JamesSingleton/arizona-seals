@@ -21,6 +21,7 @@ import {
   SheetTrigger,
 } from "@workspace/ui/components/sheet";
 import { cn } from "@workspace/ui/lib/utils";
+import type { QueryNavbarDataResult } from "@workspace/sanity/types";
 import { Menu } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -28,44 +29,102 @@ import { useEffect, useState } from "react";
 
 import { ThemeToggle } from "@/components/theme-toggle";
 
-const programs = [
-  {
-    label: "Blue Group",
-    href: "/programs#blue",
-    description: "Elite competitors — highest level",
-  },
-  {
-    label: "Red Group",
-    href: "/programs#red",
-    description: "Advanced athletes building toward Blue",
-  },
-  {
-    label: "White Group",
-    href: "/programs#white",
-    description: "Intermediate competitors",
-  },
-  {
-    label: "Rising Group",
-    href: "/programs#rising",
-    description: "Beginners and new competitive swimmers",
-  },
-];
+type NavColumn = NonNullable<
+  NonNullable<QueryNavbarDataResult>["columns"]
+>[number];
 
-const aboutLinks = [
-  {
-    label: "Our Story",
-    href: "/about",
-    description: "History, mission, and values",
-  },
-  {
-    label: "Coaching Staff",
-    href: "/coaches",
-    description: "Meet our certified coaches",
-  },
-  { label: "Facilities", href: "/facilities", description: "Where we train" },
-];
+type SiteNavbarProps = {
+  columns?: QueryNavbarDataResult["columns"];
+  buttons?: QueryNavbarDataResult["buttons"];
+};
 
-export function SiteNavbar() {
+const FALLBACK_COLUMNS = [
+  { _key: "home", type: "link" as const, name: "Home", href: "/" },
+  {
+    _key: "about",
+    type: "column" as const,
+    title: "About",
+    links: [
+      {
+        _key: "about-story",
+        name: "Our Story",
+        description: "History, mission, and values",
+        href: "/about",
+      },
+      {
+        _key: "about-coaches",
+        name: "Coaching Staff",
+        description: "Meet our certified coaches",
+        href: "/coaches",
+      },
+      {
+        _key: "about-facilities",
+        name: "Facilities",
+        description: "Where we train",
+        href: "/facilities",
+      },
+    ],
+  },
+  {
+    _key: "programs",
+    type: "column" as const,
+    title: "Programs",
+    links: [
+      {
+        _key: "programs-all",
+        name: "All Programs",
+        description: "View every training group",
+        href: "/programs",
+      },
+      {
+        _key: "programs-blue",
+        name: "Blue Group",
+        description: "Elite competitors — highest level",
+        href: "/programs#blue",
+      },
+      {
+        _key: "programs-red",
+        name: "Red Group",
+        description: "Advanced athletes building toward Blue",
+        href: "/programs#red",
+      },
+      {
+        _key: "programs-white",
+        name: "White Group",
+        description: "Intermediate competitors",
+        href: "/programs#white",
+      },
+      {
+        _key: "programs-rising",
+        name: "Rising Group",
+        description: "Beginners and new competitive swimmers",
+        href: "/programs#rising",
+      },
+    ],
+  },
+  { _key: "coaches", type: "link" as const, name: "Coaches", href: "/coaches" },
+  {
+    _key: "facilities",
+    type: "link" as const,
+    name: "Facilities",
+    href: "/facilities",
+  },
+  {
+    _key: "sponsors",
+    type: "link" as const,
+    name: "Sponsors",
+    href: "/sponsors",
+  },
+] as NonNullable<QueryNavbarDataResult["columns"]>;
+
+function normalizeHref(href?: string | null) {
+  if (!href) return "#";
+  return href.startsWith("/") || href.startsWith("http") || href.startsWith("#")
+    ? href
+    : `/${href}`;
+}
+
+export function SiteNavbar({ columns, buttons }: SiteNavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -80,8 +139,12 @@ export function SiteNavbar() {
   }, []);
 
   const isScrolled = mounted && scrolled;
-  // Solid bar whenever scrolled or a dropdown/sheet is open — keeps AA contrast
   const solid = isScrolled || menuOpen || sheetOpen;
+  const navColumns =
+    columns && columns.length > 0 ? columns : FALLBACK_COLUMNS;
+  const cta = buttons?.[0];
+  const ctaHref = normalizeHref(cta?.href) || "/contact";
+  const ctaLabel = cta?.text || "Join the Team";
 
   const linkClass = cn(
     "text-sm font-semibold tracking-wide uppercase transition-colors",
@@ -96,6 +159,8 @@ export function SiteNavbar() {
       ? "text-foreground hover:bg-muted hover:text-cyan-brand focus:bg-muted data-popup-open:bg-muted data-popup-open:text-cyan-brand data-open:bg-muted data-open:text-cyan-brand"
       : "text-white hover:bg-white/20 hover:text-white focus:bg-white/20 data-popup-open:bg-white/20 data-popup-open:text-white data-open:bg-white/20 data-open:text-white",
   );
+
+  const mobileLinks = flattenMobileLinks(navColumns);
 
   return (
     <header
@@ -153,104 +218,15 @@ export function SiteNavbar() {
             onValueChange={(value) => setMenuOpen(Boolean(value))}
           >
             <NavigationMenuList className="gap-0">
-              <NavigationMenuItem>
-                <NavigationMenuLink
-                  href="/"
-                  className={cn(linkClass, "rounded-md px-3 py-2")}
-                >
-                  Home
-                </NavigationMenuLink>
-              </NavigationMenuItem>
+              {navColumns.map((item) => (
+                <DesktopNavItem
+                  key={item._key}
+                  item={item}
+                  linkClass={linkClass}
+                  triggerClass={triggerClass}
+                />
+              ))}
 
-              <NavigationMenuItem value="about">
-                <NavigationMenuTrigger className={triggerClass}>
-                  About
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="w-56 p-2">
-                    {aboutLinks.map((item) => (
-                      <li key={item.href}>
-                        <NavigationMenuLink
-                          href={item.href}
-                          className="block rounded-md px-3 py-2.5 text-popover-foreground hover:bg-muted focus:bg-muted"
-                        >
-                          <p className="text-sm font-semibold text-popover-foreground">
-                            {item.label}
-                          </p>
-                          <p className="mt-0.5 text-xs text-muted-foreground">
-                            {item.description}
-                          </p>
-                        </NavigationMenuLink>
-                      </li>
-                    ))}
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-
-              <NavigationMenuItem value="programs">
-                <NavigationMenuTrigger className={triggerClass}>
-                  Programs
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="w-64 p-2">
-                    <li className="mb-1">
-                      <NavigationMenuLink
-                        href="/programs"
-                        className="block rounded-md bg-muted px-3 py-2.5 text-popover-foreground hover:bg-muted/80"
-                      >
-                        <p className="text-sm font-bold tracking-wide text-popover-foreground uppercase">
-                          All Programs
-                        </p>
-                        <p className="mt-0.5 text-xs text-muted-foreground">
-                          View every training group
-                        </p>
-                      </NavigationMenuLink>
-                    </li>
-                    {programs.map((item) => (
-                      <li key={item.href}>
-                        <NavigationMenuLink
-                          href={item.href}
-                          className="block rounded-md px-3 py-2.5 text-popover-foreground hover:bg-muted focus:bg-muted"
-                        >
-                          <p className="text-sm font-semibold text-popover-foreground">
-                            {item.label}
-                          </p>
-                          <p className="mt-0.5 text-xs text-muted-foreground">
-                            {item.description}
-                          </p>
-                        </NavigationMenuLink>
-                      </li>
-                    ))}
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-
-              <NavigationMenuItem>
-                <NavigationMenuLink
-                  href="/coaches"
-                  className={cn(linkClass, "rounded-md px-3 py-2")}
-                >
-                  Coaches
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-
-              <NavigationMenuItem>
-                <NavigationMenuLink
-                  href="/facilities"
-                  className={cn(linkClass, "rounded-md px-3 py-2")}
-                >
-                  Facilities
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-
-              <NavigationMenuItem>
-                <NavigationMenuLink
-                  href="/sponsors"
-                  className={cn(linkClass, "rounded-md px-3 py-2")}
-                >
-                  Sponsors
-                </NavigationMenuLink>
-              </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
 
@@ -264,14 +240,14 @@ export function SiteNavbar() {
           />
 
           <Link
-            href="/contact"
+            href={ctaHref}
             className={cn(
               buttonVariants({ variant: "default", size: "default" }),
               buttonCtaClassName,
               "ml-2",
             )}
           >
-            Join the Team
+            {ctaLabel}
           </Link>
         </nav>
 
@@ -314,17 +290,9 @@ export function SiteNavbar() {
             </SheetHeader>
 
             <nav className="flex flex-col overflow-y-auto px-4 py-4">
-              {[
-                { label: "Home", href: "/" },
-                { label: "About", href: "/about" },
-                { label: "Coaches", href: "/coaches" },
-                { label: "Programs", href: "/programs" },
-                { label: "Facilities", href: "/facilities" },
-                { label: "Sponsors", href: "/sponsors" },
-                { label: "Contact", href: "/contact" },
-              ].map((link) => (
+              {mobileLinks.map((link) => (
                 <Link
-                  key={link.href}
+                  key={`${link.href}-${link.label}`}
                   href={link.href}
                   onClick={() => setSheetOpen(false)}
                   className="flex items-center rounded-md px-3 py-3 text-sm font-semibold tracking-wide text-foreground uppercase transition-colors hover:bg-muted hover:text-cyan-brand"
@@ -334,7 +302,7 @@ export function SiteNavbar() {
               ))}
               <Separator className="my-3" />
               <Link
-                href="/contact"
+                href={ctaHref}
                 onClick={() => setSheetOpen(false)}
                 className={cn(
                   buttonVariants({ variant: "default", size: "lg" }),
@@ -342,7 +310,7 @@ export function SiteNavbar() {
                   "mx-3 mt-1",
                 )}
               >
-                Join the Team
+                {ctaLabel}
               </Link>
               <Separator className="my-3" />
               <div className="flex items-center justify-between px-3 py-1">
@@ -357,4 +325,98 @@ export function SiteNavbar() {
       </div>
     </header>
   );
+}
+
+function DesktopNavItem({
+  item,
+  linkClass,
+  triggerClass,
+}: {
+  item: NavColumn;
+  linkClass: string;
+  triggerClass: string;
+}) {
+  if (item.type === "column") {
+    const links = item.links ?? [];
+    return (
+      <NavigationMenuItem value={item.title ?? item._key}>
+        <NavigationMenuTrigger className={triggerClass}>
+          {item.title}
+        </NavigationMenuTrigger>
+        <NavigationMenuContent>
+          <ul className="w-64 p-2">
+            {links.map((link, index) => (
+              <li
+                key={link._key}
+                className={index === 0 && item.title === "Programs" ? "mb-1" : ""}
+              >
+                <NavigationMenuLink
+                  href={normalizeHref(link.href)}
+                  className={cn(
+                    "block rounded-md px-3 py-2.5 text-popover-foreground hover:bg-muted focus:bg-muted",
+                    index === 0 &&
+                      item.title === "Programs" &&
+                      "bg-muted hover:bg-muted/80",
+                  )}
+                >
+                  <p
+                    className={cn(
+                      "text-sm font-semibold text-popover-foreground",
+                      index === 0 &&
+                        item.title === "Programs" &&
+                        "font-bold tracking-wide uppercase",
+                    )}
+                  >
+                    {link.name}
+                  </p>
+                  {link.description ? (
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      {link.description}
+                    </p>
+                  ) : null}
+                </NavigationMenuLink>
+              </li>
+            ))}
+          </ul>
+        </NavigationMenuContent>
+      </NavigationMenuItem>
+    );
+  }
+
+  return (
+    <NavigationMenuItem>
+      <NavigationMenuLink
+        href={normalizeHref(item.href)}
+        className={cn(linkClass, "rounded-md px-3 py-2")}
+      >
+        {item.name}
+      </NavigationMenuLink>
+    </NavigationMenuItem>
+  );
+}
+
+function flattenMobileLinks(columns?: QueryNavbarDataResult["columns"]) {
+  const links: { label: string; href: string }[] = [];
+  for (const item of columns ?? []) {
+    if (item.type === "link" && item.name) {
+      links.push({ label: item.name, href: normalizeHref(item.href) });
+    } else if (item.type === "column") {
+      // Prefer top-level destinations for mobile (first link or column title page)
+      const first = item.links?.[0];
+      if (item.title === "About") {
+        links.push({ label: "About", href: "/about" });
+      } else if (item.title === "Programs") {
+        links.push({ label: "Programs", href: "/programs" });
+      } else if (first?.name) {
+        links.push({
+          label: first.name,
+          href: normalizeHref(first.href),
+        });
+      }
+    }
+  }
+  if (!links.some((l) => l.href === "/contact")) {
+    links.push({ label: "Contact", href: "/contact" });
+  }
+  return links;
 }

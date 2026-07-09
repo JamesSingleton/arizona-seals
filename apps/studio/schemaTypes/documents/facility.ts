@@ -17,6 +17,21 @@ export const facility = defineType({
       name: "subtitle",
       type: "string",
       title: "Subtitle",
+      description: "Short name or park name shown as a secondary label",
+    }),
+    defineField({
+      name: "description",
+      type: "text",
+      title: "Summary",
+      description: "Short summary for cards and previews",
+      rows: 3,
+    }),
+    defineField({
+      name: "longDescription",
+      type: "text",
+      title: "Description",
+      description: "Full facility description for the facilities page",
+      rows: 5,
     }),
     defineField({
       name: "address",
@@ -36,15 +51,36 @@ export const facility = defineType({
     }),
     defineField({
       name: "hours",
-      type: "string",
+      type: "object",
       title: "Hours",
-      description: "e.g. Mon–Fri 5:00 AM – 8:00 PM",
+      fields: [
+        defineField({
+          name: "label",
+          type: "string",
+          title: "Label",
+          initialValue: "Hours",
+        }),
+        defineField({
+          name: "periods",
+          type: "array",
+          title: "Periods",
+          of: [{ type: "string" }],
+          description: "e.g. Mon–Fri: 5:30am – 8:00pm",
+        }),
+      ],
     }),
     defineField({
       name: "image",
       type: "image",
       title: "Image",
       options: { hotspot: true },
+      fields: [
+        defineField({
+          name: "alt",
+          type: "string",
+          title: "Alternative text",
+        }),
+      ],
     }),
     defineField({
       name: "features",
@@ -69,9 +105,27 @@ export const facility = defineType({
       ],
     }),
     defineField({
+      name: "amenities",
+      type: "array",
+      title: "Amenities",
+      of: [{ type: "string" }],
+      description: "Short amenity labels for lists",
+    }),
+    defineField({
       name: "mapUrl",
       type: "url",
       title: "Map URL",
+    }),
+    defineField({
+      name: "citySiteUrl",
+      type: "url",
+      title: "City / Operator Site URL",
+    }),
+    defineField({
+      name: "disclaimer",
+      type: "text",
+      title: "Disclaimer",
+      rows: 3,
     }),
     defineField({
       name: "isPrimary",
@@ -85,6 +139,13 @@ export const facility = defineType({
       title: "Sort Order",
       initialValue: 0,
     }),
+  ],
+  orderings: [
+    {
+      title: "Sort Order",
+      name: "sortOrderAsc",
+      by: [{ field: "sortOrder", direction: "asc" }],
+    },
   ],
   preview: {
     select: {

@@ -3,14 +3,17 @@ import {
   buttonVariants,
 } from "@workspace/ui/components/button";
 import { cn } from "@workspace/ui/lib/utils";
+import { urlFor } from "@workspace/sanity/client";
 import Image from "next/image";
 import Link from "next/link";
 
-import { urlFor } from "@/lib/sanity/client";
+import type { SanityImageProps } from "@/types";
 
-const DEFAULT_HERO_IMAGE = urlFor({
-  _id: "image-4853ac4449a8f1d89aa4d48bb5bc8338b243be1d-6000x4000-avif",
-})
+/** Original homepage hero image (Sanity CDN asset used before CMS page-builder wiring). */
+const DEFAULT_HERO_ASSET_ID =
+  "image-4853ac4449a8f1d89aa4d48bb5bc8338b243be1d-6000x4000-avif";
+
+const DEFAULT_HERO_IMAGE = urlFor({ _id: DEFAULT_HERO_ASSET_ID })
   .width(2400)
   .quality(80)
   .url();
@@ -19,25 +22,41 @@ export type HeroFullBleedProps = {
   eyebrow?: string;
   titleLines?: string[];
   accentWord?: string;
+  /** Static image URL (marketing pages) */
   image?: string;
+  /** Sanity CMS image object — preferred when editors upload a hero image */
+  sanityImage?: SanityImageProps | null;
   imageAlt?: string;
   primaryCta?: { label: string; href: string };
   secondaryCta?: { label: string; href: string };
 };
+
+function resolveHeroSrc(
+  sanityImage?: SanityImageProps | null,
+  fallback?: string,
+): string {
+  if (sanityImage?.id) {
+    return urlFor({ _id: sanityImage.id }).width(2400).quality(80).url();
+  }
+  return fallback ?? DEFAULT_HERO_IMAGE;
+}
 
 export function HeroFullBleed({
   eyebrow = "For the Team",
   titleLines = ["Arizona", "Seals"],
   accentWord = "Swimming",
   image = DEFAULT_HERO_IMAGE,
+  sanityImage,
   imageAlt = "Arizona Seals swimmers racing in the pool",
   primaryCta = { label: "Join the Team", href: "/contact" },
   secondaryCta = { label: "Our Programs", href: "/programs" },
 }: HeroFullBleedProps) {
+  const src = resolveHeroSrc(sanityImage, image);
+
   return (
-    <section className="relative flex h-screen min-h-[600px] max-h-[900px] flex-col justify-end overflow-hidden">
+    <section className="relative flex h-screen max-h-[900px] min-h-[600px] flex-col justify-end overflow-hidden">
       <Image
-        src={image}
+        src={src}
         alt={imageAlt}
         fill
         sizes="100vw"

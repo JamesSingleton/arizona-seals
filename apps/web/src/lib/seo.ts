@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 import type { Maybe } from "@/types";
-import { capitalize } from "@/utils";
-import { getBaseUrl } from "../config";
+import { capitalize, getBaseUrl } from "@/utils";
+
 
 // Site-wide configuration interface
 interface SiteConfig {
@@ -125,8 +125,20 @@ export function getSEOMetadata(page: PageSeoData = {}): Metadata {
     creator: siteConfig.title,
     authors: [{ name: siteConfig.title }],
     icons: {
-      icon: `${baseUrl}/favicon.ico`,
+      icon: [
+        { url: "/favicon.ico" },
+        {
+          url: "/icon-light-32x32.png",
+          media: "(prefers-color-scheme: light)",
+        },
+        {
+          url: "/icon-dark-32x32.png",
+          media: "(prefers-color-scheme: dark)",
+        },
+      ],
+      apple: "/apple-icon.png",
     },
+
     keywords: allKeywords,
     robots: seoNoIndex ? "noindex, nofollow" : "index, follow",
     twitter: {
@@ -141,7 +153,8 @@ export function getSEOMetadata(page: PageSeoData = {}): Metadata {
     },
     openGraph: {
       type: pageType ?? "website",
-      countryName: "UK",
+      countryName: "United States",
+
       description: defaultDescription,
       title: defaultTitle,
       images: [

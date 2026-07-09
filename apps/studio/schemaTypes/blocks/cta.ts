@@ -16,11 +16,14 @@ export const cta = defineType({
         list: [
           { title: "Card", value: "card" },
           { title: "Full Bleed", value: "fullBleed" },
+          { title: "Cyan Band", value: "cyanBand" },
+          { title: "Navy Band", value: "navyBand" },
         ],
         layout: "radio",
       },
       initialValue: "card",
     }),
+
     defineField({
       name: "eyebrow",
       title: "Eyebrow",

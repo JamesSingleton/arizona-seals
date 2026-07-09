@@ -1,15 +1,30 @@
 import { Badge } from "@workspace/ui/components/badge";
 
-import type { PagebuilderType } from "@/types";
+import type { PagebuilderType, SanityImageProps } from "@/types";
 import { RichText } from "../elements/rich-text";
 import { SanityButtons } from "../elements/sanity-buttons";
 import { SanityImage } from "../elements/sanity-image";
 import { HeroFullBleed } from "./hero-full-bleed";
 
 type HeroBlockProps = PagebuilderType<"hero"> & {
-  layout?: "split" | "fullBleed";
+  variant?: "split" | "immersive" | "fullBleed" | null;
+  layout?: "split" | "fullBleed" | null;
   titleAccent?: string | null;
 };
+
+/** Default to immersive so homepage matches the original full-bleed hero. */
+function isImmersive(
+  variant?: string | null,
+  layout?: string | null,
+): boolean {
+  if (variant === "split" || layout === "split") return false;
+  return (
+    !variant ||
+    variant === "immersive" ||
+    variant === "fullBleed" ||
+    layout === "fullBleed"
+  );
+}
 
 export function HeroBlock({
   title,
@@ -17,10 +32,11 @@ export function HeroBlock({
   badge,
   image,
   richText,
-  layout = "split",
+  variant,
+  layout,
   titleAccent,
 }: HeroBlockProps) {
-  if (layout === "fullBleed") {
+  if (isImmersive(variant, layout)) {
     const primary = buttons?.[0];
     const secondary = buttons?.[1];
     return (
@@ -28,6 +44,12 @@ export function HeroBlock({
         eyebrow={badge ?? undefined}
         titleLines={title ? title.split("\n").filter(Boolean) : undefined}
         accentWord={titleAccent ?? undefined}
+        sanityImage={image as SanityImageProps | null | undefined}
+        imageAlt={
+          image && "alt" in image && typeof image.alt === "string"
+            ? image.alt
+            : undefined
+        }
         primaryCta={
           primary?.href
             ? { label: primary.text ?? "Learn More", href: primary.href }
@@ -41,6 +63,7 @@ export function HeroBlock({
       />
     );
   }
+
 
   return (
     <section id="hero" className="mt-4 md:my-16">
@@ -68,7 +91,7 @@ export function HeroBlock({
           {image && (
             <div className="h-96 w-full">
               <SanityImage
-                image={image}
+                image={image as SanityImageProps}
                 loading="eager"
                 width={800}
                 height={800}

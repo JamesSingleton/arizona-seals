@@ -31,7 +31,21 @@ export const pageHero = defineType({
       title: "Show Overlay",
       initialValue: true,
     }),
+    defineField({
+      name: "size",
+      type: "string",
+      title: "Size",
+      options: {
+        list: [
+          { title: "Default", value: "default" },
+          { title: "Tall (Programs)", value: "tall" },
+        ],
+        layout: "radio",
+      },
+      initialValue: "default",
+    }),
   ],
+
   preview: {
     select: {
       title: "title",

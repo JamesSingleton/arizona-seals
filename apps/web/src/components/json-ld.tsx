@@ -13,12 +13,12 @@ import type {
   WithContext,
 } from "schema-dts";
 
-import { client, urlFor } from "@/lib/sanity/client";
-import { querySettingsData } from "@/lib/sanity/query";
+import { client, urlFor } from "@workspace/sanity/client";
+import { querySettingsData } from "@workspace/sanity/query";
 import type {
   QueryBlogSlugPageDataResult,
   QuerySettingsDataResult,
-} from "@/lib/sanity/sanity.types";
+} from "@workspace/sanity/types";
 import { getBaseUrl, handleErrors } from "@/utils";
 
 interface RichTextChild {
@@ -255,12 +255,14 @@ export async function CombinedJsonLd({
   const cleanSettings = stegaClean(res);
   return (
     <>
-      {includeWebsite && cleanSettings && (
+      {includeWebsite && cleanSettings ? (
         <WebSiteJsonLd settings={cleanSettings} />
-      )}
-      {includeOrganization && cleanSettings && (
+      ) : null}
+      {includeOrganization && cleanSettings ? (
         <OrganizationJsonLd settings={cleanSettings} />
-      )}
+      ) : null}
     </>
   );
 }
+
+

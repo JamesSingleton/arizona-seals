@@ -1,23 +1,29 @@
 "use client";
 
 import { useOptimistic } from "@sanity/visual-editing/react";
+import { dataset, projectId, studioUrl } from "@workspace/sanity/api";
+import type { QueryHomePageDataResult } from "@workspace/sanity/types";
 import { cn } from "@workspace/ui/lib/utils";
 import { createDataAttribute } from "next-sanity";
 import { useCallback, useMemo } from "react";
 
-import { dataset, projectId, studioUrl } from "@/config";
-import type { QueryHomePageDataResult } from "@/lib/sanity/sanity.types";
 import type { PageBuilderBlockTypes, PagebuilderType } from "@/types";
 import { AboutPreview } from "./sections/about-preview";
+import { ChecklistSplit } from "./sections/checklist-split";
 import { ContactInfoBlock } from "./sections/contact-info";
 import { CTABlock } from "./sections/cta";
+import { FacilitiesList } from "./sections/facilities-list";
 import { FaqAccordion } from "./sections/faq-accordion";
 import { FeatureCardsWithIcon } from "./sections/feature-cards-with-icon";
 import { HeroBlock } from "./sections/hero";
 import { ImageLinkCards } from "./sections/image-link-cards";
 import { LatestNews } from "./sections/latest-news";
 import { PageHeroBlock } from "./sections/page-hero-block";
+import { ProgramsList } from "./sections/programs-list";
 import { ProgramsPreview } from "./sections/programs-preview";
+import { SponsorTiers } from "./sections/sponsor-tiers";
+import { SponsorsGrid } from "./sections/sponsors-grid";
+import { SponsorsHero } from "./sections/sponsors-hero";
 import { SponsorsMarquee } from "./sections/sponsors-marquee";
 import { StatsSection } from "./sections/stats-section";
 import { SubscribeNewsletter } from "./sections/subscribe-newsletter";
@@ -29,6 +35,7 @@ type PageBuilderBlock = NonNullable<
 >[number] & {
   _type: PageBuilderBlockTypes;
   layout?: string;
+  variant?: string;
 };
 
 export interface PageBuilderProps {
@@ -43,21 +50,29 @@ interface SanityDataAttributeConfig {
   readonly path: string;
 }
 
+/** Blocks that must span the full viewport width (no max-w-7xl wrapper). */
 const FULL_BLEED_TYPES = new Set<string>([
+  "hero",
+  "cta",
   "pageHero",
   "sponsorsMarquee",
+  "sponsorsHero",
+  "sponsorTiers",
+  "sponsorsGrid",
+  "checklistSplit",
   "stats",
   "latestNews",
   "programsPreview",
+  "programsList",
   "splitContent",
   "timeline",
   "contactInfo",
+  "facilitiesList",
+  "team",
+  "featureCardsIcon",
 ]);
 
-/**
- * Seals CMS-ready blocks are registered here for a later Sanity wiring pass.
- * Marketing routes currently compose the same section components with static data.
- */
+
 const BLOCK_COMPONENTS = {
   cta: CTABlock as React.ComponentType<PagebuilderType<"cta">>,
   faqAccordion: FaqAccordion as React.ComponentType<
@@ -73,15 +88,21 @@ const BLOCK_COMPONENTS = {
   imageLinkCards: ImageLinkCards as React.ComponentType<
     PagebuilderType<"imageLinkCards">
   >,
-  team: TeamBlock as React.ComponentType<PagebuilderType<"team">>,
+  team: TeamBlock as React.ComponentType<any>,
   splitContent: AboutPreview as React.ComponentType<any>,
   stats: StatsSection as React.ComponentType<any>,
   programsPreview: ProgramsPreview as React.ComponentType<any>,
+  programsList: ProgramsList as React.ComponentType<any>,
   latestNews: LatestNews as React.ComponentType<any>,
   sponsorsMarquee: SponsorsMarquee as React.ComponentType<any>,
+  sponsorsHero: SponsorsHero as React.ComponentType<any>,
+  sponsorTiers: SponsorTiers as React.ComponentType<any>,
+  sponsorsGrid: SponsorsGrid as React.ComponentType<any>,
+  checklistSplit: ChecklistSplit as React.ComponentType<any>,
   pageHero: PageHeroBlock as React.ComponentType<any>,
   timeline: Timeline as React.ComponentType<any>,
   contactInfo: ContactInfoBlock as React.ComponentType<any>,
+  facilitiesList: FacilitiesList as React.ComponentType<any>,
 } as const;
 
 function createSanityDataAttribute(config: SanityDataAttributeConfig): string {
@@ -136,10 +157,20 @@ function useOptimisticPageBuilder(
 
 function isFullBleedBlock(block: PageBuilderBlock): boolean {
   if (FULL_BLEED_TYPES.has(block._type)) return true;
-  if (block._type === "hero" && block.layout === "fullBleed") return true;
-  if (block._type === "cta" && block.layout === "fullBleed") return true;
+  const variant = "variant" in block ? String(block.variant ?? "") : "";
+  const layout = "layout" in block ? String(block.layout ?? "") : "";
+  if (
+    block._type === "hero" &&
+    (variant === "immersive" ||
+      variant === "fullBleed" ||
+      layout === "fullBleed")
+  ) {
+    return true;
+  }
+  if (block._type === "cta" && layout === "fullBleed") return true;
   return false;
 }
+
 
 function useBlockRenderer(id: string, type: string) {
   const createBlockDataAttribute = useCallback(
@@ -153,7 +184,7 @@ function useBlockRenderer(id: string, type: string) {
   );
 
   const renderBlock = useCallback(
-    (block: PageBuilderBlock, index: number) => {
+    (block: PageBuilderBlock) => {
       const Component =
         BLOCK_COMPONENTS[block._type as keyof typeof BLOCK_COMPONENTS];
 

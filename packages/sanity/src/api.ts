@@ -8,9 +8,12 @@ function assertValue<T>(v: T | undefined, errorMessage: string): T {
 
 export const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET ?? "production";
 
-export const projectId = assertValue(
-  process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-  "Missing environment variable: NEXT_PUBLIC_SANITY_PROJECT_ID",
+export const projectId =
+  process.env.NEXT_PUBLIC_SANITY_PROJECT_ID ?? "placeholder";
+
+export const isSanityConfigured = Boolean(
+  process.env.NEXT_PUBLIC_SANITY_PROJECT_ID &&
+    process.env.NEXT_PUBLIC_SANITY_PROJECT_ID !== "placeholder",
 );
 
 /**
@@ -26,3 +29,11 @@ export const studioUrl =
   process.env.NEXT_PUBLIC_SANITY_STUDIO_URL || "http://localhost:3333";
 
 export const revalidateSecret = process.env.SANITY_REVALIDATE_SECRET;
+
+/** Strict projectId for image CDN URLs — throws when unset. */
+export function requireProjectId(): string {
+  return assertValue(
+    process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+    "Missing environment variable: NEXT_PUBLIC_SANITY_PROJECT_ID",
+  );
+}

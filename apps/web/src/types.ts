@@ -2,18 +2,28 @@ import type {
   QueryBlogSlugPageDataResult,
   QueryHomePageDataResult,
   QueryImageTypeResult,
-} from "./lib/sanity/sanity.types";
+} from "@workspace/sanity/types";
 
-/** Legacy generated block types + Seals CMS-ready blocks (TypeGen pending) */
+/** Seals CMS blocks not yet present in generated QueryHomePageDataResult */
 export type SealsPageBuilderBlockTypes =
   | "splitContent"
   | "stats"
   | "programsPreview"
+  | "programsList"
   | "latestNews"
   | "sponsorsMarquee"
+  | "sponsorsHero"
+  | "sponsorTiers"
+  | "sponsorsGrid"
+  | "checklistSplit"
   | "pageHero"
   | "timeline"
-  | "contactInfo";
+  | "contactInfo"
+  | "facilitiesList"
+  | "team"
+  | "featureCardsIcon"
+  | "cta";
+
 
 export type PageBuilderBlockTypes =
   | NonNullable<

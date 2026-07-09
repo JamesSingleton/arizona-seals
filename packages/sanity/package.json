@@ -6,12 +6,14 @@
     "check:types": "tsc --noEmit"
   },
   "exports": {
+    "./api": "./src/api.ts",
     "./client": "./src/client.ts",
     "./query": "./src/query.ts",
     "./live": "./src/live.ts",
     "./image": "./src/image.ts",
     "./types": "./src/sanity.types.ts"
   },
+
   "dependencies": {
     "@sanity/asset-utils": "^2.3.0",
     "@sanity/client": "catalog:",

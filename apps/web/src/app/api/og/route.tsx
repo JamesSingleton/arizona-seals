@@ -13,8 +13,6 @@ import {
   getSlugPageOGData,
 } from "./og-data";
 
-export const runtime = "edge";
-
 const errorContent = (
   <div tw="flex flex-col w-full h-full items-center justify-center">
     <div tw=" flex w-full h-full items-center justify-center ">

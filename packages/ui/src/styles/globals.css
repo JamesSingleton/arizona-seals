@@ -170,3 +170,60 @@
     cursor: pointer;
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* View transition recipes for blog list → detail */
+::view-transition-old(.nav-forward) {
+  animation: 200ms ease-in both vt-slide-out-left;
+}
+::view-transition-new(.nav-forward) {
+  animation: 200ms ease-out both vt-slide-in-right;
+}
+::view-transition-old(.nav-back) {
+  animation: 200ms ease-in both vt-slide-out-right;
+}
+::view-transition-new(.nav-back) {
+  animation: 200ms ease-out both vt-slide-in-left;
+}
+
+@keyframes vt-slide-out-left {
+  to {
+    transform: translateX(-24px);
+    opacity: 0;
+  }
+}
+@keyframes vt-slide-in-right {
+  from {
+    transform: translateX(24px);
+    opacity: 0;
+  }
+}
+@keyframes vt-slide-out-right {
+  to {
+    transform: translateX(24px);
+    opacity: 0;
+  }
+}
+@keyframes vt-slide-in-left {
+  from {
+    transform: translateX(-24px);
+    opacity: 0;
+  }
+}
+

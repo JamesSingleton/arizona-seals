@@ -5,7 +5,6 @@ import type { QueryImageTypeResult } from "./sanity.types";
 
 type SanityImageData = NonNullable<QueryImageTypeResult>;
 
-// Types
 type ImageHotspot = {
   readonly x: number;
   readonly y: number;
@@ -30,9 +29,11 @@ export type SanityImageProps = {
   readonly image: SanityImageData;
 } & Omit<WrapperProps<"img">, "id">;
 
-// Base URL construction
 export const SANITY_BASE_URL =
   `https://cdn.sanity.io/images/${projectId}/${dataset}/` as const;
+
+export type { ProcessedImageData };
+
 
 // Type guards
 function isValidNumber(value: unknown): value is number {
@@ -102,9 +103,10 @@ export function processImageData(
 
   return {
     id: image.id,
-    alt: image.alt,
-    ...(preview && { preview }),
-    ...(hotspot && { hotspot }),
-    ...(crop && { crop }),
+    alt: image.alt ?? "Image",
+    ...(preview ? { preview } : {}),
+    ...(hotspot ? { hotspot } : {}),
+    ...(crop ? { crop } : {}),
   };
 }
+

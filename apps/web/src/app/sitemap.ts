@@ -1,57 +1,57 @@
+import { isSanityConfigured } from "@workspace/sanity/api";
+import { sanityFetchMetadata } from "@workspace/sanity/live";
+import { querySitemapData } from "@workspace/sanity/query";
 import type { MetadataRoute } from "next";
 
-import { getBaseUrl } from "@/config";
-import { isSanityConfigured } from "@/lib/sanity/api";
-import { client } from "@/lib/sanity/client";
-import { querySitemapData } from "@/lib/sanity/query";
-
-const baseUrl = getBaseUrl();
-
-const staticRoutes = [
-  "",
-  "/about",
-  "/coaches",
-  "/contact",
-  "/facilities",
-  "/programs",
-  "/sponsors",
-  "/privacy",
-  "/terms",
-  "/news/seals-capture-5-medals-az-state-championships",
-  "/news/summer-season-registration-now-open",
-  "/news/february-2026-swimmers-of-the-month",
-];
+import { getBaseUrl } from "@/utils";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const staticEntries: MetadataRoute.Sitemap = staticRoutes.map((path) => ({
-    url: `${baseUrl}${path}`,
-    lastModified: new Date(),
-    changeFrequency: "weekly",
-    priority: path === "" ? 1 : 0.8,
-  }));
+  const baseUrl = getBaseUrl();
+
+  const entries: MetadataRoute.Sitemap = [
+    {
+      url: baseUrl,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 1,
+    },
+    {
+      url: `${baseUrl}/blog`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+  ];
 
   if (!isSanityConfigured) {
-    return staticEntries;
+    return entries;
   }
 
   try {
-    const { slugPages, blogPages } = await client.fetch(querySitemapData);
+    const { data } = await sanityFetchMetadata({
+      query: querySitemapData,
+      perspective: "published",
+    });
+
+    const slugPages = data?.slugPages ?? [];
+    const blogPages = data?.blogPages ?? [];
+
     return [
-      ...staticEntries,
+      ...entries,
       ...slugPages.map((page) => ({
-        url: `${baseUrl}${page.slug}`,
+        url: `${baseUrl}${page.slug?.startsWith("/") ? page.slug : `/${page.slug}`}`,
         lastModified: new Date(page.lastModified ?? new Date()),
         changeFrequency: "weekly" as const,
         priority: 0.8,
       })),
       ...blogPages.map((page) => ({
-        url: `${baseUrl}${page.slug}`,
+        url: `${baseUrl}${page.slug?.startsWith("/") ? page.slug : `/${page.slug}`}`,
         lastModified: new Date(page.lastModified ?? new Date()),
         changeFrequency: "weekly" as const,
         priority: 0.5,
       })),
     ];
   } catch {
-    return staticEntries;
+    return entries;
   }
 }

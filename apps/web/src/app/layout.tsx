@@ -1,11 +1,18 @@
 import "@workspace/ui/globals.css";
 
+import { SanityLive } from "@workspace/sanity/live";
 import type { Metadata, Viewport } from "next";
 import { Barlow_Condensed, Inter } from "next/font/google";
+import { VisualEditing } from "next-sanity/visual-editing";
+import { draftMode } from "next/headers";
+import { Suspense } from "react";
 
+import { CombinedJsonLd } from "@/components/json-ld";
+import { PreviewBar } from "@/components/preview-bar";
 import { Providers } from "@/components/providers";
 import { SiteFooter } from "@/components/site-footer";
-import { SiteNavbar } from "@/components/site-navbar";
+import { SiteNavbarServer } from "@/components/site-navbar-server";
+
 
 const inter = Inter({
   subsets: ["latin"],
@@ -35,6 +42,14 @@ export const metadata: Metadata = {
     "USA Swimming",
     "Maricopa",
   ],
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/icon-light-32x32.png", media: "(prefers-color-scheme: light)" },
+      { url: "/icon-dark-32x32.png", media: "(prefers-color-scheme: dark)" },
+    ],
+    apple: "/apple-icon.png",
+  },
   openGraph: {
     title: "Arizona Seals Swimming",
     description: "A premier competitive swim club in Arizona.",
@@ -50,11 +65,13 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { isEnabled: isDraftMode } = await draftMode();
+
   return (
     <html
       lang="en"
@@ -63,9 +80,26 @@ export default function RootLayout({
     >
       <body className="font-sans antialiased">
         <Providers>
-          <SiteNavbar />
-          {children}
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-background focus:px-4 focus:py-2 focus:shadow"
+          >
+            Skip to main content
+          </a>
+          <SiteNavbarServer />
+          <main id="main-content">{children}</main>
           <SiteFooter />
+
+          <Suspense fallback={null}>
+            <CombinedJsonLd includeOrganization includeWebsite />
+          </Suspense>
+          <SanityLive includeDrafts={isDraftMode} />
+          {isDraftMode ? (
+            <>
+              <VisualEditing />
+              <PreviewBar />
+            </>
+          ) : null}
         </Providers>
       </body>
     </html>

@@ -10,18 +10,19 @@ export const hero = defineType({
   type: "object",
   fields: [
     defineField({
-      name: "layout",
+      name: "variant",
       type: "string",
-      title: "Layout",
+      title: "Variant",
       options: {
         list: [
           { title: "Split (image + text)", value: "split" },
-          { title: "Full Bleed", value: "fullBleed" },
+          { title: "Immersive (full bleed)", value: "immersive" },
         ],
         layout: "radio",
       },
       initialValue: "split",
     }),
+
     defineField({
       name: "badge",
       type: "string",
@@ -38,8 +39,8 @@ export const hero = defineType({
       type: "string",
       title: "Title Accent Line",
       description:
-        "Optional accent line rendered in brand color (full-bleed layout)",
-      hidden: ({ parent }) => parent?.layout !== "fullBleed",
+        "Optional accent line rendered in brand color (immersive variant)",
+      hidden: ({ parent }) => parent?.variant !== "immersive",
     }),
     richTextField,
     defineField({
@@ -55,11 +56,12 @@ export const hero = defineType({
   preview: {
     select: {
       title: "title",
-      layout: "layout",
+      variant: "variant",
     },
-    prepare: ({ title, layout }) => ({
+    prepare: ({ title, variant }) => ({
       title,
-      subtitle: `Hero (${layout === "fullBleed" ? "Full Bleed" : "Split"})`,
+      subtitle: `Hero (${variant === "immersive" ? "Immersive" : "Split"})`,
     }),
   },
 });
+

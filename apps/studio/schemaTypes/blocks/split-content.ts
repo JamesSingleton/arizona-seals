@@ -27,18 +27,20 @@ export const splitContent = defineType({
       options: { hotspot: true },
     }),
     defineField({
-      name: "imagePosition",
+      name: "imagePlacement",
       type: "string",
-      title: "Image Position",
+      title: "Image Placement",
+      description: "Where the image sits relative to the text content",
       options: {
         list: [
-          { title: "Right", value: "right" },
-          { title: "Left", value: "left" },
+          { title: "End (after text)", value: "end" },
+          { title: "Start (before text)", value: "start" },
         ],
         layout: "radio",
       },
-      initialValue: "right",
+      initialValue: "end",
     }),
+
     buttonsField,
   ],
   preview: {

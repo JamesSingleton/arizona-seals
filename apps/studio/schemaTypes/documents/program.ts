@@ -43,16 +43,11 @@ export const program = defineType({
       description: "e.g. Highest Level, Advanced, Intermediate",
     }),
     defineField({
-      name: "previewLevel",
-      type: "string",
-      title: "Preview Level Label",
-      description: "Short level label shown on the home programs grid",
-    }),
-    defineField({
-      name: "accentColor",
-      type: "string",
-      title: "Accent Color",
-      description: "Hex color for the program accent bar (e.g. #1B3A6B)",
+      name: "summary",
+      type: "text",
+      title: "Summary",
+      description: "Short description for preview cards and listings",
+      rows: 2,
     }),
     defineField({
       name: "description",
@@ -61,11 +56,11 @@ export const program = defineType({
       rows: 4,
     }),
     defineField({
-      name: "previewDescription",
-      type: "text",
-      title: "Preview Description",
-      description: "Short description for the home programs preview cards",
-      rows: 2,
+      name: "accent",
+      type: "string",
+      title: "Accent",
+      description:
+        "Brand accent for this program group (hex, e.g. #1B3A6B). Frontend maps this to styles.",
     }),
     defineField({
       name: "expectations",
@@ -96,6 +91,13 @@ export const program = defineType({
       type: "image",
       title: "Image",
       options: { hotspot: true },
+      fields: [
+        defineField({
+          name: "alt",
+          type: "string",
+          title: "Alternative text",
+        }),
+      ],
     }),
     defineField({
       name: "sortOrder",

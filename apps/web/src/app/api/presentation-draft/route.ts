@@ -1,13 +1,10 @@
+import { isSanityConfigured } from "@workspace/sanity/api";
+import { client } from "@workspace/sanity/client";
 import { NextResponse } from "next/server";
 import { defineEnableDraftMode } from "next-sanity/draft-mode";
 
-import { isSanityConfigured } from "@/lib/sanity/api";
-import { client } from "@/lib/sanity/client";
-import { token } from "@/lib/sanity/token";
-
-const hasRealToken =
-  Boolean(process.env.SANITY_API_READ_TOKEN) &&
-  token !== "development-placeholder";
+const token = process.env.SANITY_API_READ_TOKEN;
+const hasRealToken = Boolean(token);
 
 const draftMode = hasRealToken
   ? defineEnableDraftMode({
