@@ -2,8 +2,8 @@ import { EarthGlobeIcon } from "@sanity/icons";
 import { useToast } from "@sanity/ui";
 import { useCallback } from "react";
 import {
-  definePlugin,
   type DocumentActionComponent,
+  definePlugin,
   useGetFormValue,
 } from "sanity";
 import { useRouter } from "sanity/router";

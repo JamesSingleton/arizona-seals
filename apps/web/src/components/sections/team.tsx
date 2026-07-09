@@ -1,9 +1,8 @@
-import type { PagebuilderType } from '@/types'
+import { RichText } from "@/components/elements/rich-text";
+import { SanityImage } from "@/components/elements/sanity-image";
+import type { PagebuilderType } from "@/types";
 
-import { SanityImage } from '@/components/elements/sanity-image'
-import { RichText } from '@/components/elements/rich-text'
-
-export type TeamBlockProps = PagebuilderType<'team'>
+export type TeamBlockProps = PagebuilderType<"team">;
 
 export function TeamBlock({ teamMembers }: TeamBlockProps) {
   return (
@@ -26,7 +25,9 @@ export function TeamBlock({ teamMembers }: TeamBlockProps) {
                     </div>
                     <div className="flex-grow space-y-4 text-center md:text-left">
                       <div>
-                        <h2 className="text-lg font-medium md:text-2xl">{teamMember.name}</h2>
+                        <h2 className="text-lg font-medium md:text-2xl">
+                          {teamMember.name}
+                        </h2>
                         <h3 className="font-semibold">{teamMember.position}</h3>
                       </div>
                       <div>
@@ -41,5 +42,5 @@ export function TeamBlock({ teamMembers }: TeamBlockProps) {
         </div>
       </div>
     </section>
-  )
+  );
 }

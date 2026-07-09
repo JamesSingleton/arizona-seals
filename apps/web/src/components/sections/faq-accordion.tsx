@@ -3,18 +3,23 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@workspace/ui/components/accordion'
-import { Badge } from '@workspace/ui/components/badge'
-import { ArrowUpRight } from 'lucide-react'
-import Link from 'next/link'
+} from "@workspace/ui/components/accordion";
+import { Badge } from "@workspace/ui/components/badge";
+import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
 
-import type { PagebuilderType } from '@/types'
+import type { PagebuilderType } from "@/types";
+import { RichText } from "../elements/rich-text";
 
-import { RichText } from '../elements/rich-text'
+type FaqAccordionProps = PagebuilderType<"faqAccordion">;
 
-type FaqAccordionProps = PagebuilderType<'faqAccordion'>
-
-export function FaqAccordion({ eyebrow, title, subtitle, faqs, link }: FaqAccordionProps) {
+export function FaqAccordion({
+  eyebrow,
+  title,
+  subtitle,
+  faqs,
+  link,
+}: FaqAccordionProps) {
   return (
     <section id="faq" className="my-8">
       {/* <FaqJsonLd faqs={stegaClean(faqs)} /> */}
@@ -29,7 +34,12 @@ export function FaqAccordion({ eyebrow, title, subtitle, faqs, link }: FaqAccord
           </div>
         </div>
         <div className="my-16 max-w-xl mx-auto">
-          <Accordion type="single" collapsible className="w-full" defaultValue="3">
+          <Accordion
+            type="single"
+            collapsible
+            className="w-full"
+            defaultValue="3"
+          >
             {faqs?.map((faq, index) => (
               <AccordionItem
                 value={faq?._id}
@@ -40,7 +50,10 @@ export function FaqAccordion({ eyebrow, title, subtitle, faqs, link }: FaqAccord
                   {faq?.title}
                 </AccordionTrigger>
                 <AccordionContent className="pb-2 text-muted-foreground">
-                  <RichText richText={faq?.richText ?? []} className="text-sm md:text-base" />
+                  <RichText
+                    richText={faq?.richText ?? []}
+                    className="text-sm md:text-base"
+                  />
                 </AccordionContent>
               </AccordionItem>
             ))}
@@ -50,13 +63,18 @@ export function FaqAccordion({ eyebrow, title, subtitle, faqs, link }: FaqAccord
             <div className="w-full py-6">
               <p className="mb-1 text-xs">{link?.title}</p>
               <Link
-                href={link.href ?? '#'}
-                target={link.openInNewTab ? '_blank' : '_self'}
+                href={link.href ?? "#"}
+                target={link.openInNewTab ? "_blank" : "_self"}
                 className="flex items-center gap-2"
               >
-                <p className="text-[15px] font-[500] leading-6">{link?.description}</p>
+                <p className="text-[15px] font-[500] leading-6">
+                  {link?.description}
+                </p>
                 <span className="rounded-full border p-1">
-                  <ArrowUpRight size={16} className="text-[#374151] dark:text-neutral-300" />
+                  <ArrowUpRight
+                    size={16}
+                    className="text-[#374151] dark:text-neutral-300"
+                  />
                 </span>
               </Link>
             </div>
@@ -64,5 +82,5 @@ export function FaqAccordion({ eyebrow, title, subtitle, faqs, link }: FaqAccord
         </div>
       </div>
     </section>
-  )
+  );
 }

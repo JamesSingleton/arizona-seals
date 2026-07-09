@@ -11,4 +11,10 @@ export default defineCliConfig({
   },
   studioHost: "arizona-seals",
   autoUpdates: false,
+  typegen: {
+    path: "../web/src/**/*.{ts,tsx,js,jsx}",
+    schema: "schema.json",
+    generates: "../web/src/lib/sanity/sanity.types.ts",
+    overloadClientMethods: true,
+  },
 });

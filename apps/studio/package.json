@@ -6,12 +6,14 @@
   "license": "UNLICENSED",
   "scripts": {
     "dev": "sanity dev",
-    "format": "prettier --write .",
     "start": "sanity start",
-    "lint": "eslint . --fix",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
     "build": "sanity build",
+    "deploy:schema": "sanity schema deploy --manifest-dir ./dist/static",
     "deploy": "sanity deploy",
-    "type": "sanity schema extract && sanity typegen generate --enforce-required-fields"
+    "type": "sanity schema extract --enforce-required-fields && sanity typegen generate",
+    "check:types": "tsc --noEmit"
   },
   "keywords": [
     "sanity"
@@ -23,10 +25,10 @@
     "@sanity/image-url": "^2.0.2",
     "@sanity/ui": "^3.1.11",
     "@sanity/vision": "^4.22.0",
-    "lucide-react": "0.561.0",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3",
-    "sanity": "^4.22.0",
+    "lucide-react": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "sanity": "catalog:",
     "sanity-plugin-asset-source-unsplash": "^7.0.0",
     "sanity-plugin-icon-picker": "^4.0.0",
     "sanity-plugin-media": "^4.1.0",
@@ -35,12 +37,7 @@
   },
   "devDependencies": {
     "@sanity/eslint-config-studio": "^5.0.2",
-    "@types/node": "^25.0.3",
-    "@types/react": "^19.2.7",
-    "@types/react-is": "^19.2.0",
-    "eslint": "^9.39.2",
-    "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-prettier": "^5.5.4",
-    "eslint-plugin-simple-import-sort": "^12.1.1"
+    "@types/node": "catalog:",
+    "@types/react": "catalog:"
   }
 }

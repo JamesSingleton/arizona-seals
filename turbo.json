@@ -10,21 +10,26 @@
     "NODE_ENV"
   ],
   "tasks": {
+    "transit": {
+      "dependsOn": ["^transit"]
+    },
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [
-        ".next/**",
-        "!.next/cache/**",
-        "dist/**",
-        ".sanity/**"
-      ]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**", ".sanity/**"]
+    },
+    "clean": {
+      "cache": false
     },
     "lint": {
-      "dependsOn": ["^lint"]
+      "dependsOn": ["transit"]
     },
-    "check-types": {
-      "dependsOn": ["^check-types"]
+    "lint:fix": {
+      "dependsOn": ["transit"],
+      "cache": false
+    },
+    "check:types": {
+      "dependsOn": ["transit"]
     },
     "dev": {
       "cache": false,

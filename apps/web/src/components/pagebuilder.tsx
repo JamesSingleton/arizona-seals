@@ -1,56 +1,61 @@
-'use client'
+"use client";
 
-import { useOptimistic } from '@sanity/visual-editing/react'
-import { createDataAttribute } from 'next-sanity'
-import { useCallback, useMemo } from 'react'
+import { useOptimistic } from "@sanity/visual-editing/react";
+import { createDataAttribute } from "next-sanity";
+import { useCallback, useMemo } from "react";
 
-import { dataset, projectId, studioUrl } from '@/config'
-import type { QueryHomePageDataResult } from '@/lib/sanity/sanity.types'
-import type { PageBuilderBlockTypes, PagebuilderType } from '@/types'
-
-import { CTABlock } from './sections/cta'
-import { FaqAccordion } from './sections/faq-accordion'
-import { FeatureCardsWithIcon } from './sections/feature-cards-with-icon'
-import { HeroBlock } from './sections/hero'
-import { ImageLinkCards } from './sections/image-link-cards'
-import { SubscribeNewsletter } from './sections/subscribe-newsletter'
-import { TeamBlock } from './sections/team'
+import { dataset, projectId, studioUrl } from "@/config";
+import type { QueryHomePageDataResult } from "@/lib/sanity/sanity.types";
+import type { PageBuilderBlockTypes, PagebuilderType } from "@/types";
+import { CTABlock } from "./sections/cta";
+import { FaqAccordion } from "./sections/faq-accordion";
+import { FeatureCardsWithIcon } from "./sections/feature-cards-with-icon";
+import { HeroBlock } from "./sections/hero";
+import { ImageLinkCards } from "./sections/image-link-cards";
+import { SubscribeNewsletter } from "./sections/subscribe-newsletter";
+import { TeamBlock } from "./sections/team";
 
 // More specific and descriptive type aliases
-type PageBuilderBlock = NonNullable<NonNullable<QueryHomePageDataResult>['pageBuilder']>[number]
+type PageBuilderBlock = NonNullable<
+  NonNullable<QueryHomePageDataResult>["pageBuilder"]
+>[number];
 
 export interface PageBuilderProps {
-  readonly pageBuilder?: PageBuilderBlock[]
-  readonly id: string
-  readonly type: string
+  readonly pageBuilder?: PageBuilderBlock[];
+  readonly id: string;
+  readonly type: string;
 }
 
 interface PageData {
-  readonly _id: string
-  readonly _type: string
-  readonly pageBuilder?: PageBuilderBlock[]
+  readonly _id: string;
+  readonly _type: string;
+  readonly pageBuilder?: PageBuilderBlock[];
 }
 
 interface SanityDataAttributeConfig {
-  readonly id: string
-  readonly type: string
-  readonly path: string
+  readonly id: string;
+  readonly type: string;
+  readonly path: string;
 }
 
 // Strongly typed component mapping with proper component signatures
 const BLOCK_COMPONENTS = {
-  cta: CTABlock as React.ComponentType<PagebuilderType<'cta'>>,
-  faqAccordion: FaqAccordion as React.ComponentType<PagebuilderType<'faqAccordion'>>,
-  hero: HeroBlock as React.ComponentType<PagebuilderType<'hero'>>,
+  cta: CTABlock as React.ComponentType<PagebuilderType<"cta">>,
+  faqAccordion: FaqAccordion as React.ComponentType<
+    PagebuilderType<"faqAccordion">
+  >,
+  hero: HeroBlock as React.ComponentType<PagebuilderType<"hero">>,
   featureCardsIcon: FeatureCardsWithIcon as React.ComponentType<
-    PagebuilderType<'featureCardsIcon'>
+    PagebuilderType<"featureCardsIcon">
   >,
   subscribeNewsletter: SubscribeNewsletter as React.ComponentType<
-    PagebuilderType<'subscribeNewsletter'>
+    PagebuilderType<"subscribeNewsletter">
   >,
-  imageLinkCards: ImageLinkCards as React.ComponentType<PagebuilderType<'imageLinkCards'>>,
-  team: TeamBlock as React.ComponentType<PagebuilderType<'team'>>,
-} as const satisfies Record<PageBuilderBlockTypes, React.ComponentType<any>>
+  imageLinkCards: ImageLinkCards as React.ComponentType<
+    PagebuilderType<"imageLinkCards">
+  >,
+  team: TeamBlock as React.ComponentType<PagebuilderType<"team">>,
+} as const satisfies Record<PageBuilderBlockTypes, React.ComponentType<any>>;
 
 /**
  * Helper function to create consistent Sanity data attributes
@@ -63,13 +68,19 @@ function createSanityDataAttribute(config: SanityDataAttributeConfig): string {
     dataset,
     type: config.type,
     path: config.path,
-  }).toString()
+  }).toString();
 }
 
 /**
  * Error fallback component for unknown block types
  */
-function UnknownBlockError({ blockType, blockKey }: { blockType: string; blockKey: string }) {
+function UnknownBlockError({
+  blockType,
+  blockKey,
+}: {
+  blockType: string;
+  blockKey: string;
+}) {
   return (
     <div
       key={`${blockType}-${blockKey}`}
@@ -79,22 +90,30 @@ function UnknownBlockError({ blockType, blockKey }: { blockType: string; blockKe
     >
       <div className="space-y-2">
         <p>Component not found for block type:</p>
-        <code className="font-mono text-sm bg-background px-2 py-1 rounded">{blockType}</code>
+        <code className="font-mono text-sm bg-background px-2 py-1 rounded">
+          {blockType}
+        </code>
       </div>
     </div>
-  )
+  );
 }
 
 /**
  * Hook to handle optimistic updates for page builder blocks
  */
-function useOptimisticPageBuilder(initialBlocks: PageBuilderBlock[], documentId: string) {
-  return useOptimistic<PageBuilderBlock[], any>(initialBlocks, (currentBlocks, action) => {
-    if (action.id === documentId && action.document?.pageBuilder) {
-      return action.document.pageBuilder
-    }
-    return currentBlocks
-  })
+function useOptimisticPageBuilder(
+  initialBlocks: PageBuilderBlock[],
+  documentId: string,
+) {
+  return useOptimistic<PageBuilderBlock[], any>(
+    initialBlocks,
+    (currentBlocks, action) => {
+      if (action.id === documentId && action.document?.pageBuilder) {
+        return action.document.pageBuilder;
+      }
+      return currentBlocks;
+    },
+  );
 }
 
 /**
@@ -109,11 +128,12 @@ function useBlockRenderer(id: string, type: string) {
         path: `pageBuilder[_key=="${blockKey}"]`,
       }),
     [id, type],
-  )
+  );
 
   const renderBlock = useCallback(
     (block: PageBuilderBlock, index: number) => {
-      const Component = BLOCK_COMPONENTS[block._type as keyof typeof BLOCK_COMPONENTS]
+      const Component =
+        BLOCK_COMPONENTS[block._type as keyof typeof BLOCK_COMPONENTS];
 
       if (!Component) {
         return (
@@ -122,7 +142,7 @@ function useBlockRenderer(id: string, type: string) {
             blockType={block._type}
             blockKey={block._key}
           />
-        )
+        );
       }
 
       return (
@@ -132,28 +152,32 @@ function useBlockRenderer(id: string, type: string) {
         >
           <Component {...(block as any)} />
         </div>
-      )
+      );
     },
     [createBlockDataAttribute],
-  )
+  );
 
-  return { renderBlock }
+  return { renderBlock };
 }
 
 /**
  * PageBuilder component for rendering dynamic content blocks from Sanity CMS
  */
-export function PageBuilder({ pageBuilder: initialBlocks = [], id, type }: PageBuilderProps) {
-  const blocks = useOptimisticPageBuilder(initialBlocks, id)
-  const { renderBlock } = useBlockRenderer(id, type)
+export function PageBuilder({
+  pageBuilder: initialBlocks = [],
+  id,
+  type,
+}: PageBuilderProps) {
+  const blocks = useOptimisticPageBuilder(initialBlocks, id);
+  const { renderBlock } = useBlockRenderer(id, type);
 
   const containerDataAttribute = useMemo(
-    () => createSanityDataAttribute({ id, type, path: 'pageBuilder' }),
+    () => createSanityDataAttribute({ id, type, path: "pageBuilder" }),
     [id, type],
-  )
+  );
 
   if (!blocks.length) {
-    return null
+    return null;
   }
 
   return (
@@ -164,5 +188,5 @@ export function PageBuilder({ pageBuilder: initialBlocks = [], id, type }: PageB
     >
       {blocks.map(renderBlock)}
     </section>
-  )
+  );
 }

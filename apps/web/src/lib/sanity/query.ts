@@ -1,4 +1,4 @@
-import { defineQuery } from 'next-sanity'
+import { defineQuery } from "next-sanity";
 
 const imageFields = /* groq */ `
   "id": asset._ref,
@@ -16,14 +16,14 @@ const imageFields = /* groq */ `
   "alt": coalesce(asset->altText, asset->originalFilename, "Image-Broken"),
   "blurData": asset->metadata.lqip,
   "dominantColor": asset->metadata.palette.dominant.background,
-`
+`;
 
 // Base fragments for reusable query parts
 const imageFragment = /* groq */ `
   image {
     ${imageFields}
   }
-`
+`;
 
 const customLinkFragment = /* groq */ `
   ...customLink{
@@ -34,21 +34,21 @@ const customLinkFragment = /* groq */ `
       "#"
     ),
   }
-`
+`;
 
 const markDefsFragment = /* groq */ `
   markDefs[]{
     ...,
     ${customLinkFragment}
   }
-`
+`;
 
 const richTextFragment = /* groq */ `
   richText[]{
     ...,
     ${markDefsFragment}
   }
-`
+`;
 
 const blogAuthorFragment = /* groq */ `
   authors[0]->{
@@ -57,7 +57,7 @@ const blogAuthorFragment = /* groq */ `
     position,
     ${imageFragment}
   }
-`
+`;
 
 const blogCardFragment = /* groq */ `
   _type,
@@ -69,7 +69,7 @@ const blogCardFragment = /* groq */ `
   ${imageFragment},
   publishedAt,
   ${blogAuthorFragment}
-`
+`;
 
 const buttonsFragment = /* groq */ `
   buttons[]{
@@ -84,7 +84,7 @@ const buttonsFragment = /* groq */ `
       url.href
     ),
   }
-`
+`;
 
 // Page builder block fragments
 const ctaBlock = /* groq */ `
@@ -93,7 +93,7 @@ const ctaBlock = /* groq */ `
     ${richTextFragment},
     ${buttonsFragment},
   }
-`
+`;
 const imageLinkCardsBlock = /* groq */ `
   _type == "imageLinkCards" => {
     ...,
@@ -110,7 +110,7 @@ const imageLinkCardsBlock = /* groq */ `
       ${imageFragment},
     })
   }
-`
+`;
 
 const teamBlock = /* groq */ `
 _type == "team" => {
@@ -118,7 +118,7 @@ _type == "team" => {
   ...
   }
 }
-`
+`;
 
 const heroBlock = /* groq */ `
   _type == "hero" => {
@@ -127,7 +127,7 @@ const heroBlock = /* groq */ `
     ${buttonsFragment},
     ${richTextFragment}
   }
-`
+`;
 
 const faqFragment = /* groq */ `
   "faqs": array::compact(faqs[]->{
@@ -136,7 +136,7 @@ const faqFragment = /* groq */ `
     _type,
     ${richTextFragment}
   })
-`
+`;
 
 const faqAccordionBlock = /* groq */ `
   _type == "faqAccordion" => {
@@ -152,7 +152,7 @@ const faqAccordionBlock = /* groq */ `
       )
     }
   }
-`
+`;
 
 const subscribeNewsletterBlock = /* groq */ `
   _type == "subscribeNewsletter" => {
@@ -166,7 +166,7 @@ const subscribeNewsletterBlock = /* groq */ `
       ${markDefsFragment}
     }
   }
-`
+`;
 
 const pageBuilderFragment = /* groq */ `
   pageBuilder[]{
@@ -179,9 +179,10 @@ const pageBuilderFragment = /* groq */ `
     ${imageLinkCardsBlock},
     ${teamBlock}
   }
-`
+`;
 
-export const queryHomePageData = defineQuery(`*[_type == "homePage" && _id == "homePage"][0]{
+export const queryHomePageData =
+  defineQuery(`*[_type == "homePage" && _id == "homePage"][0]{
     ...,
     _id,
     _type,
@@ -189,7 +190,7 @@ export const queryHomePageData = defineQuery(`*[_type == "homePage" && _id == "h
     title,
     description,
     ${pageBuilderFragment}
-  }`)
+  }`);
 
 export const querySlugPageData = defineQuery(`
   *[_type == "page" && slug.current == $slug][0]{
@@ -197,11 +198,11 @@ export const querySlugPageData = defineQuery(`
     "slug": slug.current,
     ${pageBuilderFragment}
   }
-  `)
+  `);
 
 export const querySlugPagePaths = defineQuery(/* groq */ `
   *[_type == "page" && defined(slug.current)].slug.current
-`)
+`);
 
 export const queryBlogIndexPageData = defineQuery(`
   *[_type == "blogIndex"][0]{
@@ -218,7 +219,7 @@ export const queryBlogIndexPageData = defineQuery(`
       ${blogCardFragment}
     }
   }
-`)
+`);
 
 export const queryBlogSlugPageData = defineQuery(/* groq */ `
   *[_type == "blog" && slug.current == $slug][0]{
@@ -229,11 +230,11 @@ export const queryBlogSlugPageData = defineQuery(/* groq */ `
     ${richTextFragment},
     ${pageBuilderFragment}
   }
-`)
+`);
 
 export const queryBlogPaths = defineQuery(`
   *[_type == "blog" && defined(slug.current)].slug.current
-`)
+`);
 
 const ogFieldsFragment = /* groq */ `
   _id,
@@ -253,31 +254,31 @@ const ogFieldsFragment = /* groq */ `
   "seoImage": seoImage.asset->url + "?w=1200&h=630&dpr=2&fit=max",
   "logo": *[_type == "settings"][0].logo.asset->url + "?w=80&h=40&dpr=3&fit=max&q=100",
   "date": coalesce(date, _createdAt)
-`
+`;
 
 export const queryHomePageOGData = defineQuery(/* groq */ `
   *[_type == "homePage" && _id == $id][0]{
     ${ogFieldsFragment}
   }
-  `)
+  `);
 
 export const querySlugPageOGData = defineQuery(/* groq */ `
   *[_type == "page" && _id == $id][0]{
     ${ogFieldsFragment}
   }
-`)
+`);
 
 export const queryBlogPageOGData = defineQuery(/* groq */ `
   *[_type == "blog" && _id == $id][0]{
     ${ogFieldsFragment}
   }
-`)
+`);
 
 export const queryGenericPageOGData = defineQuery(/* groq */ `
   *[ defined(slug.current) && _id == $id][0]{
     ${ogFieldsFragment}
   }
-`)
+`);
 
 export const queryFooterData = defineQuery(`
   *[_type == "footer" && _id == "footer"][0]{
@@ -298,7 +299,7 @@ export const queryFooterData = defineQuery(`
       }
     }
   }
-`)
+`);
 
 export const queryNavbarData = defineQuery(/* groq */ `
   *[_type == "navbar" && _id == "navbar"][0]{
@@ -337,7 +338,7 @@ export const queryNavbarData = defineQuery(/* groq */ `
     "logo": *[_type == "settings"][0].logo.asset->url + "?w=80&h=40&dpr=3&fit=max",
     "siteTitle": *[_type == "settings"][0].siteTitle,
   }
-`)
+`);
 
 export const querySitemapData = defineQuery(/* groq */ `{
   "slugPages": *[_type == "page" && defined(slug.current)]{
@@ -348,20 +349,15 @@ export const querySitemapData = defineQuery(/* groq */ `{
     "slug": slug.current,
     "lastModified": _updatedAt
   }
-}`)
+}`);
 
 export const queryGlobalSeoSettings = defineQuery(`
   *[_type == "settings"][0]{
     _id,
     _type,
     siteTitle,
-    logo{
-      ...,
-      ...asset->{
-        "alt": coalesce(altText, originalFilename, "no-alt"),
-        "blurData": metadata.lqip,
-        "dominantColor": metadata.palette.dominant.background
-      }
+    logo {
+      ${imageFields}
     },
     siteDescription,
     socialLinks{
@@ -372,7 +368,7 @@ export const queryGlobalSeoSettings = defineQuery(`
       youtube
     }
   }
-`)
+`);
 
 export const querySettingsData = defineQuery(`
   *[_type == "settings"][0]{
@@ -384,7 +380,7 @@ export const querySettingsData = defineQuery(`
     "socialLinks": socialLinks,
     "contactEmail": contactEmail,
   }
-`)
+`);
 
 /**
  * Query to extract a single image from a page document
@@ -395,4 +391,4 @@ export const queryImageType = defineQuery(`
   *[_type == "page" && defined(image)][0]{
     ${imageFragment}
   }.image
-`)
+`);

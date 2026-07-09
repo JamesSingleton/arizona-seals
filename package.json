@@ -2,21 +2,25 @@
   "name": "arizona-seals",
   "version": "0.0.2",
   "private": true,
+  "packageManager": "pnpm@10.34.1",
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
     "build": "turbo build",
+    "clean": "git clean -xdf node_modules",
+    "clean:workspaces": "turbo run clean",
     "dev": "turbo dev",
-    "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
+    "format": "biome format --write .",
+    "check:format": "biome check .",
+    "check:types": "turbo run check:types"
   },
   "devDependencies": {
-    "@workspace/eslint-config": "workspace:*",
+    "@biomejs/biome": "^2.5.3",
     "@workspace/typescript-config": "workspace:*",
-    "prettier": "^3.7.4",
-    "turbo": "^2.6.3",
+    "turbo": "^2.10.4",
     "typescript": "5.9.3"
-  },
-  "packageManager": "pnpm@10.18.2",
-  "engines": {
-    "node": ">=20"
   }
 }

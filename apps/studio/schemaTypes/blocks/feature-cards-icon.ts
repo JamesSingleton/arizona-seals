@@ -1,6 +1,5 @@
 import { LayoutGrid } from "lucide-react";
-import { defineField } from "sanity";
-import { defineType } from "sanity";
+import { defineField, defineType } from "sanity";
 import { preview } from "sanity-plugin-icon-picker";
 
 import { iconField } from "../common";

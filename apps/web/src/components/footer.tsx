@@ -1,19 +1,27 @@
-import Link from 'next/link'
+import Link from "next/link";
 
-import { sanityFetch } from '@/lib/sanity/live'
-import { queryFooterData, queryGlobalSeoSettings } from '@/lib/sanity/query'
-import type { QueryFooterDataResult, QueryGlobalSeoSettingsResult } from '@/lib/sanity/sanity.types'
-
-import { Logo } from './logo'
-import { FacebookIcon, InstagramIcon, LinkedinIcon, XIcon, YoutubeIcon } from './social-icons'
+import { sanityFetch } from "@/lib/sanity/live";
+import { queryFooterData, queryGlobalSeoSettings } from "@/lib/sanity/query";
+import type {
+  QueryFooterDataResult,
+  QueryGlobalSeoSettingsResult,
+} from "@/lib/sanity/sanity.types";
+import { Logo } from "./logo";
+import {
+  FacebookIcon,
+  InstagramIcon,
+  LinkedinIcon,
+  XIcon,
+  YoutubeIcon,
+} from "./social-icons";
 
 interface SocialLinksProps {
-  data: NonNullable<QueryGlobalSeoSettingsResult>['socialLinks']
+  data: NonNullable<QueryGlobalSeoSettingsResult>["socialLinks"];
 }
 
 interface FooterProps {
-  data: NonNullable<QueryFooterDataResult>
-  settingsData: NonNullable<QueryGlobalSeoSettingsResult>
+  data: NonNullable<QueryFooterDataResult>;
+  settingsData: NonNullable<QueryGlobalSeoSettingsResult>;
 }
 
 export async function FooterServer() {
@@ -24,40 +32,40 @@ export async function FooterServer() {
     sanityFetch({
       query: queryGlobalSeoSettings,
     }),
-  ])
+  ]);
 
-  if (!response?.data || !settingsResponse?.data) return <FooterSkeleton />
-  return <Footer data={response.data} settingsData={settingsResponse.data} />
+  if (!response?.data || !settingsResponse?.data) return <FooterSkeleton />;
+  return <Footer data={response.data} settingsData={settingsResponse.data} />;
 }
 
 function SocialLinks({ data }: SocialLinksProps) {
-  if (!data) return null
+  if (!data) return null;
 
-  const { facebook, twitter, instagram, youtube, linkedin } = data
+  const { facebook, twitter, instagram, youtube, linkedin } = data;
 
   const socialLinks = [
     {
       url: instagram,
       Icon: InstagramIcon,
-      label: 'Follow us on Instagram',
+      label: "Follow us on Instagram",
     },
     {
       url: facebook,
       Icon: FacebookIcon,
-      label: 'Follow us on Facebook',
+      label: "Follow us on Facebook",
     },
-    { url: twitter, Icon: XIcon, label: 'Follow us on Twitter' },
+    { url: twitter, Icon: XIcon, label: "Follow us on Twitter" },
     {
       url: linkedin,
       Icon: LinkedinIcon,
-      label: 'Follow us on LinkedIn',
+      label: "Follow us on LinkedIn",
     },
     {
       url: youtube,
       Icon: YoutubeIcon,
-      label: 'Subscribe to our YouTube channel',
+      label: "Subscribe to our YouTube channel",
     },
-  ].filter((link) => link.url)
+  ].filter((link) => link.url);
 
   return (
     <ul className="flex items-center space-x-6 text-muted-foreground">
@@ -67,7 +75,7 @@ function SocialLinks({ data }: SocialLinksProps) {
           className="font-medium hover:text-primary"
         >
           <Link
-            href={url ?? '#'}
+            href={url ?? "#"}
             target="_blank"
             prefetch={false}
             rel="noopener noreferrer"
@@ -79,7 +87,7 @@ function SocialLinks({ data }: SocialLinksProps) {
         </li>
       ))}
     </ul>
-  )
+  );
 }
 
 export function FooterSkeleton() {
@@ -97,7 +105,10 @@ export function FooterSkeleton() {
               </div>
               <div className="flex items-center space-x-6">
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <div key={i} className="h-6 w-6 bg-muted rounded animate-pulse" />
+                  <div
+                    key={i}
+                    className="h-6 w-6 bg-muted rounded animate-pulse"
+                  />
                 ))}
               </div>
             </div>
@@ -107,7 +118,10 @@ export function FooterSkeleton() {
                   <div className="mb-6 h-6 w-24 bg-muted rounded animate-pulse" />
                   <div className="space-y-4">
                     {[1, 2, 3, 4].map((item) => (
-                      <div key={item} className="h-4 w-full bg-muted rounded animate-pulse" />
+                      <div
+                        key={item}
+                        className="h-4 w-full bg-muted rounded animate-pulse"
+                      />
                     ))}
                   </div>
                 </div>
@@ -124,13 +138,13 @@ export function FooterSkeleton() {
         </div>
       </section>
     </footer>
-  )
+  );
 }
 
 function Footer({ data, settingsData }: FooterProps) {
-  const { subtitle, columns } = data
-  const { siteTitle, logo, socialLinks } = settingsData
-  const year = new Date().getFullYear()
+  const { subtitle, columns } = data;
+  const { siteTitle, logo, socialLinks } = settingsData;
+  const year = new Date().getFullYear();
 
   return (
     <footer className="mt-20 pb-8">
@@ -140,7 +154,6 @@ function Footer({ data, settingsData }: FooterProps) {
             <div className="flex w-full max-w-96 shrink flex-col items-center justify-between gap-6 md:gap-8 lg:items-start">
               <div>
                 <span className="flex items-center justify-center gap-4 lg:justify-start">
-                  {/* @ts-expect-error not sure why the types are not aligning */}
                   <Logo alt={siteTitle} priority image={logo} />
                 </span>
                 {subtitle && (
@@ -164,9 +177,13 @@ function Footer({ data, settingsData }: FooterProps) {
                             className="font-medium hover:text-primary"
                           >
                             <Link
-                              href={link.href ?? '#'}
-                              target={link.openInNewTab ? '_blank' : undefined}
-                              rel={link.openInNewTab ? 'noopener noreferrer' : undefined}
+                              href={link.href ?? "#"}
+                              target={link.openInNewTab ? "_blank" : undefined}
+                              rel={
+                                link.openInNewTab
+                                  ? "noopener noreferrer"
+                                  : undefined
+                              }
                             >
                               {link.name}
                             </Link>
@@ -197,5 +214,5 @@ function Footer({ data, settingsData }: FooterProps) {
         </div>
       </section>
     </footer>
-  )
+  );
 }

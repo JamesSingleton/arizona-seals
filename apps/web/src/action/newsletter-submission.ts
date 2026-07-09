@@ -1,6 +1,6 @@
-'use server'
+"use server";
 
 export async function newsletterSubmission(formData: FormData) {
-  const email = formData.get('email')
-  console.log('🚀 ~ newsletterSubmission ~ email:', email)
+  const email = formData.get("email");
+  console.log("🚀 ~ newsletterSubmission ~ email:", email);
 }
