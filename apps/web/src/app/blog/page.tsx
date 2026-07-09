@@ -3,34 +3,50 @@ import { notFound } from "next/navigation";
 
 import { BlogCard, BlogHeader, FeaturedBlogCard } from "@/components/blog-card";
 import { PageBuilder } from "@/components/pagebuilder";
+import { isSanityConfigured } from "@/lib/sanity/api";
 import { sanityFetch } from "@/lib/sanity/live";
 import { queryBlogIndexPageData } from "@/lib/sanity/query";
+import type { QueryBlogIndexPageDataResult } from "@/lib/sanity/sanity.types";
 import { getSEOMetadata } from "@/lib/seo";
 import { handleErrors } from "@/utils";
 
 async function fetchBlogPosts() {
-  return await handleErrors(sanityFetch({ query: queryBlogIndexPageData }));
-}
-
-export async function generateMetadata(): Promise<Metadata> {
-  const { data: result } = await sanityFetch({
-    query: queryBlogIndexPageData,
-    stega: false,
-  });
-  return getSEOMetadata(
-    result
-      ? {
-          title: result?.title ?? result?.seoTitle ?? "",
-          description: result?.description ?? result?.seoDescription ?? "",
-          slug: `/${result?.slug}`,
-          contentId: result?._id,
-          contentType: result?._type,
-        }
-      : {},
+  return await handleErrors(
+    sanityFetch({ query: queryBlogIndexPageData }) as Promise<{
+      data: QueryBlogIndexPageDataResult;
+    }>,
   );
 }
 
+export async function generateMetadata(): Promise<Metadata> {
+  if (!isSanityConfigured) {
+    return getSEOMetadata({ title: "News", slug: "/blog" });
+  }
+
+  try {
+    const { data: result } = (await sanityFetch({
+      query: queryBlogIndexPageData,
+      stega: false,
+    })) as { data: QueryBlogIndexPageDataResult };
+    return getSEOMetadata(
+      result
+        ? {
+            title: result?.title ?? result?.seoTitle ?? "",
+            description: result?.description ?? result?.seoDescription ?? "",
+            slug: `/${result?.slug}`,
+            contentId: result?._id,
+            contentType: result?._type,
+          }
+        : {},
+    );
+  } catch {
+    return getSEOMetadata({ title: "News", slug: "/blog" });
+  }
+}
+
 export default async function BlogIndexPage() {
+  if (!isSanityConfigured) notFound();
+
   const [res, err] = await fetchBlogPosts();
   if (err || !res?.data) notFound();
 
@@ -51,9 +67,9 @@ export default async function BlogIndexPage() {
 
   if (!blogs.length) {
     return (
-      <main className="container my-16 mx-auto px-4 md:px-6">
+      <main className="container mx-auto my-16 px-4 md:px-6">
         <BlogHeader title={title} description={description} />
-        <div className="text-center py-12">
+        <div className="py-12 text-center">
           <p className="text-muted-foreground">
             No blog posts available at the moment.
           </p>
@@ -77,11 +93,11 @@ export default async function BlogIndexPage() {
 
   return (
     <main className="bg-background">
-      <div className="container my-16 mx-auto px-4 md:px-6">
+      <div className="container mx-auto my-16 px-4 md:px-6">
         <BlogHeader title={title} description={description} />
 
         {featuredBlogs.length > 0 && (
-          <div className="mx-auto mt-8 sm:mt-12 md:mt-16 mb-12 lg:mb-20 grid grid-cols-1 gap-8 md:gap-12">
+          <div className="mx-auto mt-8 mb-12 grid grid-cols-1 gap-8 sm:mt-12 md:mt-16 md:gap-12 lg:mb-20">
             {featuredBlogs.map((blog) => (
               <FeaturedBlogCard key={blog._id} blog={blog} />
             ))}
@@ -89,7 +105,7 @@ export default async function BlogIndexPage() {
         )}
 
         {remainingBlogs.length > 0 && (
-          <div className="grid grid-cols-1 gap-8 md:gap-12 lg:grid-cols-2 mt-8">
+          <div className="mt-8 grid grid-cols-1 gap-8 md:gap-12 lg:grid-cols-2">
             {remainingBlogs.map((blog) => (
               <BlogCard key={blog._id} blog={blog} />
             ))}

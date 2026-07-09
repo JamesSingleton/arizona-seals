@@ -1,5 +1,3 @@
-import { assertValue } from "./utils";
-
 export const getBaseUrl = () => {
   if (process.env.VERCEL_ENV === "production") {
     return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
@@ -13,10 +11,9 @@ export const getBaseUrl = () => {
 
 export const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET ?? "production";
 
-export const projectId = assertValue(
-  process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-  "Missing environment variable: NEXT_PUBLIC_SANITY_PROJECT_ID",
-);
+/** Placeholder allows the static marketing site to run before Sanity is connected. */
+export const projectId =
+  process.env.NEXT_PUBLIC_SANITY_PROJECT_ID ?? "placeholder";
 
 /**
  * see https://www.sanity.io/docs/api-versioning for how versioning works

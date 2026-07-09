@@ -65,10 +65,20 @@ const blogCardFragment = /* groq */ `
   title,
   description,
   "slug":slug.current,
+  category,
   richText,
   ${imageFragment},
   publishedAt,
   ${blogAuthorFragment}
+`;
+
+const customUrlFragment = /* groq */ `
+  "openInNewTab": openInNewTab,
+  "href": select(
+    type == "internal" => internal->slug.current,
+    type == "external" => external,
+    "#"
+  )
 `;
 
 const buttonsFragment = /* groq */ `
@@ -92,6 +102,7 @@ const ctaBlock = /* groq */ `
     ...,
     ${richTextFragment},
     ${buttonsFragment},
+    ${imageFragment},
   }
 `;
 const imageLinkCardsBlock = /* groq */ `
@@ -126,6 +137,135 @@ const heroBlock = /* groq */ `
     ${imageFragment},
     ${buttonsFragment},
     ${richTextFragment}
+  }
+`;
+
+const splitContentBlock = /* groq */ `
+  _type == "splitContent" => {
+    ...,
+    ${richTextFragment},
+    ${buttonsFragment},
+    ${imageFragment}
+  }
+`;
+
+const statsBlock = /* groq */ `
+  _type == "stats" => {
+    ...,
+    ${imageFragment}
+  }
+`;
+
+const programsPreviewBlock = /* groq */ `
+  _type == "programsPreview" => {
+    ...,
+    viewAllUrl{
+      ${customUrlFragment}
+    },
+    "programs": coalesce(
+      programs[]->{
+        _id,
+        name,
+        "id": slug.current,
+        tagline,
+        level,
+        previewLevel,
+        accentColor,
+        description,
+        previewDescription,
+        expectations,
+        requirements,
+        equipment,
+        sessions,
+        ${imageFragment}
+      },
+      *[_type == "program"] | order(sortOrder asc){
+        _id,
+        name,
+        "id": slug.current,
+        tagline,
+        level,
+        previewLevel,
+        accentColor,
+        description,
+        previewDescription,
+        expectations,
+        requirements,
+        equipment,
+        sessions,
+        ${imageFragment}
+      }
+    )
+  }
+`;
+
+const latestNewsBlock = /* groq */ `
+  _type == "latestNews" => {
+    ...,
+    "posts": select(
+      count(posts) > 0 => posts[]->{
+        ${blogCardFragment}
+      },
+      *[_type == "blog" && (seoHideFromLists != true)] | order(publishedAt desc)[0...coalesce(^.count, 3)]{
+        ${blogCardFragment}
+      }
+    )
+  }
+`;
+
+const sponsorsMarqueeBlock = /* groq */ `
+  _type == "sponsorsMarquee" => {
+    ...,
+    viewAllUrl{
+      ${customUrlFragment}
+    },
+    "sponsors": coalesce(
+      sponsors[]->{
+        _id,
+        name,
+        url,
+        tier,
+        featured,
+        ${imageFragment}
+      },
+      *[_type == "sponsor" && featured != false] | order(sortOrder asc){
+        _id,
+        name,
+        url,
+        tier,
+        featured,
+        ${imageFragment}
+      }
+    )
+  }
+`;
+
+const pageHeroBlock = /* groq */ `
+  _type == "pageHero" => {
+    ...,
+    backgroundImage {
+      ${imageFields}
+    }
+  }
+`;
+
+const timelineBlock = /* groq */ `
+  _type == "timeline" => {
+    ...
+  }
+`;
+
+const contactInfoBlock = /* groq */ `
+  _type == "contactInfo" => {
+    ...,
+    "settings": *[_type == "settings"][0]{
+      contactEmail,
+      contactPhone,
+      primaryAddress,
+      officeHours,
+      inquiryTypes,
+      mapUrl
+    }
   }
 `;
 
@@ -174,12 +314,24 @@ const pageBuilderFragment = /* groq */ `
     _type,
     ${ctaBlock},
     ${heroBlock},
+    ${splitContentBlock},
+    ${statsBlock},
+    ${programsPreviewBlock},
+    ${latestNewsBlock},
+    ${sponsorsMarqueeBlock},
+    ${pageHeroBlock},
+    ${timelineBlock},
+    ${contactInfoBlock},
     ${faqAccordionBlock},
     ${subscribeNewsletterBlock},
     ${imageLinkCardsBlock},
     ${teamBlock}
   }
 `;
+
+// Seals page-builder blocks ready for CMS wiring (routes still use static content):
+// hero (fullBleed), cta (fullBleed), splitContent, stats, programsPreview,
+// latestNews, sponsorsMarquee, pageHero, timeline, contactInfo
 
 export const queryHomePageData =
   defineQuery(`*[_type == "homePage" && _id == "homePage"][0]{

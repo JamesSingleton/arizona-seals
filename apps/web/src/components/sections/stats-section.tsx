@@ -1,0 +1,82 @@
+import Image from "next/image";
+
+import { type Stat, stats } from "@/content/stats";
+import { urlFor } from "@/lib/sanity/client";
+
+const DEFAULT_STATS_IMAGE = urlFor({
+  _id: "image-5eab7ec38166ec7e22db4124e92ff6db561278dc-6000x4000-avif",
+})
+  .width(1200)
+  .height(1040)
+  .fit("crop")
+  .quality(80)
+  .url();
+
+export type StatsSectionProps = {
+  eyebrow?: string;
+  title?: string;
+  items?: Stat[];
+  image?: string;
+  imageAlt?: string;
+};
+
+export function StatsSection({
+  eyebrow = "By the Numbers",
+  title = "We've Got a Lot to Be Proud About",
+  items = stats,
+  image = DEFAULT_STATS_IMAGE,
+  imageAlt = "Arizona Seals swimmer competing at a meet",
+}: StatsSectionProps) {
+  return (
+    <section className="bg-navy py-20 md:py-28">
+      <div className="mx-auto max-w-7xl px-6 sm:px-10 lg:px-16">
+        <div className="mb-16 text-center">
+          <div className="mb-4 flex items-center justify-center gap-4">
+            <div className="h-0.5 w-12 bg-cyan-brand" />
+            <span className="font-display text-xs font-bold tracking-[0.3em] text-cyan-brand uppercase">
+              {eyebrow}
+            </span>
+            <div className="h-0.5 w-12 bg-cyan-brand" />
+          </div>
+          <h2
+            className="font-display font-black leading-none text-white uppercase"
+            style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)" }}
+          >
+            {title}
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 items-center gap-0 lg:grid-cols-2 lg:gap-16">
+          <div className="divide-y divide-white/10">
+            {items.map((s) => (
+              <div key={s.label} className="flex items-center gap-6 py-5">
+                <span
+                  className="w-32 shrink-0 text-right font-display leading-none font-black text-white"
+                  style={{ fontSize: "clamp(2.5rem, 7vw, 5rem)" }}
+                >
+                  {s.number}
+                </span>
+                <div className="h-0.5 w-6 shrink-0 bg-cyan-brand" />
+                <span className="font-display text-sm font-bold tracking-wide text-white/70 uppercase">
+                  {s.label}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-12 lg:mt-0 lg:sticky lg:top-24 lg:self-start">
+            <div className="relative h-64 overflow-hidden lg:h-[520px]">
+              <Image
+                src={image}
+                alt={imageAlt}
+                fill
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                className="object-cover object-top"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

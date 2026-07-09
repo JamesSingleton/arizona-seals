@@ -1,8 +1,10 @@
 import {
   BookMarked,
+  Building2,
   CogIcon,
   File,
   FileText,
+  Handshake,
   HomeIcon,
   type LucideIcon,
   MessageCircleQuestion,
@@ -10,6 +12,7 @@ import {
   PanelTopDashedIcon,
   Settings2,
   User,
+  Waves,
 } from "lucide-react";
 import type {
   StructureBuilder,
@@ -110,6 +113,9 @@ export const structure = (
         icon: MessageCircleQuestion,
       }),
       createList({ S, type: "staff", title: "Staff", icon: User }),
+      createList({ S, type: "program", title: "Programs", icon: Waves }),
+      createList({ S, type: "sponsor", title: "Sponsors", icon: Handshake }),
+      createList({ S, type: "facility", title: "Facilities", icon: Building2 }),
       S.divider(),
       S.listItem()
         .title("Site Configuration")

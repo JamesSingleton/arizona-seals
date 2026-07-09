@@ -32,10 +32,18 @@ interface OgImageParams {
 
 // Default site configuration
 const siteConfig: SiteConfig = {
-  title: "Roboto Studio Demo",
-  description: "Roboto Studio Demo",
-  twitterHandle: "@studioroboto",
-  keywords: ["roboto", "studio", "demo", "sanity", "next", "react", "template"],
+  title: "Arizona Seals Swimming",
+  description:
+    "A premier competitive swim club in Arizona dedicated to developing athletes of all ages and skill levels.",
+  twitterHandle: "@arizonaseals",
+  keywords: [
+    "swim club",
+    "Arizona",
+    "competitive swimming",
+    "swim team",
+    "USA Swimming",
+    "Maricopa",
+  ],
 };
 
 function generateOgImageUrl(params: OgImageParams = {}): string {

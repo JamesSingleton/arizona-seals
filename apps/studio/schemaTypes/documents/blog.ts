@@ -88,6 +88,19 @@ export const blog = defineType({
       group: GROUP.MAIN_CONTENT,
     }),
     defineField({
+      name: "category",
+      type: "string",
+      title: "Category",
+      group: GROUP.MAIN_CONTENT,
+      options: {
+        list: [
+          { title: "Results", value: "Results" },
+          { title: "Club News", value: "Club News" },
+          { title: "Awards", value: "Awards" },
+        ],
+      },
+    }),
+    defineField({
       name: "image",
       title: "Image",
       type: "image",

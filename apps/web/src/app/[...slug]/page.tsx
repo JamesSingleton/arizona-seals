@@ -2,28 +2,36 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { PageBuilder } from "@/components/pagebuilder";
+import { isSanityConfigured } from "@/lib/sanity/api";
 import { client } from "@/lib/sanity/client";
 import { sanityFetch } from "@/lib/sanity/live";
 import { querySlugPageData, querySlugPagePaths } from "@/lib/sanity/query";
+import type { QuerySlugPageDataResult } from "@/lib/sanity/sanity.types";
 import { getSEOMetadata } from "@/lib/seo";
 
 async function fetchSlugPageData(slug: string, stega = true) {
-  return await sanityFetch({
+  // Cast until TypeGen is regenerated after Seals page-builder GROQ updates
+  return (await sanityFetch({
     query: querySlugPageData,
     params: { slug: `/${slug}` },
     stega,
-  });
+  })) as { data: QuerySlugPageDataResult };
 }
 
 async function fetchSlugPagePaths() {
-  const slugs = await client.fetch(querySlugPagePaths);
-  const paths: { slug: string[] }[] = [];
-  for (const slug of slugs) {
-    if (!slug) continue;
-    const parts = slug.split("/").filter(Boolean);
-    paths.push({ slug: parts });
+  if (!isSanityConfigured) return [];
+  try {
+    const slugs = await client.fetch(querySlugPagePaths);
+    const paths: { slug: string[] }[] = [];
+    for (const slug of slugs) {
+      if (!slug) continue;
+      const parts = slug.split("/").filter(Boolean);
+      paths.push({ slug: parts });
+    }
+    return paths;
+  } catch {
+    return [];
   }
-  return paths;
 }
 
 export async function generateMetadata({
@@ -33,19 +41,28 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const slugString = slug.join("/");
-  const { data: pageData } = await fetchSlugPageData(slugString, false);
 
-  return getSEOMetadata(
-    pageData
-      ? {
-          title: pageData?.title ?? pageData?.seoTitle ?? "",
-          description: pageData?.description ?? pageData?.seoDescription ?? "",
-          slug: `/${pageData?.slug}`,
-          contentId: pageData?._id,
-          contentType: pageData?._type,
-        }
-      : { slug: `/${slugString}` },
-  );
+  if (!isSanityConfigured) {
+    return getSEOMetadata({ slug: `/${slugString}` });
+  }
+
+  try {
+    const { data: pageData } = await fetchSlugPageData(slugString, false);
+    return getSEOMetadata(
+      pageData
+        ? {
+            title: pageData?.title ?? pageData?.seoTitle ?? "",
+            description:
+              pageData?.description ?? pageData?.seoDescription ?? "",
+            slug: `/${pageData?.slug}`,
+            contentId: pageData?._id,
+            contentType: pageData?._type,
+          }
+        : { slug: `/${slugString}` },
+    );
+  } catch {
+    return getSEOMetadata({ slug: `/${slugString}` });
+  }
 }
 
 export async function generateStaticParams() {
@@ -57,24 +74,33 @@ export default async function SlugPage({
 }: {
   params: Promise<{ slug: string[] }>;
 }) {
-  const { slug } = await params;
-  const slugString = slug.join("/");
-  const { data: pageData } = await fetchSlugPageData(slugString);
-
-  if (!pageData) {
+  if (!isSanityConfigured) {
     return notFound();
   }
 
-  const { title, pageBuilder, _id, _type } = pageData ?? {};
+  const { slug } = await params;
+  const slugString = slug.join("/");
 
-  return !Array.isArray(pageBuilder) || pageBuilder?.length === 0 ? (
-    <div className="flex flex-col items-center justify-center min-h-[50vh] text-center p-4">
-      <h1 className="text-2xl font-semibold mb-4 capitalize">{title}</h1>
-      <p className="text-muted-foreground mb-6">
-        This page has no content blocks yet.
-      </p>
-    </div>
-  ) : (
-    <PageBuilder pageBuilder={pageBuilder} id={_id} type={_type} />
-  );
+  try {
+    const { data: pageData } = await fetchSlugPageData(slugString);
+
+    if (!pageData) {
+      return notFound();
+    }
+
+    const { title, pageBuilder, _id, _type } = pageData ?? {};
+
+    return !Array.isArray(pageBuilder) || pageBuilder?.length === 0 ? (
+      <div className="flex min-h-[50vh] flex-col items-center justify-center p-4 text-center">
+        <h1 className="mb-4 text-2xl font-semibold capitalize">{title}</h1>
+        <p className="mb-6 text-muted-foreground">
+          This page has no content blocks yet.
+        </p>
+      </div>
+    ) : (
+      <PageBuilder pageBuilder={pageBuilder} id={_id} type={_type} />
+    );
+  } catch {
+    return notFound();
+  }
 }

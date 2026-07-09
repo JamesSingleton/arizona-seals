@@ -3,52 +3,24 @@ import { defineField, defineType } from "sanity";
 
 import { buttonsField, richTextField } from "../common";
 
-const ctaCard = defineField({
-  name: "ctaCard",
-  type: "object",
-  fields: [
-    defineField({
-      name: "title",
-      title: "Title",
-      type: "string",
-      description: "The title of the CTA card",
-    }),
-    defineField({
-      name: "description",
-      title: "Description",
-      type: "text",
-      description: "A brief description of the CTA card content",
-    }),
-    defineField({
-      name: "image",
-      title: "Logo",
-      type: "image",
-      description: "The logo or icon to display on the CTA card",
-    }),
-    defineField({
-      name: "url",
-      title: "URL",
-      type: "url",
-      description: "The destination URL when clicking the link",
-    }),
-  ],
-  preview: {
-    select: {
-      title: "title",
-      media: "image",
-    },
-    prepare: ({ title, media }) => ({
-      title: title || "Untitled CTA Card",
-      media,
-    }),
-  },
-});
-
 export const cta = defineType({
   name: "cta",
   type: "object",
   icon: PhoneIcon,
   fields: [
+    defineField({
+      name: "layout",
+      type: "string",
+      title: "Layout",
+      options: {
+        list: [
+          { title: "Card", value: "card" },
+          { title: "Full Bleed", value: "fullBleed" },
+        ],
+        layout: "radio",
+      },
+      initialValue: "card",
+    }),
     defineField({
       name: "eyebrow",
       title: "Eyebrow",
@@ -63,22 +35,24 @@ export const cta = defineType({
       description: "The large text that is the primary focus of the block",
     }),
     richTextField,
+    defineField({
+      name: "image",
+      type: "image",
+      title: "Background Image",
+      description: "Used for full-bleed layout",
+      options: { hotspot: true },
+      hidden: ({ parent }) => parent?.layout !== "fullBleed",
+    }),
     buttonsField,
-    // defineField({
-    //   name: "ctaCards",
-    //   title: "CTA Cards",
-    //   type: "array",
-    //   description: "Add multiple CTA cards with logos, titles, and links",
-    //   of: [ctaCard],
-    // }),
   ],
   preview: {
     select: {
       title: "title",
+      layout: "layout",
     },
-    prepare: ({ title }) => ({
+    prepare: ({ title, layout }) => ({
       title,
-      subtitle: "CTA Block",
+      subtitle: `CTA (${layout === "fullBleed" ? "Full Bleed" : "Card"})`,
     }),
   },
 });

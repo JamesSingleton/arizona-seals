@@ -4,9 +4,22 @@ import type {
   QueryImageTypeResult,
 } from "./lib/sanity/sanity.types";
 
-export type PageBuilderBlockTypes = NonNullable<
-  NonNullable<QueryHomePageDataResult>["pageBuilder"]
->[number]["_type"];
+/** Legacy generated block types + Seals CMS-ready blocks (TypeGen pending) */
+export type SealsPageBuilderBlockTypes =
+  | "splitContent"
+  | "stats"
+  | "programsPreview"
+  | "latestNews"
+  | "sponsorsMarquee"
+  | "pageHero"
+  | "timeline"
+  | "contactInfo";
+
+export type PageBuilderBlockTypes =
+  | NonNullable<
+      NonNullable<QueryHomePageDataResult>["pageBuilder"]
+    >[number]["_type"]
+  | SealsPageBuilderBlockTypes;
 
 export type PagebuilderType<T extends PageBuilderBlockTypes> = Extract<
   NonNullable<NonNullable<QueryHomePageDataResult>["pageBuilder"]>[number],
@@ -17,10 +30,6 @@ export type SanityButtonProps = NonNullable<
   NonNullable<PagebuilderType<"hero">>["buttons"]
 >[number];
 
-// export type SanityImageProps = Extract<
-//   NonNullable<QueryImageTypeResult>,
-//   { alt: string; blurData: string | null; dominantColor: string | null }
-// >;
 export type SanityImageProps = NonNullable<QueryImageTypeResult>;
 
 export type SanityRichTextProps =

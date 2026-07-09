@@ -35,10 +35,8 @@ export function FaqAccordion({
         </div>
         <div className="my-16 max-w-xl mx-auto">
           <Accordion
-            type="single"
-            collapsible
             className="w-full"
-            defaultValue="3"
+            defaultValue={[faqs?.[0]?._id].filter(Boolean) as string[]}
           >
             {faqs?.map((faq, index) => (
               <AccordionItem

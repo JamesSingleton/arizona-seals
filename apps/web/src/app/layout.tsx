@@ -1,60 +1,71 @@
 import "@workspace/ui/globals.css";
 
-import { Geist, Geist_Mono } from "next/font/google";
-import { draftMode } from "next/headers";
-import { VisualEditing } from "next-sanity/visual-editing";
-import { Suspense } from "react";
-import { preconnect, prefetchDNS } from "react-dom";
+import type { Metadata, Viewport } from "next";
+import { Barlow_Condensed, Inter } from "next/font/google";
 
-import { FooterServer, FooterSkeleton } from "@/components/footer";
-import { NavbarServer, NavbarSkeleton } from "@/components/navbar";
-import { PreviewBar } from "@/components/preview-bar";
 import { Providers } from "@/components/providers";
-import { SanityLive } from "@/lib/sanity/live";
+import { SiteFooter } from "@/components/site-footer";
+import { SiteNavbar } from "@/components/site-navbar";
 
-const fontGeist = Geist({
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-geist",
-  weight: ["400", "500", "600", "700"],
+  variable: "--font-sans",
   display: "swap",
 });
 
-const fontMono = Geist_Mono({
+const barlowCondensed = Barlow_Condensed({
   subsets: ["latin"],
-  variable: "--font-mono",
-  weight: ["400", "700"],
+  weight: ["400", "600", "700", "800", "900"],
+  variable: "--font-display",
   display: "swap",
 });
 
-export default async function RootLayout({
+export const metadata: Metadata = {
+  title: {
+    default: "Arizona Seals Swimming",
+    template: "%s | Arizona Seals Swimming",
+  },
+  description:
+    "Arizona Seals Swimming – a premier competitive swim club in Arizona dedicated to developing athletes of all ages and skill levels.",
+  keywords: [
+    "swim club",
+    "Arizona",
+    "competitive swimming",
+    "swim team",
+    "USA Swimming",
+    "Maricopa",
+  ],
+  openGraph: {
+    title: "Arizona Seals Swimming",
+    description: "A premier competitive swim club in Arizona.",
+    siteName: "Arizona Seals Swimming",
+  },
+};
+
+export const viewport: Viewport = {
+  colorScheme: "light dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#0077A3" },
+    { media: "(prefers-color-scheme: dark)", color: "#0D1520" },
+  ],
+};
+
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  preconnect("https://cdn.sanity.io");
-  prefetchDNS("https://cdn.sanity.io");
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${fontGeist.variable} ${fontMono.variable} font-geist antialiased`}
-      >
+    <html
+      lang="en"
+      className={`${inter.variable} ${barlowCondensed.variable}`}
+      suppressHydrationWarning
+    >
+      <body className="font-sans antialiased">
         <Providers>
-          <Suspense fallback={<NavbarSkeleton />}>
-            <NavbarServer />
-          </Suspense>
-          {(await draftMode()).isEnabled ? (
-            <>
-              {children}
-              <PreviewBar />
-              <VisualEditing />
-            </>
-          ) : (
-            children
-          )}
-          <Suspense fallback={<FooterSkeleton />}>
-            <FooterServer />
-          </Suspense>
-          <SanityLive />
+          <SiteNavbar />
+          {children}
+          <SiteFooter />
         </Providers>
       </body>
     </html>

@@ -1,17 +1,8 @@
-function assertValue<T>(v: T | undefined, errorMessage: string): T {
-  if (v === undefined) {
-    throw new Error(errorMessage);
-  }
-
-  return v;
-}
-
 export const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET ?? "production";
 
-export const projectId = assertValue(
-  process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-  "Missing environment variable: NEXT_PUBLIC_SANITY_PROJECT_ID",
-);
+/** Placeholder allows the static marketing site to run before Sanity is connected. */
+export const projectId =
+  process.env.NEXT_PUBLIC_SANITY_PROJECT_ID ?? "placeholder";
 
 /**
  * see https://www.sanity.io/docs/api-versioning for how versioning works
@@ -24,3 +15,7 @@ export const apiVersion =
  */
 export const studioUrl =
   process.env.NEXT_PUBLIC_SANITY_STUDIO_URL || "http://localhost:3333";
+
+export const isSanityConfigured = Boolean(
+  process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+);

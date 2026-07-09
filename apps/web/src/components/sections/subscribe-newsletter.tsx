@@ -73,7 +73,7 @@ export function SubscribeNewsletter({
             // action={newsletterSubmission}
             action={() => {}}
           >
-            <div className="flex bg-white dark:bg-zinc-200 items-center border rounded-xl p-2 drop-shadow-lg md:w-96 justify-between pl-4">
+            <div className="flex bg-background dark:bg-zinc-200 items-center border rounded-xl p-2 drop-shadow-lg md:w-96 justify-between pl-4">
               <input
                 type="email"
                 name="email"
