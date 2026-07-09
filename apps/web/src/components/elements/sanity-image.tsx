@@ -15,7 +15,11 @@ const ImageWrapper = <T extends React.ElementType = "img">(
   props: WrapperProps<T>,
 ) => <BaseSanityImage baseUrl={SANITY_BASE_URL} {...props} />;
 
-function SanityImageComponent({ image, alt: altProp, ...props }: SanityImageProps) {
+function SanityImageComponent({
+  image,
+  alt: altProp,
+  ...props
+}: SanityImageProps) {
   const processedImageData = processImageData(image);
 
   if (!processedImageData) {

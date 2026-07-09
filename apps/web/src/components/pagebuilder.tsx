@@ -72,7 +72,6 @@ const FULL_BLEED_TYPES = new Set<string>([
   "featureCardsIcon",
 ]);
 
-
 const BLOCK_COMPONENTS = {
   cta: CTABlock as React.ComponentType<PagebuilderType<"cta">>,
   faqAccordion: FaqAccordion as React.ComponentType<
@@ -170,7 +169,6 @@ function isFullBleedBlock(block: PageBuilderBlock): boolean {
   if (block._type === "cta" && layout === "fullBleed") return true;
   return false;
 }
-
 
 function useBlockRenderer(id: string, type: string) {
   const createBlockDataAttribute = useCallback(

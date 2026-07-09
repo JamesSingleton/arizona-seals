@@ -127,7 +127,6 @@ const COACH_SARAH_IMAGE_ID =
 // Programs — Rising (not Bronze), full original fields
 // ---------------------------------------------------------------------------
 
-
 const programs = [
   {
     _id: "program-blue",
@@ -449,7 +448,6 @@ const staff = [
     tier: "assistant",
     email: "alicia@azsealsswimming.com",
     bio: rich(
-
       "A USMS All-American, Alicia leads our adult and masters program with incredible energy. She makes every workout challenging, rewarding, and fun for swimmers of all backgrounds.",
     ),
     certifications: ["ASCA Level 2", "USMS Certified Coach"],
@@ -784,7 +782,6 @@ const homePage = {
       imagePlacement: "end",
       image: imageRef(STATS_IMAGE_ID),
       richText: richMulti(
-
         "Arizona Seals Swimming is a USA Swimming sanctioned club based at Copper Sky Recreation Center in Maricopa, Arizona. We develop competitive swimmers at every level — from athletes just learning to race to those chasing national titles.",
         "Our coaches are dedicated to building not just fast swimmers, but confident, disciplined competitors who carry those values with them beyond the pool.",
       ),
@@ -814,7 +811,6 @@ const homePage = {
         { _key: key(), number: "100%", label: "Sanctioned" },
       ],
     },
-
 
     {
       _key: key(),
@@ -1169,7 +1165,11 @@ const pages = [
             name: "Digital",
             price: "$250",
             availability: "Available",
-            perks: ["Website logo", "Social media mention", "Newsletter shout-out"],
+            perks: [
+              "Website logo",
+              "Social media mention",
+              "Newsletter shout-out",
+            ],
             ctaLabel: "Choose Digital",
             ctaEmail: "sponsors@azsealsswimming.com",
           },

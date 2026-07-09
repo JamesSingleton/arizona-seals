@@ -1,5 +1,6 @@
 "use client";
 
+import type { QueryNavbarDataResult } from "@workspace/sanity/types";
 import {
   buttonCtaClassName,
   buttonVariants,
@@ -21,7 +22,6 @@ import {
   SheetTrigger,
 } from "@workspace/ui/components/sheet";
 import { cn } from "@workspace/ui/lib/utils";
-import type { QueryNavbarDataResult } from "@workspace/sanity/types";
 import { Menu } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -140,8 +140,7 @@ export function SiteNavbar({ columns, buttons }: SiteNavbarProps) {
 
   const isScrolled = mounted && scrolled;
   const solid = isScrolled || menuOpen || sheetOpen;
-  const navColumns =
-    columns && columns.length > 0 ? columns : FALLBACK_COLUMNS;
+  const navColumns = columns && columns.length > 0 ? columns : FALLBACK_COLUMNS;
   const cta = buttons?.[0];
   const ctaHref = normalizeHref(cta?.href) || "/contact";
   const ctaLabel = cta?.text || "Join the Team";
@@ -226,7 +225,6 @@ export function SiteNavbar({ columns, buttons }: SiteNavbarProps) {
                   triggerClass={triggerClass}
                 />
               ))}
-
             </NavigationMenuList>
           </NavigationMenu>
 
@@ -348,7 +346,9 @@ function DesktopNavItem({
             {links.map((link, index) => (
               <li
                 key={link._key}
-                className={index === 0 && item.title === "Programs" ? "mb-1" : ""}
+                className={
+                  index === 0 && item.title === "Programs" ? "mb-1" : ""
+                }
               >
                 <NavigationMenuLink
                   href={normalizeHref(link.href)}

@@ -5,6 +5,7 @@ import {
   queryHomePageOGData,
   querySlugPageOGData,
 } from "@workspace/sanity/query";
+
 import { handleErrors } from "@/utils";
 
 export async function getHomePageOGData(id: string) {

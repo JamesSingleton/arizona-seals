@@ -51,7 +51,6 @@ export function AboutPreview({
 
   // No CMS image → centered intro (coaches philosophy, etc.). Home/about seed images when needed.
   if (centered || !image?.id) {
-
     return (
       <section className={className ?? "bg-background py-20 md:py-28"}>
         <div className="mx-auto max-w-3xl px-6 text-center sm:px-10">

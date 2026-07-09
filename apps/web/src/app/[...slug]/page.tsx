@@ -39,7 +39,6 @@ export async function generateStaticParams() {
   }
 }
 
-
 export async function generateMetadata({
   params,
 }: {
@@ -63,8 +62,7 @@ export async function generateMetadata({
       pageData
         ? {
             title: pageData.seoTitle ?? pageData.title ?? "",
-            description:
-              pageData.seoDescription ?? pageData.description ?? "",
+            description: pageData.seoDescription ?? pageData.description ?? "",
             slug: pageData.slug?.startsWith("/")
               ? pageData.slug
               : `/${pageData.slug}`,

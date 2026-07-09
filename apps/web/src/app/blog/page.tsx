@@ -39,7 +39,6 @@ export async function generateMetadata(): Promise<Metadata> {
             seoNoIndex: Boolean(
               "seoNoIndex" in result ? result.seoNoIndex : false,
             ),
-
           }
         : { title: "Blog", slug: "/blog" },
     );
@@ -54,7 +53,9 @@ export default async function BlogIndexPage() {
   const { isEnabled: isDraftMode } = await draftMode();
   if (isDraftMode) {
     return (
-      <Suspense fallback={<div className="min-h-[40vh] animate-pulse bg-muted" />}>
+      <Suspense
+        fallback={<div className="min-h-[40vh] animate-pulse bg-muted" />}
+      >
         <DynamicBlogIndex />
       </Suspense>
     );
@@ -101,7 +102,11 @@ async function CachedBlogIndex({ perspective, stega }: DynamicFetchOptions) {
           </p>
         </div>
         {pageBuilder && pageBuilder.length > 0 ? (
-          <PageBuilder pageBuilder={pageBuilder as never} id={_id} type={_type} />
+          <PageBuilder
+            pageBuilder={pageBuilder as never}
+            id={_id}
+            type={_type}
+          />
         ) : null}
       </div>
     );

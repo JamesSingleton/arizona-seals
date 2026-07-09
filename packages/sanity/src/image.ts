@@ -34,7 +34,6 @@ export const SANITY_BASE_URL =
 
 export type { ProcessedImageData };
 
-
 // Type guards
 function isValidNumber(value: unknown): value is number {
   return typeof value === "number" && !Number.isNaN(value);
@@ -109,4 +108,3 @@ export function processImageData(
     ...(crop ? { crop } : {}),
   };
 }
-

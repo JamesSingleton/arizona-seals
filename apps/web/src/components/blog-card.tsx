@@ -1,7 +1,7 @@
 "use client";
+import type { QueryBlogIndexPageDataResult } from "@workspace/sanity/types";
 import Link from "next/link";
 
-import type { QueryBlogIndexPageDataResult } from "@workspace/sanity/types";
 import { SanityImage } from "./elements/sanity-image";
 
 type Blog = NonNullable<

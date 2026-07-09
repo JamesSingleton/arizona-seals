@@ -1,8 +1,8 @@
+import { Badge } from "@workspace/ui/components/badge";
 import {
   buttonCtaClassName,
   buttonVariants,
 } from "@workspace/ui/components/button";
-import { Badge } from "@workspace/ui/components/badge";
 import { cn } from "@workspace/ui/lib/utils";
 import { Clock, ExternalLink, MapPin, Phone } from "lucide-react";
 import Image from "next/image";

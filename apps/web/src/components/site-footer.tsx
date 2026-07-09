@@ -3,14 +3,11 @@ import {
   getDynamicFetchOptions,
   sanityFetch,
 } from "@workspace/sanity/live";
-import {
-  queryFooterData,
-  querySettingsData,
-} from "@workspace/sanity/query";
+import { queryFooterData, querySettingsData } from "@workspace/sanity/query";
 import { Mail, MapPin } from "lucide-react";
+import { draftMode } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
-import { draftMode } from "next/headers";
 import { Suspense } from "react";
 
 import { FacebookIcon, InstagramIcon } from "@/components/icons";
@@ -101,7 +98,12 @@ function SiteFooterView({
   } | null;
 }) {
   const quickLinks =
-    columns?.find((c) => c.title?.toLowerCase().includes("quick") || c.title?.toLowerCase().includes("explore"))
+    columns
+      ?.find(
+        (c) =>
+          c.title?.toLowerCase().includes("quick") ||
+          c.title?.toLowerCase().includes("explore"),
+      )
       ?.links?.map((l) => ({
         label: l.name ?? "",
         href: l.href ?? "#",
@@ -118,10 +120,7 @@ function SiteFooterView({
       .filter((l) => l.label) ?? FALLBACK_PROGRAMS;
 
   const street = address?.street || "44345 M.L.K. Jr. Blvd";
-  const cityLine = [
-    address?.city || "Maricopa",
-    address?.state || "AZ",
-  ]
+  const cityLine = [address?.city || "Maricopa", address?.state || "AZ"]
     .filter(Boolean)
     .join(", ");
   const zip = address?.zip || "85138";

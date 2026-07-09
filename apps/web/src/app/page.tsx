@@ -27,10 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
           slug: "/",
           contentId: data._id,
           contentType: data._type,
-          seoNoIndex: Boolean(
-            "seoNoIndex" in data ? data.seoNoIndex : false,
-          ),
-
+          seoNoIndex: Boolean("seoNoIndex" in data ? data.seoNoIndex : false),
         }
       : { slug: "/" },
   );
@@ -68,8 +65,8 @@ async function CachedHome({ perspective, stega }: DynamicFetchOptions) {
           Arizona Seals Swimming
         </h1>
         <p className="text-muted-foreground">
-          Homepage content is not available yet. Publish the Home Page in
-          Sanity Studio.
+          Homepage content is not available yet. Publish the Home Page in Sanity
+          Studio.
         </p>
       </div>
     );
@@ -90,11 +87,11 @@ async function CachedHome({ perspective, stega }: DynamicFetchOptions) {
     );
   }
 
-  return <PageBuilder pageBuilder={pageBuilder as never} id={_id} type={_type} />;
+  return (
+    <PageBuilder pageBuilder={pageBuilder as never} id={_id} type={_type} />
+  );
 }
 
 function HomeFallback() {
-  return (
-    <div className="min-h-[50vh] animate-pulse bg-muted" aria-hidden />
-  );
+  return <div className="min-h-[50vh] animate-pulse bg-muted" aria-hidden />;
 }

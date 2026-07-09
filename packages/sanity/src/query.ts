@@ -198,8 +198,6 @@ const teamBlock = /* groq */ `
   }
 `;
 
-
-
 const heroBlock = /* groq */ `
   _type == "hero" => {
     ...,
@@ -243,7 +241,6 @@ const programsPreviewBlock = /* groq */ `
     )
   }
 `;
-
 
 const latestNewsBlock = /* groq */ `
   _type == "latestNews" => {
@@ -317,7 +314,6 @@ const checklistSplitBlock = /* groq */ `
   }
 `;
 
-
 const sponsorsMarqueeBlock = /* groq */ `
   _type == "sponsorsMarquee" => {
     ...,
@@ -344,7 +340,6 @@ const sponsorsMarqueeBlock = /* groq */ `
     )
   }
 `;
-
 
 const pageHeroBlock = /* groq */ `
   _type == "pageHero" => {
@@ -388,7 +383,6 @@ const facilitiesListBlock = /* groq */ `
     )
   }
 `;
-
 
 const featureCardsIconBlock = /* groq */ `
   _type == "featureCardsIcon" => {

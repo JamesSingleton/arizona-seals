@@ -107,13 +107,19 @@ export function SponsorsMarquee({
         {reducedMotion ? (
           <div className="flex flex-wrap items-center justify-center gap-y-4 px-4">
             {sponsors.map((sponsor) => (
-              <SponsorItem key={sponsor._id ?? sponsor.name} sponsor={sponsor} />
+              <SponsorItem
+                key={sponsor._id ?? sponsor.name}
+                sponsor={sponsor}
+              />
             ))}
           </div>
         ) : (
           <Marquee pauseOnHover className="[--duration:35s]">
             {sponsors.map((sponsor) => (
-              <SponsorItem key={sponsor._id ?? sponsor.name} sponsor={sponsor} />
+              <SponsorItem
+                key={sponsor._id ?? sponsor.name}
+                sponsor={sponsor}
+              />
             ))}
           </Marquee>
         )}

@@ -1,9 +1,9 @@
+import { urlFor } from "@workspace/sanity/client";
 import {
   buttonCtaClassName,
   buttonVariants,
 } from "@workspace/ui/components/button";
 import { cn } from "@workspace/ui/lib/utils";
-import { urlFor } from "@workspace/sanity/client";
 import Image from "next/image";
 import Link from "next/link";
 

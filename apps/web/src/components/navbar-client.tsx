@@ -1,5 +1,9 @@
 "use client";
 
+import type {
+  QueryGlobalSeoSettingsResult,
+  QueryNavbarDataResult,
+} from "@workspace/sanity/types";
 import {
   Accordion,
   AccordionContent,
@@ -30,10 +34,6 @@ import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 import { useIsMobile } from "@/hooks/use-is-mobile";
-import type {
-  QueryGlobalSeoSettingsResult,
-  QueryNavbarDataResult,
-} from "@workspace/sanity/types";
 import { SanityButtons } from "./elements/sanity-buttons";
 import { SanityIcon } from "./elements/sanity-icon";
 import { Logo } from "./logo";

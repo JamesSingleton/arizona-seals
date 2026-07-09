@@ -3,8 +3,8 @@ import "@workspace/ui/globals.css";
 import { SanityLive } from "@workspace/sanity/live";
 import type { Metadata, Viewport } from "next";
 import { Barlow_Condensed, Inter } from "next/font/google";
-import { VisualEditing } from "next-sanity/visual-editing";
 import { draftMode } from "next/headers";
+import { VisualEditing } from "next-sanity/visual-editing";
 import { Suspense } from "react";
 
 import { CombinedJsonLd } from "@/components/json-ld";
@@ -12,7 +12,6 @@ import { PreviewBar } from "@/components/preview-bar";
 import { Providers } from "@/components/providers";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNavbarServer } from "@/components/site-navbar-server";
-
 
 const inter = Inter({
   subsets: ["latin"],

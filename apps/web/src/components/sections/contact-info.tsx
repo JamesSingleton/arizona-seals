@@ -119,7 +119,9 @@ export function ContactInfoBlock({
                       <Phone size={18} className="text-cyan-brand" />
                     </div>
                     <div>
-                      <p className="mb-0.5 text-sm font-bold text-navy">Phone</p>
+                      <p className="mb-0.5 text-sm font-bold text-navy">
+                        Phone
+                      </p>
                       <a
                         href={`tel:${resolvedPhone.replace(/[^\d+]/g, "")}`}
                         className="text-sm text-seal-gray transition-colors hover:text-cyan-brand"
@@ -136,7 +138,9 @@ export function ContactInfoBlock({
                       <Mail size={18} className="text-cyan-brand" />
                     </div>
                     <div>
-                      <p className="mb-0.5 text-sm font-bold text-navy">Email</p>
+                      <p className="mb-0.5 text-sm font-bold text-navy">
+                        Email
+                      </p>
                       <a
                         href={`mailto:${resolvedEmail}`}
                         className="text-sm text-seal-gray transition-colors hover:text-cyan-brand"

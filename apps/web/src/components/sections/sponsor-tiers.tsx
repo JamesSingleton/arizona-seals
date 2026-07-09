@@ -45,8 +45,7 @@ export function SponsorTiers({
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {tiers.map((tier) => {
-            const email =
-              tier.ctaEmail || "info@azsealsswimming.com";
+            const email = tier.ctaEmail || "info@azsealsswimming.com";
             const subject = encodeURIComponent(
               `Sponsorship Inquiry — ${tier.name ?? "Package"}`,
             );

@@ -23,4 +23,3 @@ const imageBuilder = createImageUrlBuilder({
 /** Build a Sanity CDN URL. Prefer auto format — forcing `fm=webp` breaks some AVIF source paths. */
 export const urlFor = (source: SanityImageSource) =>
   imageBuilder.image(source).auto("format").fit("max");
-

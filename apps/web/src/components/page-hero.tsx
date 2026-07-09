@@ -14,10 +14,7 @@ export function PageHero({
   overlay = true,
   size = "default",
 }: PageHeroProps) {
-  const heightClass =
-    size === "tall"
-      ? "h-72 md:h-96"
-      : "h-64 md:h-80";
+  const heightClass = size === "tall" ? "h-72 md:h-96" : "h-64 md:h-80";
 
   return (
     <section

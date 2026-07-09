@@ -9,7 +9,6 @@ const allLinkableTypes = [
   { type: "homePage" },
 ];
 
-
 export const customUrl = defineType({
   name: "customUrl",
   type: "object",

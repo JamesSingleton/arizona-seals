@@ -198,10 +198,7 @@ export function TeamBlock({
           </div>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
             {headList.map((member) => (
-              <HeadCoachCard
-                key={member._id ?? member.name}
-                member={member}
-              />
+              <HeadCoachCard key={member._id ?? member.name} member={member} />
             ))}
           </div>
         </div>

@@ -64,4 +64,3 @@ export const hero = defineType({
     }),
   },
 });
-

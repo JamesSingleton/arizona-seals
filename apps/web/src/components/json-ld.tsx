@@ -1,3 +1,9 @@
+import { client, urlFor } from "@workspace/sanity/client";
+import { querySettingsData } from "@workspace/sanity/query";
+import type {
+  QueryBlogSlugPageDataResult,
+  QuerySettingsDataResult,
+} from "@workspace/sanity/types";
 import { stegaClean } from "next-sanity";
 import type {
   Answer,
@@ -13,12 +19,6 @@ import type {
   WithContext,
 } from "schema-dts";
 
-import { client, urlFor } from "@workspace/sanity/client";
-import { querySettingsData } from "@workspace/sanity/query";
-import type {
-  QueryBlogSlugPageDataResult,
-  QuerySettingsDataResult,
-} from "@workspace/sanity/types";
 import { getBaseUrl, handleErrors } from "@/utils";
 
 interface RichTextChild {
@@ -264,5 +264,3 @@ export async function CombinedJsonLd({
     </>
   );
 }
-
-

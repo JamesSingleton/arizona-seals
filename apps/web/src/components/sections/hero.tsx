@@ -13,10 +13,7 @@ type HeroBlockProps = PagebuilderType<"hero"> & {
 };
 
 /** Default to immersive so homepage matches the original full-bleed hero. */
-function isImmersive(
-  variant?: string | null,
-  layout?: string | null,
-): boolean {
+function isImmersive(variant?: string | null, layout?: string | null): boolean {
   if (variant === "split" || layout === "split") return false;
   return (
     !variant ||
@@ -63,7 +60,6 @@ export function HeroBlock({
       />
     );
   }
-
 
   return (
     <section id="hero" className="mt-4 md:my-16">

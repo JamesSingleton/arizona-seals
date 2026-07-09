@@ -1,8 +1,8 @@
+import { Badge } from "@workspace/ui/components/badge";
 import {
   buttonCtaClassName,
   buttonVariants,
 } from "@workspace/ui/components/button";
-import { Badge } from "@workspace/ui/components/badge";
 import { cn } from "@workspace/ui/lib/utils";
 
 import type { PagebuilderType } from "@/types";
@@ -45,7 +45,9 @@ export function CTABlock({
   if (layout === "cyanBand" || layout === "navyBand") {
     const isCyan = layout === "cyanBand";
     return (
-      <section className={cn("py-16 md:py-20", isCyan ? "bg-cyan-brand" : "bg-navy")}>
+      <section
+        className={cn("py-16 md:py-20", isCyan ? "bg-cyan-brand" : "bg-navy")}
+      >
         <div className="mx-auto max-w-3xl px-6 text-center sm:px-10">
           {eyebrow ? (
             <p
@@ -82,8 +84,7 @@ export function CTABlock({
                 size: "lg",
               }),
               buttonCtaClassName,
-              isCyan &&
-                "bg-white text-navy hover:bg-white/90 border-0",
+              isCyan && "bg-white text-navy hover:bg-white/90 border-0",
             )}
           />
         </div>

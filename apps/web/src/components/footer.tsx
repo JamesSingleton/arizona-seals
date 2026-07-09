@@ -11,8 +11,8 @@ import type {
   QueryFooterDataResult,
   QueryGlobalSeoSettingsResult,
 } from "@workspace/sanity/types";
-import Link from "next/link";
 import { draftMode } from "next/headers";
+import Link from "next/link";
 import { Suspense } from "react";
 
 import { Logo } from "./logo";
@@ -136,7 +136,10 @@ function Footer({ data, settingsData }: FooterProps) {
             <div>
               {logo ? (
                 <span className="flex items-center justify-center gap-4 lg:justify-start">
-                  <Logo alt={siteTitle ?? "Arizona Seals Swimming"} image={logo} />
+                  <Logo
+                    alt={siteTitle ?? "Arizona Seals Swimming"}
+                    image={logo}
+                  />
                 </span>
               ) : (
                 <p className="font-display text-lg font-black uppercase">
@@ -153,7 +156,9 @@ function Footer({ data, settingsData }: FooterProps) {
             <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:mr-20 lg:gap-28">
               {columns.map((column, index) => (
                 <div key={`column-${column?._key}-${index}`}>
-                  <h2 className="mb-6 text-sm font-semibold">{column?.title}</h2>
+                  <h2 className="mb-6 text-sm font-semibold">
+                    {column?.title}
+                  </h2>
                   {column?.links && column.links.length > 0 ? (
                     <ul className="space-y-4 text-sm text-muted-foreground">
                       {column.links.map((link, linkIndex) => (
@@ -172,7 +177,10 @@ function Footer({ data, settingsData }: FooterProps) {
                           >
                             {link.name}
                             {link.openInNewTab ? (
-                              <span className="sr-only"> (opens in new tab)</span>
+                              <span className="sr-only">
+                                {" "}
+                                (opens in new tab)
+                              </span>
                             ) : null}
                           </Link>
                         </li>

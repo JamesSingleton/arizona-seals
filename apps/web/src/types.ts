@@ -24,7 +24,6 @@ export type SealsPageBuilderBlockTypes =
   | "featureCardsIcon"
   | "cta";
 
-
 export type PageBuilderBlockTypes =
   | NonNullable<
       NonNullable<QueryHomePageDataResult>["pageBuilder"]
