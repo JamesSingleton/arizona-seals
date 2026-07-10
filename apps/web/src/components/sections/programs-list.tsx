@@ -85,7 +85,7 @@ export function ProgramsList({
               <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-2 lg:gap-16">
                 <div
                   className={cn(
-                    "relative h-72 overflow-hidden md:h-[420px]",
+                    "relative h-72 overflow-hidden md:h-[420px] lg:sticky lg:top-28",
                     imageOnRight ? "lg:order-2" : "",
                   )}
                 >

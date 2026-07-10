@@ -2,15 +2,31 @@ interface PageHeroProps {
   title: string;
   subtitle?: string;
   backgroundImage?: string;
+  /** Sanity hotspot (0–1). Used for CSS background-position under cover. */
+  hotspot?: { x: number; y: number } | null;
   overlay?: boolean;
   /** default = h-64 md:h-80; tall = programs-style h-72 md:h-96 */
   size?: "default" | "tall";
+}
+
+function backgroundPositionFromHotspot(
+  hotspot?: PageHeroProps["hotspot"],
+): string {
+  if (
+    hotspot &&
+    typeof hotspot.x === "number" &&
+    typeof hotspot.y === "number"
+  ) {
+    return `${hotspot.x * 100}% ${hotspot.y * 100}%`;
+  }
+  return "center";
 }
 
 export function PageHero({
   title,
   subtitle,
   backgroundImage = "/placeholder.svg?height=480&width=1600",
+  hotspot,
   overlay = true,
   size = "default",
 }: PageHeroProps) {
@@ -22,7 +38,7 @@ export function PageHero({
       style={{
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: "cover",
-        backgroundPosition: "center",
+        backgroundPosition: backgroundPositionFromHotspot(hotspot),
       }}
     >
       {overlay ? <div className="absolute inset-0 bg-navy/70" /> : null}

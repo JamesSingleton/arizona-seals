@@ -29,13 +29,12 @@ import { useEffect, useState } from "react";
 
 import { ThemeToggle } from "@/components/theme-toggle";
 
-type NavColumn = NonNullable<
-  NonNullable<QueryNavbarDataResult>["columns"]
->[number];
+type NavbarData = NonNullable<QueryNavbarDataResult>;
+type NavColumn = NonNullable<NavbarData["columns"]>[number];
 
 type SiteNavbarProps = {
-  columns?: QueryNavbarDataResult["columns"];
-  buttons?: QueryNavbarDataResult["buttons"];
+  columns?: NavbarData["columns"];
+  buttons?: NavbarData["buttons"];
 };
 
 const FALLBACK_COLUMNS = [
@@ -115,7 +114,7 @@ const FALLBACK_COLUMNS = [
     name: "Sponsors",
     href: "/sponsors",
   },
-] as NonNullable<QueryNavbarDataResult["columns"]>;
+] as NonNullable<NavbarData["columns"]>;
 
 function normalizeHref(href?: string | null) {
   if (!href) return "#";
@@ -212,8 +211,9 @@ export function SiteNavbar({ columns, buttons }: SiteNavbarProps) {
           </div>
         </Link>
 
-        <nav className="hidden items-center gap-1 lg:flex">
+        <div className="hidden items-center gap-1 lg:flex">
           <NavigationMenu
+            aria-label="Main"
             onValueChange={(value) => setMenuOpen(Boolean(value))}
           >
             <NavigationMenuList className="gap-0">
@@ -247,7 +247,7 @@ export function SiteNavbar({ columns, buttons }: SiteNavbarProps) {
           >
             {ctaLabel}
           </Link>
-        </nav>
+        </div>
 
         <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
           <SheetTrigger
@@ -287,7 +287,10 @@ export function SiteNavbar({ columns, buttons }: SiteNavbarProps) {
               </Link>
             </SheetHeader>
 
-            <nav className="flex flex-col overflow-y-auto px-4 py-4">
+            <nav
+              aria-label="Mobile"
+              className="flex flex-col overflow-y-auto px-4 py-4"
+            >
               {mobileLinks.map((link) => (
                 <Link
                   key={`${link.href}-${link.label}`}
@@ -395,7 +398,7 @@ function DesktopNavItem({
   );
 }
 
-function flattenMobileLinks(columns?: QueryNavbarDataResult["columns"]) {
+function flattenMobileLinks(columns?: NavbarData["columns"]) {
   const links: { label: string; href: string }[] = [];
   for (const item of columns ?? []) {
     if (item.type === "link" && item.name) {

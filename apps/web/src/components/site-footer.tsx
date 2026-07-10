@@ -181,9 +181,9 @@ function SiteFooterView({
           </div>
 
           <div>
-            <h4 className="font-display mb-4 text-base font-bold tracking-widest text-cyan-brand uppercase">
+            <h2 className="font-display mb-4 text-base font-bold tracking-widest text-cyan-brand uppercase">
               Quick Links
-            </h4>
+            </h2>
             <ul className="space-y-2">
               {quickLinks.map((l) => (
                 <li key={l.href}>
@@ -199,9 +199,9 @@ function SiteFooterView({
           </div>
 
           <div>
-            <h4 className="font-display mb-4 text-base font-bold tracking-widest text-cyan-brand uppercase">
+            <h2 className="font-display mb-4 text-base font-bold tracking-widest text-cyan-brand uppercase">
               Programs
-            </h4>
+            </h2>
             <ul className="space-y-2">
               {programLinks.map((l) => (
                 <li key={l.label}>
@@ -217,9 +217,9 @@ function SiteFooterView({
           </div>
 
           <div>
-            <h4 className="font-display mb-4 text-base font-bold tracking-widest text-cyan-brand uppercase">
+            <h2 className="font-display mb-4 text-base font-bold tracking-widest text-cyan-brand uppercase">
               Contact Us
-            </h4>
+            </h2>
             <ul className="space-y-3">
               <li className="flex items-start gap-3">
                 <MapPin size={16} className="mt-0.5 shrink-0 text-cyan-brand" />

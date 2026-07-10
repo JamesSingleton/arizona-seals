@@ -17,6 +17,19 @@ export const program = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: "image",
+      type: "image",
+      title: "Image",
+      options: { hotspot: true },
+      fields: [
+        defineField({
+          name: "alt",
+          type: "string",
+          title: "Alternative text",
+        }),
+      ],
+    }),
+    defineField({
       name: "slug",
       type: "slug",
       title: "URL / Anchor",
@@ -86,19 +99,7 @@ export const program = defineType({
       title: "Sessions",
       description: "e.g. 6–8 practices/week",
     }),
-    defineField({
-      name: "image",
-      type: "image",
-      title: "Image",
-      options: { hotspot: true },
-      fields: [
-        defineField({
-          name: "alt",
-          type: "string",
-          title: "Alternative text",
-        }),
-      ],
-    }),
+
     defineField({
       name: "sortOrder",
       type: "number",

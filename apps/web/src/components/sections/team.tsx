@@ -116,7 +116,7 @@ function AssistantCoachRow({ member }: { member: TeamMember }) {
           <SanityImage
             image={member.image}
             alt={member.name ?? "Coach"}
-            className="absolute inset-0 size-full object-cover"
+            className="absolute inset-0 size-full object-cover object-top"
           />
         ) : (
           <Image
