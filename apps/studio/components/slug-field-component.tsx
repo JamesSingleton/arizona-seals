@@ -1,4 +1,4 @@
-import { CopyIcon } from "@sanity/icons";
+import { CopyIcon } from "@sanity/icons/Copy";
 import { Box, Button, Card, Flex, Stack, Text, TextInput } from "@sanity/ui";
 import type { ChangeEvent } from "react";
 import { useCallback, useMemo } from "react";

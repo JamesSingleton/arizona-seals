@@ -1,0 +1,10 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "env": ["SANITY_STUDIO_*", "SANITY_API_PROJECT_ID", "SANITY_API_DATASET"],
+      "outputs": ["dist/**", ".sanity/**"]
+    }
+  }
+}
