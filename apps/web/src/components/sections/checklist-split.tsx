@@ -1,5 +1,4 @@
 import { Star } from "lucide-react";
-import Image from "next/image";
 
 import type { SanityButtonProps, SanityImageProps } from "@/types";
 import { SanityButtons } from "../elements/sanity-buttons";
@@ -90,21 +89,14 @@ export function ChecklistSplit({
           </div>
 
           <div
-            className={`relative h-72 overflow-hidden md:h-[420px] ${imageAtEnd ? "" : "lg:order-1"}`}
+            className={`relative h-72 overflow-hidden bg-muted md:h-[420px] ${imageAtEnd ? "" : "lg:order-1"}`}
           >
             {image?.id ? (
               <SanityImage
                 image={image}
                 className="absolute inset-0 size-full object-cover"
               />
-            ) : (
-              <Image
-                src="/placeholder.svg?height=420&width=700"
-                alt=""
-                fill
-                className="object-cover"
-              />
-            )}
+            ) : null}
           </div>
         </div>
       </div>

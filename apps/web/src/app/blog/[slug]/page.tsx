@@ -15,7 +15,7 @@ import { Suspense, ViewTransition } from "react";
 
 import { RichText } from "@/components/elements/rich-text";
 import { SanityImage } from "@/components/elements/sanity-image";
-import { ArticleJsonLd } from "@/components/json-ld";
+import { ArticleJsonLd, BreadcrumbJsonLd } from "@/components/json-ld";
 import { getSEOMetadata } from "@/lib/seo";
 
 function blogSlugPath(slug: string) {
@@ -160,9 +160,21 @@ async function CachedBlogPost({
     >
       <article>
         <ArticleJsonLd article={data} />
+        <BreadcrumbJsonLd
+          items={[
+            { name: "Home", path: "/" },
+            { name: "News", path: "/blog" },
+            {
+              name: title || "Article",
+              path: data.slug?.startsWith("/")
+                ? data.slug
+                : `/blog/${data.slug}`,
+            },
+          ]}
+        />
 
         <section className="relative flex h-72 items-end overflow-hidden md:h-96">
-          {image ? (
+          {image?.id ? (
             <SanityImage
               image={image}
               alt={title ?? "Blog post"}
@@ -172,22 +184,31 @@ async function CachedBlogPost({
           ) : (
             <div className="absolute inset-0 bg-navy" />
           )}
-          <div className="absolute inset-0 bg-navy/60" />
-          <div className="relative z-10 mx-auto w-full max-w-3xl px-6 pb-10 sm:px-10">
-            {category ? (
-              <span className="mb-3 inline-block bg-cyan-brand px-3 py-1 font-display text-xs font-bold tracking-widest text-white uppercase">
-                {category}
-              </span>
-            ) : null}
-            <h1 className="font-display text-3xl font-bold text-balance text-white uppercase md:text-5xl">
-              {title}
-            </h1>
+          {image?.id ? <div className="absolute inset-0 bg-navy/70" /> : null}
+          <div className="relative z-10 mx-auto w-full max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
+            <div className="border-l-4 border-cyan-brand pl-5">
+              {category ? (
+                <span className="mb-3 inline-block bg-cyan-brand px-3 py-1 font-display text-xs font-bold tracking-widest text-primary-foreground uppercase">
+                  {category}
+                </span>
+              ) : null}
+              <h1 className="font-display text-balance text-4xl font-bold tracking-wide text-white uppercase md:text-6xl">
+                {title}
+              </h1>
+            </div>
           </div>
         </section>
 
-        <div className="mx-auto max-w-3xl px-6 py-12 sm:px-10">
-          <div className="mb-8 flex flex-wrap items-center gap-4 text-sm text-seal-gray">
-            {publishedAt ? <span>{formatDate(publishedAt)}</span> : null}
+        <div className="mx-auto max-w-3xl px-6 py-12 sm:px-10 md:py-16">
+          <div className="mb-8 flex flex-wrap items-center gap-4">
+            {publishedAt ? (
+              <time
+                dateTime={publishedAt}
+                className="font-display text-xs tracking-widest text-seal-gray uppercase"
+              >
+                {formatDate(publishedAt)}
+              </time>
+            ) : null}
             {category ? (
               <span className="font-display text-xs font-bold tracking-widest text-cyan-brand uppercase">
                 {category}
@@ -204,10 +225,10 @@ async function CachedBlogPost({
             className="prose prose-neutral max-w-none dark:prose-invert"
           />
           <Link
-            href="/"
-            className="mt-12 inline-flex font-display text-sm font-bold tracking-widest text-cyan-brand uppercase hover:text-navy"
+            href="/blog"
+            className="mt-12 inline-flex font-display text-sm font-bold tracking-widest text-cyan-brand uppercase transition-colors hover:text-foreground"
           >
-            ← Back to Home
+            ← Back to News
           </Link>
         </div>
       </article>

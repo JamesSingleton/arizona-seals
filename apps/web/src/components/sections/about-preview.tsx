@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 import type {
   SanityButtonProps,
   SanityImageProps,
@@ -127,26 +125,17 @@ export function AboutPreview({
           </div>
 
           <div
-            className={`relative h-80 overflow-hidden md:h-[460px] ${imageAtEnd ? "" : "lg:order-1"}`}
+            className={`relative h-80 overflow-hidden bg-muted md:h-[460px] ${imageAtEnd ? "" : "lg:order-1"}`}
           >
-            {image?.id ? (
-              <SanityImage
-                image={image}
-                alt={
-                  typeof image.alt === "string"
-                    ? image.alt
-                    : "Arizona Seals athletes racing at a swim meet"
-                }
-                className="absolute inset-0 size-full object-cover"
-              />
-            ) : (
-              <Image
-                src="/placeholder.svg?height=460&width=700"
-                alt="Arizona Seals athletes racing at a swim meet"
-                fill
-                className="object-cover"
-              />
-            )}
+            <SanityImage
+              image={image}
+              alt={
+                typeof image.alt === "string"
+                  ? image.alt
+                  : "Arizona Seals athletes racing at a swim meet"
+              }
+              className="absolute inset-0 size-full object-cover"
+            />
           </div>
         </div>
       </div>

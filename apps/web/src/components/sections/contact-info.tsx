@@ -1,5 +1,4 @@
 import { Clock, Mail, MapPin, Phone } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 
 import { ContactForm } from "./contact-form";
@@ -203,12 +202,6 @@ export function ContactInfoBlock({
       </section>
 
       <section className="relative flex h-72 items-center justify-center overflow-hidden bg-muted">
-        <Image
-          src="/placeholder.svg?height=400&width=1600"
-          alt="Map location"
-          fill
-          className="object-cover opacity-40"
-        />
         <div className="relative z-10 mx-4 max-w-md rounded-xl bg-background/95 p-6 text-center shadow-lg backdrop-blur">
           <p className="mb-1 font-display text-lg font-bold text-navy uppercase">
             Copper Sky Aquatic Center

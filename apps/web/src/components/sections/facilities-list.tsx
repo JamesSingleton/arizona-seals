@@ -5,7 +5,6 @@ import {
 } from "@workspace/ui/components/button";
 import { cn } from "@workspace/ui/lib/utils";
 import { Clock, ExternalLink, MapPin, Phone } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 
 import type { SanityImageProps } from "@/types";
@@ -63,14 +62,7 @@ function FacilityCard({ facility }: { facility: FacilitiesListFacility }) {
             image={facility.image}
             className="absolute inset-0 size-full object-cover"
           />
-        ) : (
-          <Image
-            src="/placeholder.svg?height=440&width=700"
-            alt={facility.name ?? "Facility"}
-            fill
-            className="object-cover"
-          />
-        )}
+        ) : null}
         {facility.isPrimary ? (
           <Badge className="absolute top-4 left-4 rounded border-0 bg-cyan-brand px-3 py-1.5 text-xs font-bold tracking-wide text-primary-foreground uppercase">
             Primary Training Facility

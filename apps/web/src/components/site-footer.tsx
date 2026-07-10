@@ -16,6 +16,7 @@ const FALLBACK_QUICK_LINKS = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about" },
   { label: "Coaches", href: "/coaches" },
+  { label: "Board", href: "/board" },
   { label: "Programs", href: "/programs" },
   { label: "Facilities", href: "/facilities" },
   { label: "Sponsors", href: "/sponsors" },

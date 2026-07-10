@@ -21,7 +21,8 @@ export const sponsorsGrid = defineType({
       name: "sponsors",
       type: "array",
       title: "Sponsors",
-      description: "Leave empty to show all sponsors.",
+      description:
+        "Leave empty to show all sponsors grouped by sponsorship level.",
       of: [
         defineArrayMember({
           type: "reference",

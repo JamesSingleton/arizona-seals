@@ -109,6 +109,15 @@ export const blog = defineType({
       options: {
         hotspot: true,
       },
+      fields: [
+        defineField({
+          name: "alt",
+          type: "string",
+          title: "Alternative text",
+          validation: (Rule) =>
+            Rule.required().warning("Add alt text for accessibility."),
+        }),
+      ],
     }),
     defineField({
       name: "richText",

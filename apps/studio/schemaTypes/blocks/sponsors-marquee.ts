@@ -35,7 +35,7 @@ export const sponsorsMarquee = defineType({
       type: "array",
       title: "Sponsors",
       description:
-        "Leave empty to show all featured sponsors ordered by sort order",
+        "Leave empty to show all featured sponsors in the marquee (alphabetical).",
       of: [
         {
           type: "reference",

@@ -9,6 +9,7 @@ import { page } from "./page";
 import { program } from "./program";
 import { settings } from "./settings";
 import { sponsor } from "./sponsor";
+import { sponsorLevel } from "./sponsor-level";
 import { staff } from "./staff";
 
 export const singletons = [homePage, blogIndex, settings, footer, navbar];
@@ -20,6 +21,7 @@ export const documents = [
   staff,
   program,
   sponsor,
+  sponsorLevel,
   facility,
   ...singletons,
 ];

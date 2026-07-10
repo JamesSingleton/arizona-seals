@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 
 import type { SanityImageProps } from "@/types";
@@ -78,12 +77,7 @@ export function ProgramsPreview({
                     className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                 ) : (
-                  <Image
-                    src="/placeholder.svg?height=400&width=400"
-                    alt={prog.name ?? "Program"}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
+                  <div className="absolute inset-0 bg-navy" />
                 )}
                 <div className="absolute inset-0 bg-navy/50 transition-colors duration-300 group-hover:bg-navy/30" />
                 <div

@@ -3,14 +3,15 @@ import {
   buttonVariants,
 } from "@workspace/ui/components/button";
 import { cn } from "@workspace/ui/lib/utils";
-import Image from "next/image";
 import Link from "next/link";
+
+import type { SanityImageProps } from "@/types";
+import { SanityImage } from "../elements/sanity-image";
 
 export type CtaFullBleedProps = {
   eyebrow?: string;
   titleLines?: string[];
-  image?: string;
-  imageAlt?: string;
+  image?: SanityImageProps | null;
   primaryCta?: { label: string; href: string };
   secondaryCta?: { label: string; href: string };
 };
@@ -18,20 +19,25 @@ export type CtaFullBleedProps = {
 export function CtaFullBleed({
   eyebrow = "Get Started",
   titleLines = ["Master the Basics", "at Arizona Seals"],
-  image = "/placeholder.svg?height=560&width=1920",
-  imageAlt = "Arizona Seals team at the pool",
+  image,
   primaryCta = { label: "Join the Team", href: "/contact" },
   secondaryCta = { label: "Explore Programs", href: "/programs" },
 }: CtaFullBleedProps) {
+  const imageAlt =
+    typeof image?.alt === "string" && image.alt
+      ? image.alt
+      : "Arizona Seals team at the pool";
+
   return (
-    <section className="relative flex h-[480px] items-end overflow-hidden md:h-[560px]">
-      <Image
-        src={image}
-        alt={imageAlt}
-        fill
-        className="object-cover object-center"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-navy/90 via-navy/40 to-transparent" />
+    <section className="relative flex h-[480px] items-end overflow-hidden bg-navy md:h-[560px]">
+      {image?.id ? (
+        <SanityImage
+          image={image}
+          alt={imageAlt}
+          className="absolute inset-0 size-full object-cover object-center"
+        />
+      ) : null}
+      <div className="absolute inset-0 bg-linear-to-t from-navy/90 via-navy/40 to-transparent" />
 
       <div className="relative z-10 mx-auto w-full max-w-7xl px-6 pb-16 sm:px-10 md:pb-24 lg:px-16">
         <div className="mb-4 flex items-center gap-3">

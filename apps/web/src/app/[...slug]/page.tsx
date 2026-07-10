@@ -13,6 +13,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 import { PageBuilder } from "@/components/pagebuilder";
+import { BreadcrumbJsonLd } from "@/components/json-ld";
 import { getSEOMetadata } from "@/lib/seo";
 
 function toSlugParam(slug: string[]) {
@@ -146,7 +147,15 @@ async function CachedSlugPage({
   }
 
   return (
-    <PageBuilder pageBuilder={pageBuilder as never} id={_id} type={_type} />
+    <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", path: "/" },
+          { name: title || "Page", path: slug },
+        ]}
+      />
+      <PageBuilder pageBuilder={pageBuilder as never} id={_id} type={_type} />
+    </>
   );
 }
 

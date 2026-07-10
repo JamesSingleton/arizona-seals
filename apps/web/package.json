@@ -10,8 +10,7 @@
     "start": "next start",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
-    "check:types": "tsc --noEmit",
-    "seed:cms": "node --env-file=.env.local scripts/seed-cms.mjs"
+    "check:types": "tsc --noEmit"
   },
   "dependencies": {
     "@portabletext/react": "^6.0.0",

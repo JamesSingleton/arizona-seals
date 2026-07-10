@@ -31,6 +31,50 @@ const sponsorLogoFragment = /* groq */ `
   }
 `;
 
+/** Prefer orderRank (drag-and-drop); fall back to legacy sortOrder. */
+const documentOrder = /* groq */ `order(orderRank asc, sortOrder asc)`;
+
+const sponsorLevelFragment = /* groq */ `
+  level->{
+    _id,
+    name,
+    "slug": slug.current,
+    price,
+    availability,
+    perks,
+    ctaLabel,
+    ctaEmail,
+    showInPackages,
+    orderRank,
+    sortOrder
+  }
+`;
+
+const sponsorCardFragment = /* groq */ `
+  _id,
+  name,
+  url,
+  featured,
+  ${sponsorLevelFragment},
+  "tier": coalesce(level->name, tier),
+  ${sponsorLogoFragment}
+`;
+
+/** Sponsors follow their level's desk order, then name within the level. */
+const sponsorOrder = /* groq */ `order(level->orderRank asc, level->sortOrder asc, name asc)`;
+
+const sponsorPackageFragment = /* groq */ `
+  _id,
+  name,
+  "slug": slug.current,
+  price,
+  availability,
+  perks,
+  ctaLabel,
+  ctaEmail,
+  showInPackages
+`;
+
 const customLinkFragment = /* groq */ `
   ...customLink{
     openInNewTab,
@@ -173,33 +217,52 @@ const imageLinkCardsBlock = /* groq */ `
   }
 `;
 
+const staffCardFragment = /* groq */ `
+  _id,
+  name,
+  position,
+  "role": coalesce(
+    role,
+    select(
+      tier in ["head", "assistant"] => "coaching",
+      tier == "staff" => "operations",
+      "coaching"
+    )
+  ),
+  "featured": coalesce(featured, tier == "head"),
+  "tier": coalesce(
+    select(featured == true => "head", role == "operations" => "staff", "assistant"),
+    tier
+  ),
+  email,
+  bio,
+  certifications,
+  specialties,
+  sortOrder,
+  ${imageFragment}
+`;
+
 const teamBlock = /* groq */ `
   _type == "team" => {
     ...,
+    "roleFilter": coalesce(roleFilter, "coaching"),
     "teamMembers": select(
       count(teamMembers) > 0 => teamMembers[]->{
-        _id,
-        name,
-        position,
-        tier,
-        email,
-        bio,
-        certifications,
-        specialties,
-        sortOrder,
-        ${imageFragment}
+        ${staffCardFragment}
       },
-      *[_type == "staff"] | order(sortOrder asc){
-        _id,
-        name,
-        position,
-        tier,
-        email,
-        bio,
-        certifications,
-        specialties,
-        sortOrder,
-        ${imageFragment}
+      coalesce(roleFilter, "coaching") == "all" => *[_type == "staff"] | ${documentOrder}{
+        ${staffCardFragment}
+      },
+      // ^.roleFilter: parent scope — bare roleFilter is undefined inside *[...]
+      *[_type == "staff" && coalesce(
+        role,
+        select(
+          tier in ["head", "assistant"] => "coaching",
+          tier == "staff" => "operations",
+          "coaching"
+        )
+      ) == coalesce(^.roleFilter, "coaching")] | ${documentOrder}{
+        ${staffCardFragment}
       }
     )
   }
@@ -242,7 +305,7 @@ const programsPreviewBlock = /* groq */ `
       count(programs) > 0 => programs[]->{
         ${programFields}
       },
-      *[_type == "program"] | order(sortOrder asc){
+      *[_type == "program"] | ${documentOrder}{
         ${programFields}
       }
     )
@@ -270,7 +333,7 @@ const programsListBlock = /* groq */ `
       count(programs) > 0 => programs[]->{
         ${programFields}
       },
-      *[_type == "program"] | order(sortOrder asc){
+      *[_type == "program"] | ${documentOrder}{
         ${programFields}
       }
     )
@@ -285,7 +348,15 @@ const sponsorsHeroBlock = /* groq */ `
 
 const sponsorTiersBlock = /* groq */ `
   _type == "sponsorTiers" => {
-    ...
+    ...,
+    "tiers": select(
+      count(tiers) > 0 => tiers[]->{
+        ${sponsorPackageFragment}
+      },
+      *[_type == "sponsorLevel" && showInPackages != false] | ${documentOrder}{
+        ${sponsorPackageFragment}
+      }
+    )
   }
 `;
 
@@ -294,20 +365,10 @@ const sponsorsGridBlock = /* groq */ `
     ...,
     "sponsors": select(
       count(sponsors) > 0 => sponsors[]->{
-        _id,
-        name,
-        url,
-        tier,
-        featured,
-        ${sponsorLogoFragment}
+        ${sponsorCardFragment}
       },
-      *[_type == "sponsor"] | order(sortOrder asc){
-        _id,
-        name,
-        url,
-        tier,
-        featured,
-        ${sponsorLogoFragment}
+      *[_type == "sponsor"] | ${sponsorOrder}{
+        ${sponsorCardFragment}
       }
     )
   }
@@ -329,20 +390,10 @@ const sponsorsMarqueeBlock = /* groq */ `
     },
     "sponsors": select(
       count(sponsors) > 0 => sponsors[]->{
-        _id,
-        name,
-        url,
-        tier,
-        featured,
-        ${sponsorLogoFragment}
+        ${sponsorCardFragment}
       },
-      *[_type == "sponsor" && featured != false] | order(sortOrder asc){
-        _id,
-        name,
-        url,
-        tier,
-        featured,
-        ${sponsorLogoFragment}
+      *[_type == "sponsor" && featured != false] | order(name asc){
+        ${sponsorCardFragment}
       }
     )
   }
@@ -384,7 +435,7 @@ const facilitiesListBlock = /* groq */ `
       count(facilities) > 0 => facilities[]->{
         ${facilityFields}
       },
-      *[_type == "facility"] | order(sortOrder asc){
+      *[_type == "facility"] | ${documentOrder}{
         ${facilityFields}
       }
     )
@@ -502,11 +553,12 @@ export const queryBlogIndexPageData = defineQuery(`
     _type,
     title,
     description,
-    "displayFeaturedBlogs" : displayFeaturedBlogs == "yes",
-    "featuredBlogsCount" : featuredBlogsCount,
+    "featuredBlogs": featured[]->{
+      ${blogCardFragment}
+    },
     ${pageBuilderFragment},
     "slug": slug.current,
-    "blogs": *[_type == "blog" && (seoHideFromLists != true)] | order(orderRank asc){
+    "blogs": *[_type == "blog" && (seoHideFromLists != true)] | order(publishedAt desc){
       ${blogCardFragment}
     }
   }
@@ -540,11 +592,13 @@ const ogFieldsFragment = /* groq */ `
     defined(seoDescription) => seoDescription,
     description
   ),
-  "image": image.asset->url + "?w=566&h=566&dpr=2&fit=max",
-  "dominantColor": image.asset->metadata.palette.dominant.background,
+  "image": select(
+    defined(image.asset) => image.asset->url + "?w=1200&h=630&dpr=2&fit=crop",
+    defined(seoImage.asset) => seoImage.asset->url + "?w=1200&h=630&dpr=2&fit=crop"
+  ),
   "seoImage": seoImage.asset->url + "?w=1200&h=630&dpr=2&fit=max",
-  "logo": *[_type == "settings"][0].logo.asset->url + "?w=80&h=40&dpr=3&fit=max&q=100",
-  "date": coalesce(date, _createdAt)
+  "logo": *[_type == "settings"][0].logo.asset->url + "?w=240&h=80&dpr=2&fit=max&q=100",
+  "date": coalesce(publishedAt, date, _createdAt)
 `;
 
 export const queryHomePageOGData = defineQuery(/* groq */ `

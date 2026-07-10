@@ -19,6 +19,7 @@ export function CTABlock({
   title,
   eyebrow,
   buttons,
+  image,
   layout = "card",
 }: CTABlockProps) {
   if (layout === "fullBleed") {
@@ -28,6 +29,7 @@ export function CTABlock({
       <CtaFullBleed
         eyebrow={eyebrow ?? undefined}
         titleLines={title ? title.split("\n").filter(Boolean) : undefined}
+        image={image}
         primaryCta={
           primary?.href
             ? { label: primary.text ?? "Learn More", href: primary.href }

@@ -5,7 +5,14 @@ export type SponsorsGridSponsor = {
   _id?: string;
   name?: string | null;
   url?: string | null;
+  tier?: string | null;
   image?: SanityImageProps | null;
+  level?: {
+    _id?: string;
+    name?: string | null;
+    slug?: string | null;
+    orderRank?: string | null;
+  } | null;
 };
 
 export type SponsorsGridProps = {
@@ -16,6 +23,31 @@ export type SponsorsGridProps = {
   footerEmail?: string | null;
 };
 
+type SponsorGroup = {
+  key: string;
+  name: string;
+  sponsors: SponsorsGridSponsor[];
+};
+
+function groupSponsorsByLevel(
+  sponsors: SponsorsGridSponsor[],
+): SponsorGroup[] {
+  const groups = new Map<string, SponsorGroup>();
+
+  for (const sponsor of sponsors) {
+    const key = sponsor.level?._id ?? sponsor.tier ?? "ungrouped";
+    const name = sponsor.level?.name ?? sponsor.tier ?? "Partners";
+    const existing = groups.get(key);
+    if (existing) {
+      existing.sponsors.push(sponsor);
+    } else {
+      groups.set(key, { key, name, sponsors: [sponsor] });
+    }
+  }
+
+  return Array.from(groups.values());
+}
+
 export function SponsorsGrid({
   eyebrow = "Thank You",
   title = "Our Sponsors & Partners",
@@ -24,6 +56,9 @@ export function SponsorsGrid({
   footerEmail = "info@azsealsswimming.com",
 }: SponsorsGridProps) {
   if (!sponsors?.length) return null;
+
+  const groups = groupSponsorsByLevel(sponsors);
+  const showGroupHeadings = groups.length > 1;
 
   return (
     <section className="bg-background py-20 md:py-28">
@@ -39,15 +74,26 @@ export function SponsorsGrid({
           </h2>
         </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-5">
-          {sponsors.map((sponsor) => (
-            <SponsorLogo
-              key={sponsor._id ?? sponsor.name}
-              name={sponsor.name}
-              image={sponsor.image}
-              url={sponsor.url}
-              size="md"
-            />
+        <div className="space-y-14">
+          {groups.map((group) => (
+            <div key={group.key}>
+              {showGroupHeadings ? (
+                <h3 className="mb-6 text-center font-display text-sm font-bold tracking-[0.25em] text-cyan-brand uppercase">
+                  {group.name}
+                </h3>
+              ) : null}
+              <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-5">
+                {group.sponsors.map((sponsor) => (
+                  <SponsorLogo
+                    key={sponsor._id ?? sponsor.name}
+                    name={sponsor.name}
+                    image={sponsor.image}
+                    url={sponsor.url}
+                    size="md"
+                  />
+                ))}
+              </div>
+            </div>
           ))}
         </div>
 

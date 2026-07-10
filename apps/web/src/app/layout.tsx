@@ -12,6 +12,7 @@ import { PreviewBar } from "@/components/preview-bar";
 import { Providers } from "@/components/providers";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNavbarServer } from "@/components/site-navbar-server";
+import { getBaseUrl } from "@/utils";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -26,13 +27,17 @@ const barlowCondensed = Barlow_Condensed({
   display: "swap",
 });
 
+const siteName = "Arizona Seals Swimming";
+const siteDescription =
+  "Arizona Seals Swimming – a premier competitive swim club in Arizona dedicated to developing athletes of all ages and skill levels.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(getBaseUrl()),
   title: {
-    default: "Arizona Seals Swimming",
-    template: "%s | Arizona Seals Swimming",
+    default: siteName,
+    template: `%s | ${siteName}`,
   },
-  description:
-    "Arizona Seals Swimming – a premier competitive swim club in Arizona dedicated to developing athletes of all ages and skill levels.",
+  description: siteDescription,
   keywords: [
     "swim club",
     "Arizona",
@@ -50,9 +55,18 @@ export const metadata: Metadata = {
     apple: "/apple-icon.png",
   },
   openGraph: {
-    title: "Arizona Seals Swimming",
-    description: "A premier competitive swim club in Arizona.",
-    siteName: "Arizona Seals Swimming",
+    type: "website",
+    locale: "en_US",
+    siteName,
+    title: siteName,
+    description:
+      "A premier competitive swim club in Maricopa, Arizona — USA Swimming sanctioned training for athletes of all ages.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteName,
+    description:
+      "A premier competitive swim club in Maricopa, Arizona — USA Swimming sanctioned training for athletes of all ages.",
   },
 };
 

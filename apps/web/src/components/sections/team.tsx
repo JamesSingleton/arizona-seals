@@ -1,5 +1,4 @@
 import { Award, Mail } from "lucide-react";
-import Image from "next/image";
 
 import type { SanityImageProps, SanityRichTextProps } from "@/types";
 import { RichText } from "../elements/rich-text";
@@ -9,6 +8,9 @@ export type TeamMember = {
   _id?: string;
   name?: string | null;
   position?: string | null;
+  role?: string | null;
+  featured?: boolean | null;
+  /** @deprecated Prefer `featured` + `role` */
   tier?: string | null;
   email?: string | null;
   bio?: SanityRichTextProps | string | null;
@@ -22,8 +24,14 @@ export type TeamBlockProps = {
   title?: string | null;
   assistantsEyebrow?: string | null;
   assistantsTitle?: string | null;
+  roleFilter?: string | null;
   teamMembers?: TeamMember[] | null;
 };
+
+function isFeatured(member: TeamMember): boolean {
+  if (typeof member.featured === "boolean") return member.featured;
+  return member.tier === "head" || member.tier === "leadership";
+}
 
 function BioText({ bio }: { bio?: TeamMember["bio"] }) {
   if (!bio) return null;
@@ -38,24 +46,17 @@ function BioText({ bio }: { bio?: TeamMember["bio"] }) {
   );
 }
 
-function HeadCoachCard({ member }: { member: TeamMember }) {
+function FeaturedPersonCard({ member }: { member: TeamMember }) {
   return (
     <article className="overflow-hidden border border-border bg-background">
       <div className="relative h-72 bg-muted md:h-80">
         {member.image?.id ? (
           <SanityImage
             image={member.image}
-            alt={member.name ?? "Coach"}
+            alt={member.name ?? "Team member"}
             className="absolute inset-0 size-full object-cover object-top"
           />
-        ) : (
-          <Image
-            src="/placeholder.svg?height=500&width=400"
-            alt={member.name ?? "Coach"}
-            fill
-            className="object-cover object-top"
-          />
-        )}
+        ) : null}
         <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-navy via-navy/70 to-transparent p-5 pt-16">
           {member.position ? (
             <p className="mb-1 font-display text-xs font-bold tracking-widest text-cyan-brand uppercase">
@@ -108,24 +109,17 @@ function HeadCoachCard({ member }: { member: TeamMember }) {
   );
 }
 
-function AssistantCoachRow({ member }: { member: TeamMember }) {
+function SupportingPersonRow({ member }: { member: TeamMember }) {
   return (
     <article className="flex flex-col gap-5 border-b border-border py-8 last:border-0 sm:flex-row sm:items-start">
       <div className="relative size-24 shrink-0 overflow-hidden rounded-full bg-muted sm:size-28">
         {member.image?.id ? (
           <SanityImage
             image={member.image}
-            alt={member.name ?? "Coach"}
+            alt={member.name ?? "Team member"}
             className="absolute inset-0 size-full object-cover object-top"
           />
-        ) : (
-          <Image
-            src="/placeholder.svg?height=200&width=200"
-            alt={member.name ?? "Coach"}
-            fill
-            className="object-cover"
-          />
-        )}
+        ) : null}
       </div>
       <div className="flex-1 space-y-3">
         <div>
@@ -166,21 +160,17 @@ function AssistantCoachRow({ member }: { member: TeamMember }) {
 
 export function TeamBlock({
   eyebrow = "Leadership",
-  title = "Head Coaches",
+  title = "Featured",
   assistantsEyebrow = "The Full Staff",
-  assistantsTitle = "Assistant Coaches",
+  assistantsTitle = "Team Members",
   teamMembers,
 }: TeamBlockProps) {
   if (!teamMembers?.length) return null;
 
-  const heads = teamMembers.filter(
-    (m) => !m.tier || m.tier === "head" || m.tier === "leadership",
-  );
-  const assistants = teamMembers.filter(
-    (m) => m.tier === "assistant" || m.tier === "support",
-  );
-  const headList = heads.length ? heads : teamMembers;
-  const assistantList = heads.length ? assistants : [];
+  const featured = teamMembers.filter(isFeatured);
+  const supporting = teamMembers.filter((m) => !isFeatured(m));
+  const featuredList = featured.length ? featured : teamMembers;
+  const supportingList = featured.length ? supporting : [];
 
   return (
     <>
@@ -197,14 +187,17 @@ export function TeamBlock({
             </h2>
           </div>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-            {headList.map((member) => (
-              <HeadCoachCard key={member._id ?? member.name} member={member} />
+            {featuredList.map((member) => (
+              <FeaturedPersonCard
+                key={member._id ?? member.name}
+                member={member}
+              />
             ))}
           </div>
         </div>
       </section>
 
-      {assistantList.length > 0 ? (
+      {supportingList.length > 0 ? (
         <section className="bg-background py-20 md:py-28">
           <div className="mx-auto max-w-7xl px-6 sm:px-10 lg:px-16">
             <div className="mb-10">
@@ -218,8 +211,8 @@ export function TeamBlock({
               </h2>
             </div>
             <div>
-              {assistantList.map((member) => (
-                <AssistantCoachRow
+              {supportingList.map((member) => (
+                <SupportingPersonRow
                   key={member._id ?? member.name}
                   member={member}
                 />

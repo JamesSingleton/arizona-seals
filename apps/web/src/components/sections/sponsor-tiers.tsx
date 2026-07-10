@@ -1,6 +1,7 @@
 import { Star } from "lucide-react";
 
 export type SponsorTierItem = {
+  _id?: string;
   _key?: string;
   name?: string | null;
   price?: string | null;
@@ -51,7 +52,7 @@ export function SponsorTiers({
             );
             return (
               <div
-                key={tier._key ?? tier.name}
+                key={tier._id ?? tier._key ?? tier.name}
                 className="flex flex-col rounded-xl border border-white/15 bg-white/5 p-6"
               >
                 <h3 className="font-display text-xl font-bold text-white uppercase">

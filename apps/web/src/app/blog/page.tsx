@@ -11,7 +11,9 @@ import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
-import { BlogCard, BlogHeader, FeaturedBlogCard } from "@/components/blog-card";
+import { BlogCard, FeaturedBlogCard } from "@/components/blog-card";
+import { BreadcrumbJsonLd } from "@/components/json-ld";
+import { PageHero } from "@/components/page-hero";
 import { PageBuilder } from "@/components/pagebuilder";
 import { getSEOMetadata } from "@/lib/seo";
 
@@ -79,70 +81,65 @@ async function CachedBlogIndex({ perspective, stega }: DynamicFetchOptions) {
 
   const {
     blogs = [],
+    featuredBlogs: featuredFromCms = [],
     title,
     description,
     pageBuilder = [],
     _id,
     _type,
-    displayFeaturedBlogs,
-    featuredBlogsCount,
   } = data;
 
-  const validFeaturedBlogsCount = featuredBlogsCount
-    ? Number.parseInt(featuredBlogsCount, 10)
-    : 0;
-
-  if (!blogs.length) {
-    return (
-      <div className="container mx-auto my-16 px-4 md:px-6">
-        <BlogHeader title={title} description={description} />
-        <div className="py-12 text-center">
-          <p className="text-muted-foreground">
-            No blog posts available at the moment.
-          </p>
-        </div>
-        {pageBuilder && pageBuilder.length > 0 ? (
-          <PageBuilder
-            pageBuilder={pageBuilder as never}
-            id={_id}
-            type={_type}
-          />
-        ) : null}
-      </div>
-    );
-  }
-
-  const shouldDisplayFeaturedBlogs =
-    displayFeaturedBlogs && validFeaturedBlogsCount > 0;
-
-  const featuredBlogs = shouldDisplayFeaturedBlogs
-    ? blogs.slice(0, validFeaturedBlogsCount)
-    : [];
-  const remainingBlogs = shouldDisplayFeaturedBlogs
-    ? blogs.slice(validFeaturedBlogsCount)
+  const featuredIds = new Set(
+    (featuredFromCms ?? []).map((blog) => blog._id).filter(Boolean),
+  );
+  const featuredBlogs = featuredFromCms ?? [];
+  const remainingBlogs = featuredIds.size
+    ? blogs.filter((blog) => !featuredIds.has(blog._id))
     : blogs;
 
   return (
     <div className="bg-background">
-      <div className="container mx-auto my-16 px-4 md:px-6">
-        <BlogHeader title={title} description={description} />
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", path: "/" },
+          { name: title || "News", path: "/blog" },
+        ]}
+      />
+      <PageHero
+        title={title ?? "News"}
+        subtitle={description ?? undefined}
+        size="tall"
+      />
 
-        {featuredBlogs.length > 0 ? (
-          <div className="mx-auto mt-8 mb-12 grid grid-cols-1 gap-8 sm:mt-12 md:mt-16 md:gap-12 lg:mb-20">
-            {featuredBlogs.map((blog) => (
-              <FeaturedBlogCard key={blog._id} blog={blog} />
-            ))}
-          </div>
-        ) : null}
+      <section className="bg-muted py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-6 sm:px-10 lg:px-16">
+          {!blogs.length && !featuredBlogs.length ? (
+            <div className="py-12 text-center">
+              <p className="text-seal-gray">
+                No blog posts available at the moment.
+              </p>
+            </div>
+          ) : (
+            <>
+              {featuredBlogs.length > 0 ? (
+                <div className="mb-12 grid grid-cols-1 gap-8 lg:mb-16">
+                  {featuredBlogs.map((blog) => (
+                    <FeaturedBlogCard key={blog._id} blog={blog} />
+                  ))}
+                </div>
+              ) : null}
 
-        {remainingBlogs.length > 0 ? (
-          <div className="mt-8 grid grid-cols-1 gap-8 md:gap-12 lg:grid-cols-2">
-            {remainingBlogs.map((blog) => (
-              <BlogCard key={blog._id} blog={blog} />
-            ))}
-          </div>
-        ) : null}
-      </div>
+              {remainingBlogs.length > 0 ? (
+                <div className="grid grid-cols-1 items-stretch gap-8 md:grid-cols-2 lg:grid-cols-3">
+                  {remainingBlogs.map((blog) => (
+                    <BlogCard key={blog._id} blog={blog} />
+                  ))}
+                </div>
+              ) : null}
+            </>
+          )}
+        </div>
+      </section>
 
       {pageBuilder && pageBuilder.length > 0 ? (
         <PageBuilder pageBuilder={pageBuilder as never} id={_id} type={_type} />

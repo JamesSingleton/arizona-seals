@@ -1,6 +1,7 @@
 interface PageHeroProps {
   title: string;
   subtitle?: string;
+  /** When omitted, renders a solid navy hero (no image). */
   backgroundImage?: string;
   /** Sanity hotspot (0–1). Used for CSS background-position under cover. */
   hotspot?: { x: number; y: number } | null;
@@ -25,23 +26,30 @@ function backgroundPositionFromHotspot(
 export function PageHero({
   title,
   subtitle,
-  backgroundImage = "/placeholder.svg?height=480&width=1600",
+  backgroundImage,
   hotspot,
   overlay = true,
   size = "default",
 }: PageHeroProps) {
   const heightClass = size === "tall" ? "h-72 md:h-96" : "h-64 md:h-80";
+  const hasImage = Boolean(backgroundImage);
 
   return (
     <section
-      className={`relative flex items-end ${heightClass}`}
-      style={{
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: backgroundPositionFromHotspot(hotspot),
-      }}
+      className={`relative flex items-end ${heightClass} ${hasImage ? "" : "bg-navy"}`}
+      style={
+        hasImage
+          ? {
+              backgroundImage: `url(${backgroundImage})`,
+              backgroundSize: "cover",
+              backgroundPosition: backgroundPositionFromHotspot(hotspot),
+            }
+          : undefined
+      }
     >
-      {overlay ? <div className="absolute inset-0 bg-navy/70" /> : null}
+      {overlay && hasImage ? (
+        <div className="absolute inset-0 bg-navy/70" />
+      ) : null}
       <div className="relative z-10 mx-auto w-full max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
         <div className="border-l-4 border-cyan-brand pl-5">
           <h1 className="font-display text-balance text-4xl font-bold tracking-wide text-white uppercase md:text-6xl">

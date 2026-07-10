@@ -6,10 +6,12 @@ import {
 } from "@workspace/ui/components/accordion";
 import { Badge } from "@workspace/ui/components/badge";
 import { ArrowUpRight } from "lucide-react";
+import { stegaClean } from "next-sanity";
 import Link from "next/link";
 
 import type { PagebuilderType } from "@/types";
 import { RichText } from "../elements/rich-text";
+import { FaqJsonLd } from "../json-ld";
 
 type FaqAccordionProps = PagebuilderType<"faqAccordion">;
 
@@ -22,7 +24,7 @@ export function FaqAccordion({
 }: FaqAccordionProps) {
   return (
     <section id="faq" className="my-8">
-      {/* <FaqJsonLd faqs={stegaClean(faqs)} /> */}
+      <FaqJsonLd faqs={stegaClean(faqs) ?? []} />
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex w-full flex-col items-center">
           <div className="flex flex-col items-center space-y-4 text-center sm:space-y-6 md:text-center">
@@ -65,7 +67,7 @@ export function FaqAccordion({
                 target={link.openInNewTab ? "_blank" : "_self"}
                 className="flex items-center gap-2"
               >
-                <p className="text-[15px] font-[500] leading-6">
+                <p className="text-[15px] font-medium leading-6">
                   {link?.description}
                 </p>
                 <span className="rounded-full border p-1">

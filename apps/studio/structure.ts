@@ -1,4 +1,9 @@
 import {
+  type OrderableListConfig,
+  orderableDocumentListDeskItem,
+} from "@sanity/orderable-document-list";
+import {
+  BadgeDollarSign,
   BookMarked,
   Building2,
   CogIcon,
@@ -46,11 +51,6 @@ type CreateList = {
   S: StructureBuilder;
 } & Base;
 
-// This function creates a list item for a type. It takes a StructureBuilder instance (S),
-// a type, an icon, and a title as parameters. It generates a title for the type if not provided,
-// and uses a default icon if not provided. It then returns a list item with the generated or
-// provided title and icon.
-
 const createList = ({ S, type, icon, title, id }: CreateList) => {
   const newTitle = title ?? getTitleCase(type);
   return S.documentTypeListItem(type)
@@ -91,6 +91,18 @@ const createIndexList = ({ S, index, list }: CreateIndexList) => {
     );
 };
 
+function createOrderableList(
+  S: StructureBuilder,
+  context: StructureResolverContext,
+  params: Omit<OrderableListConfig, "S" | "context">,
+) {
+  return orderableDocumentListDeskItem({
+    S,
+    context,
+    ...params,
+  });
+}
+
 export const structure = (
   S: StructureBuilder,
   context: StructureResolverContext,
@@ -100,23 +112,114 @@ export const structure = (
     .items([
       createSingleTon({ S, type: "homePage", icon: HomeIcon }),
       S.divider(),
-      createList({ S, type: "page", title: "Pages" }),
-      createIndexList({
-        S,
-        index: { type: "blogIndex", icon: BookMarked },
-        list: { type: "blog", title: "Blogs", icon: FileText },
-      }),
-      createList({
-        S,
-        type: "faq",
-        title: "FAQs",
-        icon: MessageCircleQuestion,
-      }),
-      createList({ S, type: "staff", title: "Staff", icon: User }),
-      createList({ S, type: "program", title: "Programs", icon: Waves }),
-      createList({ S, type: "sponsor", title: "Sponsors", icon: Handshake }),
-      createList({ S, type: "facility", title: "Facilities", icon: Building2 }),
+
+      S.listItem()
+        .title("Content")
+        .icon(FileText)
+        .child(
+          S.list()
+            .title("Content")
+            .items([
+              createList({ S, type: "page", title: "Pages" }),
+              createIndexList({
+                S,
+                index: {
+                  type: "blogIndex",
+                  icon: BookMarked,
+                  title: "Blog Index",
+                },
+                list: { type: "blog", title: "Posts", icon: FileText },
+              }),
+              createList({
+                S,
+                type: "faq",
+                title: "FAQs",
+                icon: MessageCircleQuestion,
+              }),
+            ]),
+        ),
+
+      S.listItem()
+        .title("Club")
+        .icon(Waves)
+        .child(
+          S.list()
+            .title("Club")
+            .items([
+              createOrderableList(S, context, {
+                type: "program",
+                title: "Programs",
+                icon: Waves,
+              }),
+              S.listItem()
+                .title("People")
+                .icon(User)
+                .child(
+                  S.list()
+                    .title("People")
+                    .items([
+                      createOrderableList(S, context, {
+                        type: "staff",
+                        id: "staff-coaching",
+                        title: "Coaches",
+                        icon: User,
+                        filter:
+                          'role == "coaching" || (!defined(role) && tier in ["head", "assistant"])',
+                      }),
+                      createOrderableList(S, context, {
+                        type: "staff",
+                        id: "staff-board",
+                        title: "Board / Leadership",
+                        icon: User,
+                        filter: 'role == "board"',
+                      }),
+                      createOrderableList(S, context, {
+                        type: "staff",
+                        id: "staff-operations",
+                        title: "Operations",
+                        icon: User,
+                        filter:
+                          'role == "operations" || (!defined(role) && tier == "staff")',
+                      }),
+                      createOrderableList(S, context, {
+                        type: "staff",
+                        id: "staff-all",
+                        title: "All People",
+                        icon: User,
+                      }),
+                    ]),
+                ),
+              createOrderableList(S, context, {
+                type: "facility",
+                title: "Facilities",
+                icon: Building2,
+              }),
+            ]),
+        ),
+
+      S.listItem()
+        .title("Partners")
+        .icon(Handshake)
+        .child(
+          S.list()
+            .title("Partners")
+            .items([
+              createList({
+                S,
+                type: "sponsor",
+                title: "Sponsors",
+                icon: Handshake,
+              }),
+              createOrderableList(S, context, {
+                type: "sponsorLevel",
+                title: "Sponsor Levels",
+                icon: BadgeDollarSign,
+              }),
+            ]),
+        ),
+
       S.divider(),
+
       S.listItem()
         .title("Site Configuration")
         .icon(Settings2)

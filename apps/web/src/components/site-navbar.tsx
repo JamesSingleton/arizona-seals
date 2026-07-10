@@ -57,6 +57,12 @@ const FALLBACK_COLUMNS = [
         href: "/coaches",
       },
       {
+        _key: "about-board",
+        name: "Board of Directors",
+        description: "Club officers and leadership",
+        href: "/board",
+      },
+      {
         _key: "about-facilities",
         name: "Facilities",
         description: "Where we train",
@@ -102,6 +108,7 @@ const FALLBACK_COLUMNS = [
     ],
   },
   { _key: "coaches", type: "link" as const, name: "Coaches", href: "/coaches" },
+  { _key: "board", type: "link" as const, name: "Board", href: "/board" },
   {
     _key: "facilities",
     type: "link" as const,
