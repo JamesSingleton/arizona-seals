@@ -75,10 +75,41 @@ export const settings = defineType({
       name: "logo",
       type: "image",
       title: "Site Logo",
-      description: "Upload your website logo",
+      description:
+        "Primary logo for light backgrounds (navbar when scrolled, mobile menu, etc.)",
       options: {
         hotspot: true,
       },
+      fields: [
+        defineField({
+          name: "alt",
+          type: "string",
+          title: "Alternative text",
+          description: "Describe the logo for screen readers.",
+          validation: (rule) =>
+            rule.required().warning("Add alt text for accessibility."),
+        }),
+      ],
+    }),
+    defineField({
+      name: "alternateLogo",
+      type: "image",
+      title: "Alternate Logo",
+      description:
+        "Logo for dark or transparent backgrounds (e.g. white mark over the hero)",
+      options: {
+        hotspot: true,
+      },
+      fields: [
+        defineField({
+          name: "alt",
+          type: "string",
+          title: "Alternative text",
+          description: "Describe the logo for screen readers.",
+          validation: (rule) =>
+            rule.required().warning("Add alt text for accessibility."),
+        }),
+      ],
     }),
     defineField({
       name: "contactEmail",

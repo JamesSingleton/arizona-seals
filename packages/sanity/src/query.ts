@@ -688,8 +688,13 @@ export const queryNavbarData = defineQuery(/* groq */ `
       }
     },
     ${buttonsFragment},
-    "logo": *[_type == "settings"][0].logo.asset->url + "?w=80&h=40&dpr=3&fit=max",
     "siteTitle": *[_type == "settings"][0].siteTitle,
+    "logo": *[_type == "settings"][0].logo {
+      ${imageFields}
+    },
+    "alternateLogo": *[_type == "settings"][0].alternateLogo {
+      ${imageFields}
+    },
   }
 `);
 
@@ -712,6 +717,9 @@ export const queryGlobalSeoSettings = defineQuery(`
     logo {
       ${imageFields}
     },
+    alternateLogo {
+      ${imageFields}
+    },
     siteDescription,
     socialLinks{
       linkedin,
@@ -730,6 +738,12 @@ export const querySettingsData = defineQuery(`
     siteTitle,
     siteDescription,
     "logo": logo.asset->url + "?w=80&h=40&dpr=3&fit=max",
+    "logoImage": logo {
+      ${imageFields}
+    },
+    alternateLogo {
+      ${imageFields}
+    },
     "socialLinks": socialLinks,
     "contactEmail": contactEmail,
     "contactPhone": contactPhone,

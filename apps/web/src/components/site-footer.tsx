@@ -4,13 +4,23 @@ import {
   sanityFetch,
 } from "@workspace/sanity/live";
 import { queryFooterData, querySettingsData } from "@workspace/sanity/query";
+import type { QuerySettingsDataResult } from "@workspace/sanity/types";
 import { Mail, MapPin } from "lucide-react";
 import { draftMode } from "next/headers";
-import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 
+import { SanityImage } from "@/components/elements/sanity-image";
 import { FacebookIcon, InstagramIcon } from "@/components/icons";
+import type { SanityImageProps } from "@/types";
+
+type SettingsLogo = NonNullable<QuerySettingsDataResult>["alternateLogo"];
+
+function isRenderableLogo(
+  image?: SettingsLogo,
+): image is NonNullable<SettingsLogo> & { id: string } {
+  return typeof image?.id === "string" && image.id.length > 0;
+}
 
 const FALLBACK_QUICK_LINKS = [
   { label: "Home", href: "/" },
@@ -61,6 +71,10 @@ async function CachedSiteFooter({ perspective, stega }: DynamicFetchOptions) {
       email={settingsResult.data?.contactEmail}
       address={settingsResult.data?.primaryAddress}
       socialLinks={settingsResult.data?.socialLinks}
+      logo={
+        settingsResult.data?.alternateLogo ?? settingsResult.data?.logoImage
+      }
+      siteTitle={settingsResult.data?.siteTitle}
     />
   );
 }
@@ -71,6 +85,8 @@ function SiteFooterView({
   email = "arizonaseals@gmail.com",
   address,
   socialLinks,
+  logo,
+  siteTitle,
 }: {
   subtitle?: string | null;
   columns?:
@@ -97,6 +113,8 @@ function SiteFooterView({
     facebook?: string | null;
     instagram?: string | null;
   } | null;
+  logo?: SettingsLogo;
+  siteTitle?: string | null;
 }) {
   const quickLinks =
     columns
@@ -126,6 +144,7 @@ function SiteFooterView({
     .join(", ");
   const zip = address?.zip || "85138";
   const resolvedEmail = email || "arizonaseals@gmail.com";
+  const footerLogo = isRenderableLogo(logo) ? logo : null;
 
   const social = [
     {
@@ -146,13 +165,15 @@ function SiteFooterView({
         <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-1">
             <Link href="/" className="mb-4 flex items-center gap-3">
-              <Image
-                src="/logo.png"
-                alt="Arizona Seals Swimming"
-                width={56}
-                height={56}
-                className="h-14 w-14 object-contain"
-              />
+              {footerLogo ? (
+                <SanityImage
+                  image={footerLogo as SanityImageProps}
+                  alt={footerLogo.alt || siteTitle || "Arizona Seals Swimming"}
+                  width={56}
+                  height={56}
+                  className="h-14 w-14 object-contain"
+                />
+              ) : null}
               <div>
                 <p className="font-display text-lg leading-tight font-bold text-white uppercase">
                   Arizona Seals

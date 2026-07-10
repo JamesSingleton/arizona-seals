@@ -23,18 +23,23 @@ import {
 } from "@workspace/ui/components/sheet";
 import { cn } from "@workspace/ui/lib/utils";
 import { Menu } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { SanityImage } from "@/components/elements/sanity-image";
 import { ThemeToggle } from "@/components/theme-toggle";
+import type { SanityImageProps } from "@/types";
 
 type NavbarData = NonNullable<QueryNavbarDataResult>;
 type NavColumn = NonNullable<NavbarData["columns"]>[number];
+type NavbarLogo = NavbarData["logo"];
 
 type SiteNavbarProps = {
   columns?: NavbarData["columns"];
   buttons?: NavbarData["buttons"];
+  logo?: NavbarLogo;
+  alternateLogo?: NavbarData["alternateLogo"];
+  siteTitle?: NavbarData["siteTitle"];
 };
 
 const FALLBACK_COLUMNS = [
@@ -130,7 +135,64 @@ function normalizeHref(href?: string | null) {
     : `/${href}`;
 }
 
-export function SiteNavbar({ columns, buttons }: SiteNavbarProps) {
+function isRenderableLogo(
+  image?: NavbarLogo,
+): image is NonNullable<NavbarLogo> & { id: string } {
+  return typeof image?.id === "string" && image.id.length > 0;
+}
+
+function BrandMark({
+  logo,
+  alternateLogo,
+  siteTitle,
+  solid,
+}: {
+  logo?: NavbarLogo;
+  alternateLogo?: NavbarData["alternateLogo"];
+  siteTitle?: string | null;
+  solid: boolean;
+}) {
+  const primary = isRenderableLogo(logo) ? logo : null;
+  const alternate = isRenderableLogo(alternateLogo) ? alternateLogo : primary;
+  const alt = primary?.alt || alternate?.alt || siteTitle || "Arizona Seals";
+
+  return (
+    <>
+      {primary ? (
+        <SanityImage
+          image={primary as SanityImageProps}
+          alt={alt}
+          width={56}
+          height={56}
+          className={cn(
+            "size-12 object-contain transition-opacity duration-300 md:size-14 dark:brightness-110",
+            solid ? "opacity-100" : "absolute opacity-0",
+          )}
+        />
+      ) : null}
+      {alternate ? (
+        <SanityImage
+          image={alternate as SanityImageProps}
+          alt={alt}
+          width={56}
+          height={56}
+          className={cn(
+            "size-12 object-contain transition-opacity duration-300 md:size-14",
+            solid ? "absolute opacity-0" : "opacity-100",
+          )}
+        />
+      ) : null}
+    </>
+  );
+}
+
+export function SiteNavbar({
+  columns,
+  buttons,
+  logo,
+  alternateLogo,
+  siteTitle,
+}: SiteNavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -150,6 +212,7 @@ export function SiteNavbar({ columns, buttons }: SiteNavbarProps) {
   const cta = buttons?.[0];
   const ctaHref = normalizeHref(cta?.href) || "/contact";
   const ctaLabel = cta?.text || "Join the Team";
+  const brandTitle = siteTitle || "Arizona Seals";
 
   const linkClass = cn(
     "text-sm font-semibold tracking-wide uppercase transition-colors",
@@ -166,6 +229,7 @@ export function SiteNavbar({ columns, buttons }: SiteNavbarProps) {
   );
 
   const mobileLinks = flattenMobileLinks(navColumns);
+  const sheetLogo = isRenderableLogo(logo) ? logo : null;
 
   return (
     <header
@@ -177,26 +241,12 @@ export function SiteNavbar({ columns, buttons }: SiteNavbarProps) {
       )}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex shrink-0 items-center gap-3">
-          <Image
-            src="/logo.png"
-            alt="Arizona Seals Swimming Logo"
-            width={56}
-            height={56}
-            className={cn(
-              "size-12 object-contain transition-opacity duration-300 md:size-14 dark:brightness-110",
-              solid ? "opacity-100" : "absolute opacity-0",
-            )}
-          />
-          <Image
-            src="/logo-white.png"
-            alt="Arizona Seals Swimming Logo"
-            width={56}
-            height={56}
-            className={cn(
-              "size-12 object-contain transition-opacity duration-300 md:size-14",
-              solid ? "absolute opacity-0" : "opacity-100",
-            )}
+        <Link href="/" className="relative flex shrink-0 items-center gap-3">
+          <BrandMark
+            logo={logo}
+            alternateLogo={alternateLogo}
+            siteTitle={brandTitle}
+            solid={solid}
           />
           <div className="hidden leading-none sm:block">
             <p
@@ -276,13 +326,15 @@ export function SiteNavbar({ columns, buttons }: SiteNavbarProps) {
                 onClick={() => setSheetOpen(false)}
                 className="flex items-center gap-3"
               >
-                <Image
-                  src="/logo.png"
-                  alt="Arizona Seals Swimming"
-                  width={48}
-                  height={48}
-                  className="size-12 object-contain"
-                />
+                {sheetLogo ? (
+                  <SanityImage
+                    image={sheetLogo as SanityImageProps}
+                    alt={sheetLogo.alt || brandTitle}
+                    width={48}
+                    height={48}
+                    className="size-12 object-contain"
+                  />
+                ) : null}
                 <div>
                   <p className="font-display text-base leading-tight font-bold text-foreground uppercase">
                     Arizona Seals

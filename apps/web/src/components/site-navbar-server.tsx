@@ -34,5 +34,13 @@ async function CachedSiteNavbar({ perspective, stega }: DynamicFetchOptions) {
     stega,
   });
 
-  return <SiteNavbar columns={data?.columns} buttons={data?.buttons} />;
+  return (
+    <SiteNavbar
+      columns={data?.columns}
+      buttons={data?.buttons}
+      logo={data?.logo}
+      alternateLogo={data?.alternateLogo}
+      siteTitle={data?.siteTitle}
+    />
+  );
 }

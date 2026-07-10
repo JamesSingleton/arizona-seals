@@ -13,8 +13,8 @@ import { schemaTypes } from "./schemaTypes";
 import { structure } from "./structure";
 import { createPageTemplate } from "./utils/helper";
 
-const projectId = process.env.SANITY_STUDIO_PROJECT_ID ?? "";
-const dataset = process.env.SANITY_STUDIO_DATASET;
+const projectId = process.env.SANITY_STUDIO_PROJECT_ID ?? "nck2qq2n";
+const dataset = process.env.SANITY_STUDIO_DATASET ?? "production";
 const title = process.env.SANITY_STUDIO_TITLE;
 const presentationOriginUrl = process.env.SANITY_STUDIO_PRESENTATION_URL;
 
