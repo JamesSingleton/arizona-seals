@@ -31,7 +31,6 @@ type BrandOgRenderProps = {
   image?: Maybe<string>;
   title?: Maybe<string>;
   logo?: Maybe<string>;
-  date?: Maybe<string>;
   _type?: Maybe<string>;
   description?: Maybe<string>;
 };
@@ -59,17 +58,6 @@ const seoImageRender = ({ seoImage }: SeoImageRenderProps) => (
   </div>
 );
 
-function formatDate(value?: Maybe<string>) {
-  if (!value) return null;
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return null;
-  return date.toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
-}
-
 function eyebrowForType(_type?: Maybe<string>) {
   if (_type === "blog") return "News";
   if (_type === "homePage") return "Arizona Seals Swimming";
@@ -78,11 +66,13 @@ function eyebrowForType(_type?: Maybe<string>) {
 
 function Wordmark({ logo }: { logo?: Maybe<string> }) {
   if (logo) {
+    // Fetch is ~4× display size so Satori downscales instead of upscaling.
     return (
       <img
         src={logo}
         alt="Arizona Seals"
-        height={52}
+        width={240}
+        height={80}
         style={{ objectFit: "contain" }}
       />
     );
@@ -110,11 +100,9 @@ const brandOgRender = ({
   image,
   title,
   logo,
-  date,
   description,
   _type,
 }: BrandOgRenderProps) => {
-  const formattedDate = formatDate(date);
   const eyebrow = eyebrowForType(_type);
   const displayTitle =
     title?.trim() ||
@@ -161,16 +149,8 @@ const brandOgRender = ({
       ) : null}
 
       <div tw="relative flex h-full w-full flex-col justify-between px-16 py-14">
-        <div tw="flex w-full items-center justify-between">
+        <div tw="flex w-full items-center">
           <Wordmark logo={logo} />
-          {formattedDate ? (
-            <div
-              tw="flex items-center text-lg tracking-wide"
-              style={{ color: BRAND.muted, fontFamily: "Inter" }}
-            >
-              {formattedDate}
-            </div>
-          ) : null}
         </div>
 
         <div tw="flex max-w-[920px] flex-col">

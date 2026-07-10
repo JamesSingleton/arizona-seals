@@ -29,9 +29,7 @@ type SponsorGroup = {
   sponsors: SponsorsGridSponsor[];
 };
 
-function groupSponsorsByLevel(
-  sponsors: SponsorsGridSponsor[],
-): SponsorGroup[] {
+function groupSponsorsByLevel(sponsors: SponsorsGridSponsor[]): SponsorGroup[] {
   const groups = new Map<string, SponsorGroup>();
 
   for (const sponsor of sponsors) {

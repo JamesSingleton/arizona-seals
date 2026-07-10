@@ -6,8 +6,8 @@ import {
 } from "@workspace/ui/components/accordion";
 import { Badge } from "@workspace/ui/components/badge";
 import { ArrowUpRight } from "lucide-react";
-import { stegaClean } from "next-sanity";
 import Link from "next/link";
+import { stegaClean } from "next-sanity";
 
 import type { PagebuilderType } from "@/types";
 import { RichText } from "../elements/rich-text";

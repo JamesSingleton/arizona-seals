@@ -12,8 +12,8 @@ import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
-import { PageBuilder } from "@/components/pagebuilder";
 import { BreadcrumbJsonLd } from "@/components/json-ld";
+import { PageBuilder } from "@/components/pagebuilder";
 import { getSEOMetadata } from "@/lib/seo";
 
 function toSlugParam(slug: string[]) {

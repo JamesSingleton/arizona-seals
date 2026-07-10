@@ -597,8 +597,7 @@ const ogFieldsFragment = /* groq */ `
     defined(seoImage.asset) => seoImage.asset->url + "?w=1200&h=630&dpr=2&fit=crop"
   ),
   "seoImage": seoImage.asset->url + "?w=1200&h=630&dpr=2&fit=max",
-  "logo": *[_type == "settings"][0].logo.asset->url + "?w=240&h=80&dpr=2&fit=max&q=100",
-  "date": coalesce(publishedAt, date, _createdAt)
+  "logo": *[_type == "settings"][0].logo.asset->url + "?w=960&h=320&fit=max&q=100"
 `;
 
 export const queryHomePageOGData = defineQuery(/* groq */ `
