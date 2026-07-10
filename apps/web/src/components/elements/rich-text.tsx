@@ -56,6 +56,22 @@ const components: Partial<PortableTextReactComponents> = {
       );
     },
   },
+  list: {
+    bullet: ({ children }) => (
+      <ul className="my-3 list-disc space-y-1 pl-5 marker:text-cyan-brand">
+        {children}
+      </ul>
+    ),
+    number: ({ children }) => (
+      <ol className="my-3 list-decimal space-y-1 pl-5 marker:text-cyan-brand">
+        {children}
+      </ol>
+    ),
+  },
+  listItem: {
+    bullet: ({ children }) => <li className="leading-relaxed">{children}</li>,
+    number: ({ children }) => <li className="leading-relaxed">{children}</li>,
+  },
   marks: {
     code: ({ children }) => (
       <code className="rounded-md border border-white/10 bg-opacity-5 p-1 text-sm lg:whitespace-nowrap">

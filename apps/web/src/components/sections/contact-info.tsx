@@ -40,6 +40,53 @@ const quickLinks = [
   { label: "Facility Info", href: "/facilities" },
 ];
 
+const DEFAULT_MAP_QUERY = "44345 MLK Jr Blvd, Maricopa, AZ 85138";
+
+function buildMapUrls(options: {
+  mapUrl?: string | null;
+  address?: {
+    street?: string | null;
+    city?: string | null;
+    state?: string | null;
+    zip?: string | null;
+  } | null;
+}) {
+  const addressQuery = [
+    options.address?.street,
+    [options.address?.city, options.address?.state].filter(Boolean).join(", "),
+    options.address?.zip,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const query = addressQuery || DEFAULT_MAP_QUERY;
+  const encodedQuery = encodeURIComponent(query);
+
+  // Prefer an explicit CMS link for "Open in Maps"; fall back to a search URL.
+  const linkUrl =
+    options.mapUrl ||
+    `https://www.google.com/maps/search/?api=1&query=${encodedQuery}`;
+
+  // Embed via the public maps search endpoint (no API key required).
+  // If the CMS already stored an embed URL, use it as-is.
+  let embedUrl = `https://www.google.com/maps?q=${encodedQuery}&output=embed`;
+  if (options.mapUrl) {
+    try {
+      const parsed = new URL(options.mapUrl);
+      if (parsed.pathname.includes("/embed")) {
+        embedUrl = options.mapUrl;
+      } else if (parsed.searchParams.has("q")) {
+        const q = parsed.searchParams.get("q") || query;
+        embedUrl = `https://www.google.com/maps?q=${encodeURIComponent(q)}&output=embed`;
+      }
+    } catch {
+      // Keep address-based embed fallback.
+    }
+  }
+
+  return { linkUrl, embedUrl };
+}
+
 export function ContactInfoBlock({
   eyebrow = "Get in Touch",
   title = "We're Here to Help",
@@ -65,9 +112,10 @@ export function ContactInfoBlock({
     useSiteSettings !== false
       ? (settings?.primaryAddress ?? address)
       : (address ?? settings?.primaryAddress);
-  const mapUrl =
-    settings?.mapUrl ||
-    "https://maps.google.com/?q=44345+MLK+Jr+Blvd+Maricopa+AZ+85138";
+  const { linkUrl: mapUrl, embedUrl: mapEmbedUrl } = buildMapUrls({
+    mapUrl: settings?.mapUrl,
+    address: resolvedAddress,
+  });
   const inquiryTypes = settings?.inquiryTypes?.filter(Boolean) ?? [];
 
   return (
@@ -201,7 +249,15 @@ export function ContactInfoBlock({
         </div>
       </section>
 
-      <section className="relative flex h-72 items-center justify-center overflow-hidden bg-muted">
+      <section className="relative flex h-72 items-center justify-center overflow-hidden bg-muted sm:h-80">
+        <iframe
+          title="Map of Copper Sky Aquatic Center"
+          src={mapEmbedUrl}
+          className="absolute inset-0 size-full border-0"
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          allowFullScreen
+        />
         <div className="relative z-10 mx-4 max-w-md rounded-xl bg-background/95 p-6 text-center shadow-lg backdrop-blur">
           <p className="mb-1 font-display text-lg font-bold text-navy uppercase">
             Copper Sky Aquatic Center

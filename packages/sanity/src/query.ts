@@ -96,7 +96,12 @@ const markDefsFragment = /* groq */ `
 const richTextFragment = /* groq */ `
   richText[]{
     ...,
-    ${markDefsFragment}
+    ${markDefsFragment},
+    _type == "image" => {
+      ...,
+      ${imageFields}
+      caption
+    }
   }
 `;
 
