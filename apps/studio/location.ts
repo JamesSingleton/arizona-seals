@@ -21,7 +21,7 @@ export const locations = {
       };
     },
   }),
-  home: defineLocations({
+  homePage: defineLocations({
     select: {
       title: "title",
       slug: "slug.current",
@@ -37,6 +37,7 @@ export const locations = {
       };
     },
   }),
+
   page: defineLocations({
     select: {
       title: "title",

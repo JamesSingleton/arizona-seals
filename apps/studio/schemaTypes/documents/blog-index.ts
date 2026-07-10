@@ -50,7 +50,7 @@ export const blogIndex = defineType({
           validation: (rule) => [rule.required()],
         }),
       ],
-      validation: (rule) => [rule.max(1), rule.unique()],
+      validation: (rule) => [rule.max(3), rule.unique()],
       group: GROUP.MAIN_CONTENT,
     }),
     pageBuilderField,

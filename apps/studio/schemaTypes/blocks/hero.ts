@@ -10,14 +10,37 @@ export const hero = defineType({
   type: "object",
   fields: [
     defineField({
+      name: "variant",
+      type: "string",
+      title: "Variant",
+      options: {
+        list: [
+          { title: "Split (image + text)", value: "split" },
+          { title: "Immersive (full bleed)", value: "immersive" },
+        ],
+        layout: "radio",
+      },
+      initialValue: "split",
+    }),
+
+    defineField({
       name: "badge",
       type: "string",
-      title: "Badge",
+      title: "Eyebrow / Badge",
+      description: "Small text above the title",
     }),
     defineField({
       name: "title",
       type: "string",
       title: "Title",
+    }),
+    defineField({
+      name: "titleAccent",
+      type: "string",
+      title: "Title Accent Line",
+      description:
+        "Optional accent line rendered in brand color (immersive variant)",
+      hidden: ({ parent }) => parent?.variant !== "immersive",
     }),
     richTextField,
     defineField({
@@ -33,10 +56,11 @@ export const hero = defineType({
   preview: {
     select: {
       title: "title",
+      variant: "variant",
     },
-    prepare: ({ title }) => ({
+    prepare: ({ title, variant }) => ({
       title,
-      subtitle: "Hero Block",
+      subtitle: `Hero (${variant === "immersive" ? "Immersive" : "Split"})`,
     }),
   },
 });

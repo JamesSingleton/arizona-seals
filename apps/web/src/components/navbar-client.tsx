@@ -1,5 +1,9 @@
 "use client";
 
+import type {
+  QueryGlobalSeoSettingsResult,
+  QueryNavbarDataResult,
+} from "@workspace/sanity/types";
 import {
   Accordion,
   AccordionContent,
@@ -30,10 +34,6 @@ import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 import { useIsMobile } from "@/hooks/use-is-mobile";
-import type {
-  QueryGlobalSeoSettingsResult,
-  QueryNavbarDataResult,
-} from "@/lib/sanity/sanity.types";
 import { SanityButtons } from "./elements/sanity-buttons";
 import { SanityIcon } from "./elements/sanity-icon";
 import { Logo } from "./logo";
@@ -127,12 +127,14 @@ function MobileNavbar({
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <div className="flex justify-end">
-        <SheetTrigger asChild>
-          <Button variant="outline" size="icon">
-            <Menu className="size-4" />
-            <span className="sr-only">Open menu</span>
-          </Button>
-        </SheetTrigger>
+        <SheetTrigger
+          render={
+            <Button variant="outline" size="icon">
+              <Menu className="size-4" />
+              <span className="sr-only">Open menu</span>
+            </Button>
+          }
+        />
       </div>
       <SheetContent className="overflow-y-auto">
         <SheetHeader>
@@ -169,12 +171,7 @@ function MobileNavbar({
               );
             }
             return (
-              <Accordion
-                type="single"
-                collapsible
-                className="w-full"
-                key={item._key}
-              >
+              <Accordion className="w-full" key={item._key}>
                 <MobileNavbarAccordionColumn
                   column={item}
                   setIsOpen={setIsOpen}

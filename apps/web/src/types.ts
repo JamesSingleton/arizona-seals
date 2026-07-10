@@ -2,11 +2,33 @@ import type {
   QueryBlogSlugPageDataResult,
   QueryHomePageDataResult,
   QueryImageTypeResult,
-} from "./lib/sanity/sanity.types";
+} from "@workspace/sanity/types";
 
-export type PageBuilderBlockTypes = NonNullable<
-  NonNullable<QueryHomePageDataResult>["pageBuilder"]
->[number]["_type"];
+/** Seals CMS blocks not yet present in generated QueryHomePageDataResult */
+export type SealsPageBuilderBlockTypes =
+  | "splitContent"
+  | "stats"
+  | "programsPreview"
+  | "programsList"
+  | "latestNews"
+  | "sponsorsMarquee"
+  | "sponsorsHero"
+  | "sponsorTiers"
+  | "sponsorsGrid"
+  | "checklistSplit"
+  | "pageHero"
+  | "timeline"
+  | "contactInfo"
+  | "facilitiesList"
+  | "team"
+  | "featureCardsIcon"
+  | "cta";
+
+export type PageBuilderBlockTypes =
+  | NonNullable<
+      NonNullable<QueryHomePageDataResult>["pageBuilder"]
+    >[number]["_type"]
+  | SealsPageBuilderBlockTypes;
 
 export type PagebuilderType<T extends PageBuilderBlockTypes> = Extract<
   NonNullable<NonNullable<QueryHomePageDataResult>["pageBuilder"]>[number],
@@ -17,10 +39,6 @@ export type SanityButtonProps = NonNullable<
   NonNullable<PagebuilderType<"hero">>["buttons"]
 >[number];
 
-// export type SanityImageProps = Extract<
-//   NonNullable<QueryImageTypeResult>,
-//   { alt: string; blurData: string | null; dominantColor: string | null }
-// >;
 export type SanityImageProps = NonNullable<QueryImageTypeResult>;
 
 export type SanityRichTextProps =

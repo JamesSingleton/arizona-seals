@@ -1,8 +1,23 @@
+import { isSanityConfigured } from "@workspace/sanity/api";
+import { client } from "@workspace/sanity/client";
+import { NextResponse } from "next/server";
 import { defineEnableDraftMode } from "next-sanity/draft-mode";
 
-import { client } from "@/lib/sanity/client";
-import { token } from "@/lib/sanity/token";
+const token = process.env.SANITY_API_READ_TOKEN;
+const hasRealToken = Boolean(token);
 
-export const { GET } = defineEnableDraftMode({
-  client: client.withConfig({ token }),
-});
+const draftMode = hasRealToken
+  ? defineEnableDraftMode({
+      client: client.withConfig({ token }),
+    })
+  : null;
+
+export async function GET(request: Request) {
+  if (!isSanityConfigured || !draftMode) {
+    return NextResponse.json(
+      { message: "Sanity draft mode is not configured" },
+      { status: 503 },
+    );
+  }
+  return draftMode.GET(request);
+}

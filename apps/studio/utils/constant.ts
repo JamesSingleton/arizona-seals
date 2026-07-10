@@ -32,7 +32,7 @@ export const GROUPS: FieldGroupDefinition[] = [
   {
     name: GROUP.CARD,
     icon: BlockElementIcon,
-    title: "Card",
+    title: "Display",
   },
   {
     name: GROUP.RELATED,

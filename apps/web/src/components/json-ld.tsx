@@ -1,24 +1,28 @@
+import { client, urlFor } from "@workspace/sanity/client";
+import { querySettingsData } from "@workspace/sanity/query";
+import type {
+  QueryBlogSlugPageDataResult,
+  QuerySettingsDataResult,
+} from "@workspace/sanity/types";
 import { stegaClean } from "next-sanity";
 import type {
   Answer,
   Article,
+  BreadcrumbList,
   ContactPoint,
   FAQPage,
   ImageObject,
+  ListItem,
   Organization,
   Person,
+  PostalAddress,
   Question,
+  SportsClub,
   WebPage,
   WebSite,
   WithContext,
 } from "schema-dts";
 
-import { client, urlFor } from "@/lib/sanity/client";
-import { querySettingsData } from "@/lib/sanity/query";
-import type {
-  QueryBlogSlugPageDataResult,
-  QuerySettingsDataResult,
-} from "@/lib/sanity/sanity.types";
 import { getBaseUrl, handleErrors } from "@/utils";
 
 interface RichTextChild {
@@ -173,7 +177,15 @@ export function ArticleJsonLd({ article, settings }: ArticleJsonLdProps) {
   );
 }
 
-// Organization JSON-LD Component
+function formatPhoneToE164(phone?: string | null): string | undefined {
+  if (!phone) return undefined;
+  const digits = phone.replace(/\D/g, "");
+  if (digits.length === 10) return `+1${digits}`;
+  if (digits.length === 11 && digits.startsWith("1")) return `+${digits}`;
+  return phone;
+}
+
+// Organization JSON-LD Component (SportsClub for local swim-team search)
 interface OrganizationJsonLdProps {
   settings: QuerySettingsDataResult;
 }
@@ -182,14 +194,16 @@ export function OrganizationJsonLd({ settings }: OrganizationJsonLdProps) {
   if (!settings) return null;
 
   const baseUrl = getBaseUrl();
+  const address = settings.primaryAddress;
+  const phone = formatPhoneToE164(settings.contactPhone);
 
   const socialLinks = settings.socialLinks
     ? (Object.values(settings.socialLinks).filter(Boolean) as string[])
     : undefined;
 
-  const organizationJsonLd: WithContext<Organization> = {
+  const organizationJsonLd: WithContext<SportsClub> = {
     "@context": "https://schema.org",
-    "@type": "Organization",
+    "@type": "SportsClub",
     name: settings.siteTitle!,
     description: settings.siteDescription!,
     url: baseUrl,
@@ -199,17 +213,74 @@ export function OrganizationJsonLd({ settings }: OrganizationJsonLdProps) {
           url: settings.logo,
         } as ImageObject)
       : undefined,
-    contactPoint: settings.contactEmail
+    image: settings.logo || undefined,
+    email: settings.contactEmail || undefined,
+    telephone: phone,
+    address: address?.street
       ? ({
-          "@type": "ContactPoint",
-          email: settings.contactEmail,
-          contactType: "customer service",
-        } as ContactPoint)
+          "@type": "PostalAddress",
+          streetAddress: address.street,
+          addressLocality: address.city,
+          addressRegion: address.state,
+          postalCode: address.zip,
+          addressCountry: "US",
+        } as PostalAddress)
       : undefined,
+    areaServed: address?.city
+      ? {
+          "@type": "City",
+          name: `${address.city}${address.state ? `, ${address.state}` : ""}`,
+        }
+      : undefined,
+    contactPoint:
+      settings.contactEmail || phone
+        ? ({
+            "@type": "ContactPoint",
+            email: settings.contactEmail || undefined,
+            telephone: phone,
+            contactType: "customer service",
+            areaServed: "US",
+            availableLanguage: "English",
+          } as ContactPoint)
+        : undefined,
     sameAs: socialLinks?.length ? socialLinks : undefined,
+    knowsAbout: ["Competitive swimming", "USA Swimming", "Youth athletics"],
   };
 
   return <JsonLdScript data={organizationJsonLd} id="organization-json-ld" />;
+}
+
+// Breadcrumb JSON-LD
+export type BreadcrumbItem = {
+  name: string;
+  path: string;
+};
+
+interface BreadcrumbJsonLdProps {
+  items: BreadcrumbItem[];
+}
+
+export function BreadcrumbJsonLd({ items }: BreadcrumbJsonLdProps) {
+  if (!items?.length) return null;
+
+  const baseUrl = getBaseUrl();
+  const breadcrumbJsonLd: WithContext<BreadcrumbList> = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map(
+      (crumb, index): ListItem => ({
+        "@type": "ListItem",
+        position: index + 1,
+        name: crumb.name,
+        item:
+          crumb.path === "/"
+            ? baseUrl
+            : `${baseUrl}${crumb.path.startsWith("/") ? crumb.path : `/${crumb.path}`}`,
+      }),
+    ),
+  };
+
+  return <JsonLdScript data={breadcrumbJsonLd} id="breadcrumb-json-ld" />;
 }
 
 // Website JSON-LD Component
@@ -255,12 +326,12 @@ export async function CombinedJsonLd({
   const cleanSettings = stegaClean(res);
   return (
     <>
-      {includeWebsite && cleanSettings && (
+      {includeWebsite && cleanSettings ? (
         <WebSiteJsonLd settings={cleanSettings} />
-      )}
-      {includeOrganization && cleanSettings && (
+      ) : null}
+      {includeOrganization && cleanSettings ? (
         <OrganizationJsonLd settings={cleanSettings} />
-      )}
+      ) : null}
     </>
   );
 }

@@ -1,10 +1,13 @@
 import type { NextConfig } from "next";
+import { sanity } from "next-sanity/live/cache-life";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  transpilePackages: ["@workspace/ui"],
+  cacheComponents: true,
+  cacheLife: {
+    default: sanity,
+  },
+  transpilePackages: ["@workspace/ui", "@workspace/sanity"],
   experimental: {
-    // ppr: true,
     inlineCss: true,
   },
   logging: {

@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 
 import type { Maybe } from "@/types";
-import { capitalize } from "@/utils";
-import { getBaseUrl } from "../config";
+import { capitalize, getBaseUrl } from "@/utils";
 
 // Site-wide configuration interface
 interface SiteConfig {
@@ -32,10 +31,18 @@ interface OgImageParams {
 
 // Default site configuration
 const siteConfig: SiteConfig = {
-  title: "Roboto Studio Demo",
-  description: "Roboto Studio Demo",
-  twitterHandle: "@studioroboto",
-  keywords: ["roboto", "studio", "demo", "sanity", "next", "react", "template"],
+  title: "Arizona Seals Swimming",
+  description:
+    "A premier competitive swim club in Arizona dedicated to developing athletes of all ages and skill levels.",
+  twitterHandle: "@arizonaseals",
+  keywords: [
+    "swim club",
+    "Arizona",
+    "competitive swimming",
+    "swim team",
+    "USA Swimming",
+    "Maricopa",
+  ],
 };
 
 function generateOgImageUrl(params: OgImageParams = {}): string {
@@ -117,8 +124,20 @@ export function getSEOMetadata(page: PageSeoData = {}): Metadata {
     creator: siteConfig.title,
     authors: [{ name: siteConfig.title }],
     icons: {
-      icon: `${baseUrl}/favicon.ico`,
+      icon: [
+        { url: "/favicon.ico" },
+        {
+          url: "/icon-light-32x32.png",
+          media: "(prefers-color-scheme: light)",
+        },
+        {
+          url: "/icon-dark-32x32.png",
+          media: "(prefers-color-scheme: dark)",
+        },
+      ],
+      apple: "/apple-icon.png",
     },
+
     keywords: allKeywords,
     robots: seoNoIndex ? "noindex, nofollow" : "index, follow",
     twitter: {
@@ -133,7 +152,9 @@ export function getSEOMetadata(page: PageSeoData = {}): Metadata {
     },
     openGraph: {
       type: pageType ?? "website",
-      countryName: "UK",
+      locale: "en_US",
+      siteName: siteConfig.title,
+      countryName: "United States",
       description: defaultDescription,
       title: defaultTitle,
       images: [

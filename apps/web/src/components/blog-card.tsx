@@ -1,200 +1,135 @@
-"use client";
+import type { QueryBlogIndexPageDataResult } from "@workspace/sanity/types";
 import Link from "next/link";
 
-import type { QueryBlogIndexPageDataResult } from "@/lib/sanity/sanity.types";
 import { SanityImage } from "./elements/sanity-image";
 
 type Blog = NonNullable<
   NonNullable<QueryBlogIndexPageDataResult>["blogs"]
 >[number];
 
-interface BlogImageProps {
-  image: Blog["image"];
-  title?: string | null;
-}
-
-function BlogImage({ image, title }: BlogImageProps) {
-  if (!image?.id) return null;
-
-  return (
-    <SanityImage
-      image={image}
-      width={800}
-      height={400}
-      alt={title ?? "Blog post image"}
-      className="aspect-[16/9] w-full rounded-2xl bg-gray-100 object-cover sm:aspect-[2/1] lg:aspect-[3/2]"
-    />
-  );
-}
-
-interface AuthorImageProps {
-  author: Blog["authors"];
-}
-
-function AuthorImage({ author }: AuthorImageProps) {
-  if (!author?.image) return null;
-
-  return (
-    <SanityImage
-      image={author.image}
-      width={40}
-      height={40}
-      alt={author.name ?? "Author image"}
-      className="size-8 flex-none rounded-full bg-gray-50"
-    />
-  );
-}
-
-interface BlogAuthorProps {
-  author: Blog["authors"];
-}
-
-export function BlogAuthor({ author }: BlogAuthorProps) {
-  if (!author) return null;
-
-  return (
-    <div className="flex items-center gap-x-2.5 text-sm/6 font-semibold text-gray-900">
-      <AuthorImage author={author} />
-      {author.name}
-    </div>
-  );
-}
-
 interface BlogCardProps {
   blog: Blog;
 }
 
-function BlogMeta({ publishedAt }: { publishedAt: string | null }) {
-  return (
-    <div className="flex items-center gap-x-4 text-xs my-4">
-      <time dateTime={publishedAt ?? ""} className="text-muted-foreground">
-        {publishedAt
-          ? new Date(publishedAt).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-            })
-          : ""}
-      </time>
-    </div>
-  );
+function formatDate(value?: string | null): string {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
-function BlogContent({
-  title,
-  slug,
-  description,
-  isFeatured,
-}: {
-  title: string | null;
-  slug: string | null;
-  description: string | null;
-  isFeatured?: boolean;
-}) {
-  const HeadingTag = isFeatured ? "h2" : "h3";
-  const headingClasses = isFeatured
-    ? "mt-3 text-3xl font-semibold leading-tight"
-    : "mt-3 text-lg font-semibold leading-6";
-
-  return (
-    <div className="group relative">
-      <HeadingTag className={headingClasses}>
-        <Link href={slug ?? "#"}>
-          <span className="absolute inset-0" />
-          {title}
-        </Link>
-      </HeadingTag>
-      <p className="mt-5 text-sm leading-6 text-muted-foreground">
-        {description}
-      </p>
-    </div>
-  );
-}
-
-function AuthorSection({ authors }: { authors: Blog["authors"] }) {
-  if (!authors) return null;
-
-  return (
-    <div className="mt-6 flex border-t border-gray-900/5 pt-6">
-      <div className="relative flex items-center gap-x-4">
-        <AuthorImage author={authors} />
-        <div className="text-sm leading-6">
-          <p className="font-semibold">
-            <span className="absolute inset-0" />
-            {authors.name}
-          </p>
-        </div>
-      </div>
-    </div>
-  );
+function blogHref(slug?: string | null): string {
+  if (!slug) return "#";
+  if (slug.startsWith("/blog/")) return slug;
+  if (slug.startsWith("/")) return slug;
+  return `/blog/${slug}`;
 }
 
 export function FeaturedBlogCard({ blog }: BlogCardProps) {
-  const { title, publishedAt, slug, authors, description, image } = blog ?? {};
+  if (!blog) return null;
+
+  const { title, publishedAt, slug, description, image, category } = blog;
+  const href = blogHref(slug);
 
   return (
-    <article className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full">
-      <BlogImage image={image} title={title} />
-      <div className="space-y-6">
-        <BlogMeta publishedAt={publishedAt} />
-        <BlogContent
-          title={title}
-          slug={slug}
-          description={description}
-          isFeatured
-        />
-        {/* <AuthorSection authors={authors} /> */}
-      </div>
-    </article>
+    <Link href={href} className="group block">
+      <article className="grid grid-cols-1 overflow-hidden border border-border bg-background lg:grid-cols-2">
+        <div className="relative aspect-16/10 overflow-hidden bg-muted lg:aspect-auto lg:min-h-88">
+          {image?.id ? (
+            <SanityImage
+              image={image}
+              alt={title ?? "Blog post image"}
+              className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+          ) : (
+            <div className="absolute inset-0 bg-navy" />
+          )}
+          {category ? (
+            <span className="absolute top-4 left-4 bg-cyan-brand px-3 py-1 font-display text-xs font-bold tracking-widest text-primary-foreground uppercase">
+              {category}
+            </span>
+          ) : null}
+        </div>
+        <div className="flex flex-col justify-center p-8 md:p-10">
+          {publishedAt ? (
+            <p className="mb-3 font-display text-xs tracking-widest text-seal-gray uppercase">
+              {formatDate(publishedAt)}
+            </p>
+          ) : null}
+          <h2 className="mb-4 font-display text-2xl leading-tight font-black text-balance text-foreground uppercase transition-colors group-hover:text-cyan-brand md:text-3xl">
+            {title}
+          </h2>
+          {description ? (
+            <p className="mb-6 text-base leading-relaxed text-seal-gray">
+              {description}
+            </p>
+          ) : null}
+          <p className="font-display text-xs font-bold tracking-widest text-cyan-brand uppercase transition-colors group-hover:text-foreground">
+            Read More →
+          </p>
+        </div>
+      </article>
+    </Link>
   );
 }
 
 export function BlogCard({ blog }: BlogCardProps) {
   if (!blog) {
     return (
-      <article className="grid grid-cols-1 gap-4 w-full">
-        <div className="h-48 bg-muted rounded-2xl animate-pulse" />
-        <div className="space-y-2">
-          <div className="h-4 w-24 bg-muted rounded animate-pulse" />
-          <div className="h-6 w-full bg-muted rounded animate-pulse" />
-          <div className="h-4 w-3/4 bg-muted rounded animate-pulse" />
+      <article className="flex flex-col border border-border bg-background">
+        <div className="h-52 animate-pulse bg-muted" />
+        <div className="space-y-3 p-6">
+          <div className="h-3 w-24 animate-pulse bg-muted" />
+          <div className="h-5 w-full animate-pulse bg-muted" />
+          <div className="h-4 w-3/4 animate-pulse bg-muted" />
         </div>
       </article>
     );
   }
 
-  const { title, publishedAt, slug, authors, description, image } = blog;
+  const { title, publishedAt, slug, description, image, category } = blog;
+  const href = blogHref(slug);
 
   return (
-    <article className="grid grid-cols-1 gap-4 w-full">
-      <div className="relative w-full h-auto aspect-[16/9] overflow-hidden rounded-2xl">
-        <BlogImage image={image} title={title} />
-        <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10" />
-      </div>
-      <div className="w-full space-y-4">
-        <BlogMeta publishedAt={publishedAt} />
-        <BlogContent title={title} slug={slug} description={description} />
-        {/* <AuthorSection authors={authors} /> */}
-      </div>
-    </article>
-  );
-}
-
-export function BlogHeader({
-  title,
-  description,
-}: {
-  title: string | null;
-  description: string | null;
-}) {
-  return (
-    <div className="mx-auto max-w-7xl px-6 lg:px-8">
-      <div className="mx-auto max-w-2xl text-center">
-        <h1 className="text-3xl font-bold sm:text-4xl">{title}</h1>
-        <p className="mt-4 text-lg leading-8 text-muted-foreground">
-          {description}
-        </p>
-      </div>
-    </div>
+    <Link href={href} className="group flex flex-col">
+      <article className="flex flex-1 flex-col border border-border bg-background">
+        <div className="relative h-52 shrink-0 overflow-hidden bg-muted">
+          {image?.id ? (
+            <SanityImage
+              image={image}
+              alt={title ?? "Blog post image"}
+              className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+          ) : null}
+          {category ? (
+            <span className="absolute top-4 left-4 bg-cyan-brand px-3 py-1 font-display text-xs font-bold tracking-widest text-primary-foreground uppercase">
+              {category}
+            </span>
+          ) : null}
+        </div>
+        <div className="flex flex-1 flex-col p-6">
+          {publishedAt ? (
+            <p className="mb-3 font-display text-xs tracking-widest text-seal-gray uppercase">
+              {formatDate(publishedAt)}
+            </p>
+          ) : null}
+          <h3 className="mb-3 font-display text-lg leading-tight font-black text-balance text-foreground uppercase transition-colors group-hover:text-cyan-brand">
+            {title}
+          </h3>
+          {description ? (
+            <p className="flex-1 text-sm leading-relaxed text-seal-gray">
+              {description}
+            </p>
+          ) : null}
+          <p className="mt-4 font-display text-xs font-bold tracking-widest text-cyan-brand uppercase transition-colors group-hover:text-foreground">
+            Read More →
+          </p>
+        </div>
+      </article>
+    </Link>
   );
 }

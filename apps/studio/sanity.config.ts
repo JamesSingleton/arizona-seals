@@ -3,12 +3,8 @@ import { visionTool } from "@sanity/vision";
 import { defineConfig } from "sanity";
 import { presentationTool } from "sanity/presentation";
 import { structureTool } from "sanity/structure";
-import {
-  unsplashAssetSource,
-  unsplashImageAsset,
-} from "sanity-plugin-asset-source-unsplash";
 import { iconPicker } from "sanity-plugin-icon-picker";
-import { media, mediaAssetSource } from "sanity-plugin-media";
+import { media } from "sanity-plugin-media";
 
 import { Logo } from "./components/logo";
 import { locations } from "./location";
@@ -26,7 +22,7 @@ export default defineConfig({
   name: "default",
   title: title ?? "Arizona Seals",
   projectId: projectId,
-  // icon: Logo,
+  icon: Logo,
   dataset: dataset ?? "production",
   plugins: [
     presentationTool({
@@ -48,20 +44,18 @@ export default defineConfig({
     iconPicker(),
     media(),
     presentationUrl(),
-    unsplashImageAsset(),
   ],
 
-  form: {
-    image: {
-      assetSources: (previousAssetSources) => {
-        return previousAssetSources.filter(
-          (assetSource) =>
-            assetSource === mediaAssetSource ||
-            assetSource === unsplashAssetSource,
-        );
-      },
-    },
-  },
+  // form: {
+  //   image: {
+  //     assetSources: (previousAssetSources) => {
+  //       return previousAssetSources.filter(
+  //         (assetSource) =>
+  //           assetSource === mediaAssetSource
+  //       );
+  //     },
+  //   },
+  // },
   document: {
     newDocumentOptions: (prev, { creationContext }) => {
       const { type } = creationContext;

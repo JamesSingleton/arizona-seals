@@ -1,11 +1,20 @@
-import Link from "next/link";
-
-import { sanityFetch } from "@/lib/sanity/live";
-import { queryFooterData, queryGlobalSeoSettings } from "@/lib/sanity/query";
+import {
+  type DynamicFetchOptions,
+  getDynamicFetchOptions,
+  sanityFetch,
+} from "@workspace/sanity/live";
+import {
+  queryFooterData,
+  queryGlobalSeoSettings,
+} from "@workspace/sanity/query";
 import type {
   QueryFooterDataResult,
   QueryGlobalSeoSettingsResult,
-} from "@/lib/sanity/sanity.types";
+} from "@workspace/sanity/types";
+import { draftMode } from "next/headers";
+import Link from "next/link";
+import { Suspense } from "react";
+
 import { Logo } from "./logo";
 import {
   FacebookIcon,
@@ -25,13 +34,27 @@ interface FooterProps {
 }
 
 export async function FooterServer() {
+  const { isEnabled: isDraftMode } = await draftMode();
+  if (isDraftMode) {
+    return (
+      <Suspense fallback={<FooterSkeleton />}>
+        <DynamicFooter />
+      </Suspense>
+    );
+  }
+  return <CachedFooter perspective="published" stega={false} />;
+}
+
+async function DynamicFooter() {
+  const options = await getDynamicFetchOptions();
+  return <CachedFooter {...options} />;
+}
+
+async function CachedFooter({ perspective, stega }: DynamicFetchOptions) {
+  "use cache";
   const [response, settingsResponse] = await Promise.all([
-    sanityFetch({
-      query: queryFooterData,
-    }),
-    sanityFetch({
-      query: queryGlobalSeoSettings,
-    }),
+    sanityFetch({ query: queryFooterData, perspective, stega }),
+    sanityFetch({ query: queryGlobalSeoSettings, perspective, stega }),
   ]);
 
   if (!response?.data || !settingsResponse?.data) return <FooterSkeleton />;
@@ -92,50 +115,9 @@ function SocialLinks({ data }: SocialLinksProps) {
 
 export function FooterSkeleton() {
   return (
-    <footer className="mt-16 pb-8">
+    <footer className="mt-16 pb-8" aria-hidden>
       <section className="container mx-auto px-4 md:px-6">
-        <div className="h-[500px] lg:h-auto">
-          <div className="flex flex-col items-center justify-between gap-10 text-center lg:flex-row lg:text-left">
-            <div className="flex w-full max-w-96 shrink flex-col items-center justify-between gap-6 lg:items-start">
-              <div>
-                <span className="flex items-center justify-center gap-4 lg:justify-start">
-                  <div className="h-[40px] w-[80px] bg-muted rounded animate-pulse" />
-                </span>
-                <div className="mt-6 h-16 w-full bg-muted rounded animate-pulse" />
-              </div>
-              <div className="flex items-center space-x-6">
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <div
-                    key={i}
-                    className="h-6 w-6 bg-muted rounded animate-pulse"
-                  />
-                ))}
-              </div>
-            </div>
-            <div className="grid grid-cols-3 gap-6 lg:gap-20">
-              {[1, 2, 3].map((col) => (
-                <div key={col}>
-                  <div className="mb-6 h-6 w-24 bg-muted rounded animate-pulse" />
-                  <div className="space-y-4">
-                    {[1, 2, 3, 4].map((item) => (
-                      <div
-                        key={item}
-                        className="h-4 w-full bg-muted rounded animate-pulse"
-                      />
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="mt-20 flex flex-col justify-between gap-4 border-t pt-8 text-center lg:flex-row lg:items-center lg:text-left">
-            <div className="h-4 w-48 bg-muted rounded animate-pulse" />
-            <div className="flex justify-center gap-4 lg:justify-start">
-              <div className="h-4 w-32 bg-muted rounded animate-pulse" />
-              <div className="h-4 w-24 bg-muted rounded animate-pulse" />
-            </div>
-          </div>
-        </div>
+        <div className="h-[200px] animate-pulse rounded bg-muted" />
       </section>
     </footer>
   );
@@ -147,69 +129,82 @@ function Footer({ data, settingsData }: FooterProps) {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="mt-20 pb-8">
+    <footer className="mt-20 border-t border-border pb-8">
       <section className="container mx-auto">
-        <div className="h-[500px] lg:h-auto">
-          <div className="flex flex-col items-center justify-between gap-10 text-center lg:flex-row lg:text-left mx-auto max-w-7xl px-4 md:px-6">
-            <div className="flex w-full max-w-96 shrink flex-col items-center justify-between gap-6 md:gap-8 lg:items-start">
-              <div>
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-10 px-4 py-12 text-center md:px-6 lg:flex-row lg:text-left">
+          <div className="flex w-full max-w-96 shrink flex-col items-center justify-between gap-6 md:gap-8 lg:items-start">
+            <div>
+              {logo ? (
                 <span className="flex items-center justify-center gap-4 lg:justify-start">
-                  <Logo alt={siteTitle} priority image={logo} />
+                  <Logo
+                    alt={siteTitle ?? "Arizona Seals Swimming"}
+                    image={logo}
+                  />
                 </span>
-                {subtitle && (
-                  <p className="mt-6 text-sm text-muted-foreground dark:text-zinc-400">
-                    {subtitle}
-                  </p>
-                )}
-              </div>
-              {socialLinks && <SocialLinks data={socialLinks} />}
+              ) : (
+                <p className="font-display text-lg font-black uppercase">
+                  {siteTitle}
+                </p>
+              )}
+              {subtitle ? (
+                <p className="mt-6 text-sm text-muted-foreground">{subtitle}</p>
+              ) : null}
             </div>
-            {Array.isArray(columns) && columns?.length > 0 && (
-              <div className="grid grid-cols-3 gap-6 lg:gap-28 lg:mr-20">
-                {columns.map((column, index) => (
-                  <div key={`column-${column?._key}-${index}`}>
-                    <h3 className="mb-6 font-semibold">{column?.title}</h3>
-                    {column?.links && column?.links?.length > 0 && (
-                      <ul className="space-y-4 text-sm text-muted-foreground dark:text-zinc-400">
-                        {column?.links?.map((link, index) => (
-                          <li
-                            key={`${link?._key}-${index}-column-${column?._key}`}
-                            className="font-medium hover:text-primary"
-                          >
-                            <Link
-                              href={link.href ?? "#"}
-                              target={link.openInNewTab ? "_blank" : undefined}
-                              rel={
-                                link.openInNewTab
-                                  ? "noopener noreferrer"
-                                  : undefined
-                              }
-                            >
-                              {link.name}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
+            {socialLinks ? <SocialLinks data={socialLinks} /> : null}
           </div>
-          <div className="mt-20 border-t pt-8">
-            <div className="flex flex-col justify-between gap-4  text-center text-sm font-normal text-muted-foreground lg:flex-row lg:items-center lg:text-left mx-auto max-w-7xl px-4 md:px-6">
-              <p>
-                © {year} {siteTitle}. All rights reserved.
-              </p>
-              <ul className="flex justify-center gap-4 lg:justify-start">
-                <li className="hover:text-primary">
-                  <Link href="/terms">Terms and Conditions</Link>
-                </li>
-                <li className="hover:text-primary">
-                  <Link href="/privacy">Privacy Policy</Link>
-                </li>
-              </ul>
+          {Array.isArray(columns) && columns.length > 0 ? (
+            <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:mr-20 lg:gap-28">
+              {columns.map((column, index) => (
+                <div key={`column-${column?._key}-${index}`}>
+                  <h2 className="mb-6 text-sm font-semibold">
+                    {column?.title}
+                  </h2>
+                  {column?.links && column.links.length > 0 ? (
+                    <ul className="space-y-4 text-sm text-muted-foreground">
+                      {column.links.map((link, linkIndex) => (
+                        <li
+                          key={`${link?._key}-${linkIndex}-column-${column?._key}`}
+                          className="font-medium hover:text-primary"
+                        >
+                          <Link
+                            href={link.href ?? "#"}
+                            target={link.openInNewTab ? "_blank" : undefined}
+                            rel={
+                              link.openInNewTab
+                                ? "noopener noreferrer"
+                                : undefined
+                            }
+                          >
+                            {link.name}
+                            {link.openInNewTab ? (
+                              <span className="sr-only">
+                                {" "}
+                                (opens in new tab)
+                              </span>
+                            ) : null}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                </div>
+              ))}
             </div>
+          ) : null}
+        </div>
+        <div className="border-t border-border pt-8">
+          <div className="mx-auto flex max-w-7xl flex-col justify-between gap-4 px-4 text-center text-sm text-muted-foreground md:px-6 lg:flex-row lg:items-center lg:text-left">
+            <p>
+              © {year} {siteTitle}. All rights reserved.
+            </p>
+            <ul className="flex justify-center gap-4 lg:justify-start">
+              <li className="hover:text-primary">
+                <Link href="/terms">Terms and Conditions</Link>
+              </li>
+              <li className="hover:text-primary">
+                <Link href="/privacy">Privacy Policy</Link>
+              </li>
+            </ul>
           </div>
         </div>
       </section>

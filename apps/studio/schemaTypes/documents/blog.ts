@@ -88,6 +88,19 @@ export const blog = defineType({
       group: GROUP.MAIN_CONTENT,
     }),
     defineField({
+      name: "category",
+      type: "string",
+      title: "Category",
+      group: GROUP.MAIN_CONTENT,
+      options: {
+        list: [
+          { title: "Results", value: "Results" },
+          { title: "Club News", value: "Club News" },
+          { title: "Awards", value: "Awards" },
+        ],
+      },
+    }),
+    defineField({
       name: "image",
       title: "Image",
       type: "image",
@@ -96,6 +109,15 @@ export const blog = defineType({
       options: {
         hotspot: true,
       },
+      fields: [
+        defineField({
+          name: "alt",
+          type: "string",
+          title: "Alternative text",
+          validation: (Rule) =>
+            Rule.required().warning("Add alt text for accessibility."),
+        }),
+      ],
     }),
     defineField({
       name: "richText",

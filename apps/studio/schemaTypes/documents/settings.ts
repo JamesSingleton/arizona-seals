@@ -87,6 +87,52 @@ export const settings = defineType({
       description: "Primary contact email address for your website",
       validation: (rule) => rule.email(),
     }),
+    defineField({
+      name: "contactPhone",
+      type: "string",
+      title: "Contact Phone",
+    }),
+    defineField({
+      name: "primaryAddress",
+      type: "object",
+      title: "Primary Address",
+      fields: [
+        defineField({ name: "street", type: "string", title: "Street" }),
+        defineField({ name: "city", type: "string", title: "City" }),
+        defineField({ name: "state", type: "string", title: "State" }),
+        defineField({ name: "zip", type: "string", title: "ZIP" }),
+      ],
+    }),
+    defineField({
+      name: "officeHours",
+      type: "array",
+      title: "Office Hours",
+      of: [
+        {
+          type: "object",
+          fields: [
+            defineField({ name: "days", type: "string", title: "Days" }),
+            defineField({ name: "hours", type: "string", title: "Hours" }),
+          ],
+          preview: {
+            select: { title: "days", subtitle: "hours" },
+          },
+        },
+      ],
+    }),
+    defineField({
+      name: "inquiryTypes",
+      type: "array",
+      title: "Contact Inquiry Types",
+      of: [{ type: "string" }],
+      description: "Options shown in the contact form inquiry dropdown",
+    }),
+    defineField({
+      name: "mapUrl",
+      type: "url",
+      title: "Map URL",
+      description: "Google Maps or similar link for the primary location",
+    }),
     socialLinks,
   ],
   preview: {

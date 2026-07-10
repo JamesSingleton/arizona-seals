@@ -1,29 +1,43 @@
+import { isSanityConfigured } from "@workspace/sanity/api";
+import {
+  type DynamicFetchOptions,
+  getDynamicFetchOptions,
+  sanityFetch,
+  sanityFetchMetadata,
+  sanityFetchStaticParams,
+} from "@workspace/sanity/live";
+import { querySlugPageData, querySlugPagePaths } from "@workspace/sanity/query";
 import type { Metadata } from "next";
+import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
+import { BreadcrumbJsonLd } from "@/components/json-ld";
 import { PageBuilder } from "@/components/pagebuilder";
-import { client } from "@/lib/sanity/client";
-import { sanityFetch } from "@/lib/sanity/live";
-import { querySlugPageData, querySlugPagePaths } from "@/lib/sanity/query";
 import { getSEOMetadata } from "@/lib/seo";
 
-async function fetchSlugPageData(slug: string, stega = true) {
-  return await sanityFetch({
-    query: querySlugPageData,
-    params: { slug: `/${slug}` },
-    stega,
-  });
+function toSlugParam(slug: string[]) {
+  return `/${slug.join("/")}`;
 }
 
-async function fetchSlugPagePaths() {
-  const slugs = await client.fetch(querySlugPagePaths);
-  const paths: { slug: string[] }[] = [];
-  for (const slug of slugs) {
-    if (!slug) continue;
-    const parts = slug.split("/").filter(Boolean);
-    paths.push({ slug: parts });
+export async function generateStaticParams() {
+  // Cache Components requires at least one static param for build-time validation.
+  const fallback = [{ slug: ["about"] }];
+  if (!isSanityConfigured) return fallback;
+  try {
+    const { data: slugs } = await sanityFetchStaticParams({
+      query: querySlugPagePaths,
+    });
+    const paths: { slug: string[] }[] = [];
+    for (const slug of slugs ?? []) {
+      if (!slug) continue;
+      const parts = slug.split("/").filter(Boolean);
+      if (parts.length) paths.push({ slug: parts });
+    }
+    return paths.length > 0 ? paths : fallback;
+  } catch {
+    return fallback;
   }
-  return paths;
 }
 
 export async function generateMetadata({
@@ -32,24 +46,36 @@ export async function generateMetadata({
   params: Promise<{ slug: string[] }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const slugString = slug.join("/");
-  const { data: pageData } = await fetchSlugPageData(slugString, false);
+  const slugString = toSlugParam(slug);
+  const { isEnabled: isDraftMode } = await draftMode();
 
-  return getSEOMetadata(
-    pageData
-      ? {
-          title: pageData?.title ?? pageData?.seoTitle ?? "",
-          description: pageData?.description ?? pageData?.seoDescription ?? "",
-          slug: `/${pageData?.slug}`,
-          contentId: pageData?._id,
-          contentType: pageData?._type,
-        }
-      : { slug: `/${slugString}` },
-  );
-}
+  if (!isSanityConfigured) {
+    return getSEOMetadata({ slug: slugString });
+  }
 
-export async function generateStaticParams() {
-  return await fetchSlugPagePaths();
+  try {
+    const { data: pageData } = await sanityFetchMetadata({
+      query: querySlugPageData,
+      params: { slug: slugString },
+      perspective: isDraftMode ? "drafts" : "published",
+    });
+    return getSEOMetadata(
+      pageData
+        ? {
+            title: pageData.seoTitle ?? pageData.title ?? "",
+            description: pageData.seoDescription ?? pageData.description ?? "",
+            slug: pageData.slug?.startsWith("/")
+              ? pageData.slug
+              : `/${pageData.slug}`,
+            contentId: pageData._id,
+            contentType: pageData._type,
+            seoNoIndex: pageData.seoNoIndex ?? false,
+          }
+        : { slug: slugString },
+    );
+  } catch {
+    return getSEOMetadata({ slug: slugString });
+  }
 }
 
 export default async function SlugPage({
@@ -57,24 +83,82 @@ export default async function SlugPage({
 }: {
   params: Promise<{ slug: string[] }>;
 }) {
-  const { slug } = await params;
-  const slugString = slug.join("/");
-  const { data: pageData } = await fetchSlugPageData(slugString);
+  if (!isSanityConfigured) notFound();
 
-  if (!pageData) {
-    return notFound();
+  const { isEnabled: isDraftMode } = await draftMode();
+  if (isDraftMode) {
+    return (
+      <Suspense fallback={<PageFallback />}>
+        <DynamicSlugPage params={params} />
+      </Suspense>
+    );
   }
 
-  const { title, pageBuilder, _id, _type } = pageData ?? {};
-
-  return !Array.isArray(pageBuilder) || pageBuilder?.length === 0 ? (
-    <div className="flex flex-col items-center justify-center min-h-[50vh] text-center p-4">
-      <h1 className="text-2xl font-semibold mb-4 capitalize">{title}</h1>
-      <p className="text-muted-foreground mb-6">
-        This page has no content blocks yet.
-      </p>
-    </div>
-  ) : (
-    <PageBuilder pageBuilder={pageBuilder} id={_id} type={_type} />
+  const { slug } = await params;
+  return (
+    <CachedSlugPage
+      slug={toSlugParam(slug)}
+      perspective="published"
+      stega={false}
+    />
   );
+}
+
+async function DynamicSlugPage({
+  params,
+}: {
+  params: Promise<{ slug: string[] }>;
+}) {
+  const [{ slug }, options] = await Promise.all([
+    params,
+    getDynamicFetchOptions(),
+  ]);
+  return <CachedSlugPage slug={toSlugParam(slug)} {...options} />;
+}
+
+async function CachedSlugPage({
+  slug,
+  perspective,
+  stega,
+}: { slug: string } & DynamicFetchOptions) {
+  "use cache";
+  const { data: pageData } = await sanityFetch({
+    query: querySlugPageData,
+    params: { slug },
+    perspective,
+    stega,
+  });
+
+  if (!pageData) notFound();
+
+  const { title, pageBuilder, _id, _type } = pageData;
+
+  if (!Array.isArray(pageBuilder) || pageBuilder.length === 0) {
+    return (
+      <div className="flex min-h-[50vh] flex-col items-center justify-center p-4 text-center">
+        <h1 className="mb-4 font-display text-2xl font-semibold capitalize">
+          {title}
+        </h1>
+        <p className="mb-6 text-muted-foreground">
+          This page has no content blocks yet.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", path: "/" },
+          { name: title || "Page", path: slug },
+        ]}
+      />
+      <PageBuilder pageBuilder={pageBuilder as never} id={_id} type={_type} />
+    </>
+  );
+}
+
+function PageFallback() {
+  return <div className="min-h-[50vh] animate-pulse bg-muted" aria-hidden />;
 }
