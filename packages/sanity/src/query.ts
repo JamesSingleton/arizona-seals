@@ -24,6 +24,13 @@ const imageFragment = /* groq */ `
   }
 `;
 
+/** Sponsor documents store the asset on `logo`; project it as `image` for frontend components. */
+const sponsorLogoFragment = /* groq */ `
+  "image": logo {
+    ${imageFields}
+  }
+`;
+
 const customLinkFragment = /* groq */ `
   ...customLink{
     openInNewTab,
@@ -292,7 +299,7 @@ const sponsorsGridBlock = /* groq */ `
         url,
         tier,
         featured,
-        ${imageFragment}
+        ${sponsorLogoFragment}
       },
       *[_type == "sponsor"] | order(sortOrder asc){
         _id,
@@ -300,7 +307,7 @@ const sponsorsGridBlock = /* groq */ `
         url,
         tier,
         featured,
-        ${imageFragment}
+        ${sponsorLogoFragment}
       }
     )
   }
@@ -327,7 +334,7 @@ const sponsorsMarqueeBlock = /* groq */ `
         url,
         tier,
         featured,
-        ${imageFragment}
+        ${sponsorLogoFragment}
       },
       *[_type == "sponsor" && featured != false] | order(sortOrder asc){
         _id,
@@ -335,7 +342,7 @@ const sponsorsMarqueeBlock = /* groq */ `
         url,
         tier,
         featured,
-        ${imageFragment}
+        ${sponsorLogoFragment}
       }
     )
   }

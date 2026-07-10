@@ -1,5 +1,5 @@
 import type { SanityImageProps } from "@/types";
-import { SanityImage } from "../elements/sanity-image";
+import { SponsorLogo } from "../elements/sponsor-logo";
 
 export type SponsorsGridSponsor = {
   _id?: string;
@@ -34,49 +34,21 @@ export function SponsorsGrid({
               {eyebrow}
             </p>
           ) : null}
-          <h2 className="font-display text-4xl font-bold text-navy uppercase md:text-5xl">
+          <h2 className="font-display text-4xl font-bold text-foreground uppercase md:text-5xl">
             {title}
           </h2>
         </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-8">
-          {sponsors.map((sponsor) => {
-            const content = sponsor.image?.id ? (
-              <SanityImage
-                image={sponsor.image}
-                alt={sponsor.name ?? "Sponsor"}
-                className="h-12 w-auto object-contain opacity-50 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0"
-              />
-            ) : (
-              <span className="font-display text-sm font-bold tracking-wide text-seal-gray uppercase opacity-60 transition-opacity hover:opacity-100">
-                {sponsor.name}
-              </span>
-            );
-
-            if (sponsor.url) {
-              return (
-                <a
-                  key={sponsor._id ?? sponsor.name}
-                  href={sponsor.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={sponsor.name ?? "Sponsor"}
-                  className="flex h-16 items-center justify-center"
-                >
-                  {content}
-                </a>
-              );
-            }
-
-            return (
-              <div
-                key={sponsor._id ?? sponsor.name}
-                className="flex h-16 items-center justify-center"
-              >
-                {content}
-              </div>
-            );
-          })}
+        <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-5">
+          {sponsors.map((sponsor) => (
+            <SponsorLogo
+              key={sponsor._id ?? sponsor.name}
+              name={sponsor.name}
+              image={sponsor.image}
+              url={sponsor.url}
+              size="md"
+            />
+          ))}
         </div>
 
         {footerNote || footerEmail ? (
@@ -84,7 +56,7 @@ export function SponsorsGrid({
             {footerNote || "Interested in becoming a sponsor?"}{" "}
             <a
               href={`mailto:${footerEmail}`}
-              className="font-semibold text-cyan-brand hover:text-navy"
+              className="font-semibold text-cyan-brand hover:text-foreground"
             >
               {footerEmail}
             </a>

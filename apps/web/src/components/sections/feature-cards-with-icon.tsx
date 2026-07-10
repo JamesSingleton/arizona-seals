@@ -17,7 +17,7 @@ function FeatureCard({ card, navy }: FeatureCardProps) {
     return (
       <div className="rounded-xl border border-white/10 bg-white/5 p-6 transition-colors hover:bg-white/10">
         {icon ? (
-          <span className="mb-5 flex size-12 items-center justify-center rounded-full bg-cyan-brand/20 text-cyan-brand">
+          <span className="mb-5 flex size-12 items-center justify-center rounded-full bg-cyan-on-navy/20 text-cyan-on-navy">
             <SanityIcon icon={icon} />
           </span>
         ) : null}
@@ -77,7 +77,7 @@ export function FeatureCardsWithIcon({
               <p
                 className={
                   navy
-                    ? "font-display text-sm font-bold tracking-[0.2em] text-cyan-brand uppercase"
+                    ? "font-display text-sm font-bold tracking-[0.2em] text-cyan-on-navy uppercase"
                     : "rounded-full bg-muted px-3 py-1 text-sm"
                 }
               >

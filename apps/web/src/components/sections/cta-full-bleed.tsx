@@ -35,8 +35,8 @@ export function CtaFullBleed({
 
       <div className="relative z-10 mx-auto w-full max-w-7xl px-6 pb-16 sm:px-10 md:pb-24 lg:px-16">
         <div className="mb-4 flex items-center gap-3">
-          <div className="h-0.5 w-8 bg-cyan-brand" />
-          <span className="font-display text-xs font-bold tracking-[0.25em] text-cyan-brand uppercase">
+          <div className="h-0.5 w-8 bg-cyan-on-navy" />
+          <span className="font-display text-xs font-bold tracking-[0.25em] text-cyan-on-navy uppercase">
             {eyebrow}
           </span>
         </div>

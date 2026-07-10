@@ -233,7 +233,7 @@ export function FacilitiesList({
         <section className="bg-navy py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="mb-12 text-center">
-              <p className="mb-2 font-display text-sm font-bold tracking-[0.2em] text-cyan-brand uppercase">
+              <p className="mb-2 font-display text-sm font-bold tracking-[0.2em] text-cyan-on-navy uppercase">
                 What We Have
               </p>
               <h2 className="font-display text-4xl font-bold text-balance text-white uppercase">
@@ -250,7 +250,7 @@ export function FacilitiesList({
                     {f.title}
                   </h4>
                   {f.description ? (
-                    <p className="text-sm leading-relaxed text-white/60">
+                    <p className="text-sm leading-relaxed text-white/80">
                       {f.description}
                     </p>
                   ) : null}

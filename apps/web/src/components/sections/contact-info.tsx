@@ -183,9 +183,9 @@ export function ContactInfoBlock({
                     <Link
                       key={l.label}
                       href={l.href}
-                      className="flex items-center gap-2 text-sm text-white/70 transition-colors hover:text-cyan-brand"
+                      className="flex items-center gap-2 text-sm text-white/80 transition-colors hover:text-cyan-on-navy"
                     >
-                      <span className="size-1 rounded-full bg-cyan-brand" />
+                      <span className="size-1 rounded-full bg-cyan-on-navy" />
                       {l.label}
                     </Link>
                   ))}

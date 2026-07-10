@@ -28,7 +28,7 @@ export function SponsorTiers({
       <div className="mx-auto max-w-7xl px-6 sm:px-10 lg:px-16">
         <div className="mb-14 text-center">
           {eyebrow ? (
-            <p className="mb-2 font-display text-sm font-bold tracking-[0.2em] text-cyan-brand uppercase">
+            <p className="mb-2 font-display text-sm font-bold tracking-[0.2em] text-cyan-on-navy uppercase">
               {eyebrow}
             </p>
           ) : null}
@@ -58,12 +58,12 @@ export function SponsorTiers({
                   {tier.name}
                 </h3>
                 {tier.price ? (
-                  <p className="mt-2 font-display text-3xl font-black text-cyan-brand">
+                  <p className="mt-2 font-display text-3xl font-black text-cyan-on-navy">
                     {tier.price}
                   </p>
                 ) : null}
                 {tier.availability ? (
-                  <p className="mt-1 text-xs tracking-wide text-white/50 uppercase">
+                  <p className="mt-1 text-xs tracking-wide text-white/70 uppercase">
                     {tier.availability}
                   </p>
                 ) : null}
@@ -76,7 +76,7 @@ export function SponsorTiers({
                       >
                         <Star
                           size={12}
-                          className="mt-1 shrink-0 fill-cyan-brand text-cyan-brand"
+                          className="mt-1 shrink-0 fill-cyan-on-navy text-cyan-on-navy"
                         />
                         {perk}
                       </li>

@@ -14,11 +14,13 @@
 
   /*
    * Brand palette
-   * - cyan-brand: interactive accent (theme-aware for AA contrast)
+   * - cyan-brand: interactive accent on light surfaces (theme-aware for AA)
+   * - cyan-on-navy: accent text/icons on bg-navy (always light cyan)
    * - navy: deep brand surface (always dark — use for bg-navy bands)
    * - seal-gray: secondary body text (theme-aware)
    */
   --color-cyan-brand: var(--cyan-brand);
+  --color-cyan-on-navy: var(--cyan-on-navy);
   --color-navy: var(--navy);
   --color-seal-gray: var(--seal-gray);
 
@@ -67,8 +69,10 @@
 :root {
   /* Deep brand navy stays constant — used for bg-navy surfaces */
   --navy: #1b3a6b;
-  /* AA normal text: #0077a3 on white ≈ 5.0:1; white on #0077a3 ≈ 5.0:1 */
-  --cyan-brand: #0077a3;
+  /* AA normal text on white/muted; white on this cyan ≈ 5.6:1 */
+  --cyan-brand: #006f9a;
+  /* AA on navy (~6:1) — use for eyebrows/accents on bg-navy */
+  --cyan-on-navy: #5ec9f2;
   --seal-gray: #4a5a6a;
 
   --background: #ffffff;
@@ -77,7 +81,7 @@
   --card-foreground: #0f1c2e;
   --popover: #ffffff;
   --popover-foreground: #0f1c2e;
-  --primary: #0077a3;
+  --primary: #006f9a;
   --primary-foreground: #ffffff;
   --secondary: #1b3a6b;
   --secondary-foreground: #ffffff;
@@ -88,8 +92,8 @@
   --destructive: oklch(0.577 0.245 27.325);
   --border: #c5d0db;
   --input: #c5d0db;
-  --ring: #0077a3;
-  --chart-1: #0077a3;
+  --ring: #006f9a;
+  --chart-1: #006f9a;
   --chart-2: #1b3a6b;
   --chart-3: #4a5a6a;
   --chart-4: #4a7ab5;
@@ -97,19 +101,20 @@
   --radius: 0.5rem;
   --sidebar: #ffffff;
   --sidebar-foreground: #0f1c2e;
-  --sidebar-primary: #0077a3;
+  --sidebar-primary: #006f9a;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #e8eff5;
   --sidebar-accent-foreground: #0f1c2e;
   --sidebar-border: #c5d0db;
-  --sidebar-ring: #0077a3;
+  --sidebar-ring: #006f9a;
 }
 
 .dark {
   /* Keep deep navy for brand bands (footer, stats, CTAs) */
   --navy: #1b3a6b;
-  /* Brighter cyan for AA on dark surfaces */
+  /* Brighter cyan for AA on dark app surfaces */
   --cyan-brand: #5ec9f2;
+  --cyan-on-navy: #5ec9f2;
   /* Body secondary text — AA on #0d1520 / #131e2e */
   --seal-gray: #b8c7d6;
 

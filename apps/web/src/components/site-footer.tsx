@@ -156,7 +156,7 @@ function SiteFooterView({
                 <p className="font-display text-lg leading-tight font-bold text-white uppercase">
                   Arizona Seals
                 </p>
-                <p className="font-display text-sm font-bold tracking-widest text-cyan-brand uppercase">
+                <p className="font-display text-sm font-bold tracking-widest text-cyan-on-navy uppercase">
                   Swimming
                 </p>
               </div>
@@ -181,7 +181,7 @@ function SiteFooterView({
           </div>
 
           <div>
-            <h2 className="font-display mb-4 text-base font-bold tracking-widest text-cyan-brand uppercase">
+            <h2 className="font-display mb-4 text-base font-bold tracking-widest text-white uppercase">
               Quick Links
             </h2>
             <ul className="space-y-2">
@@ -189,7 +189,7 @@ function SiteFooterView({
                 <li key={l.href}>
                   <Link
                     href={l.href}
-                    className="text-sm text-white/70 transition-colors hover:text-cyan-brand"
+                    className="text-sm text-white/80 transition-colors hover:text-cyan-on-navy"
                   >
                     {l.label}
                   </Link>
@@ -199,7 +199,7 @@ function SiteFooterView({
           </div>
 
           <div>
-            <h2 className="font-display mb-4 text-base font-bold tracking-widest text-cyan-brand uppercase">
+            <h2 className="font-display mb-4 text-base font-bold tracking-widest text-white uppercase">
               Programs
             </h2>
             <ul className="space-y-2">
@@ -207,7 +207,7 @@ function SiteFooterView({
                 <li key={l.label}>
                   <Link
                     href={l.href}
-                    className="text-sm text-white/70 transition-colors hover:text-cyan-brand"
+                    className="text-sm text-white/80 transition-colors hover:text-cyan-on-navy"
                   >
                     {l.label}
                   </Link>
@@ -217,34 +217,37 @@ function SiteFooterView({
           </div>
 
           <div>
-            <h2 className="font-display mb-4 text-base font-bold tracking-widest text-cyan-brand uppercase">
+            <h2 className="font-display mb-4 text-base font-bold tracking-widest text-white uppercase">
               Contact Us
             </h2>
             <ul className="space-y-3">
               <li className="flex items-start gap-3">
-                <MapPin size={16} className="mt-0.5 shrink-0 text-cyan-brand" />
-                <span className="text-sm text-white/70">
+                <MapPin
+                  size={16}
+                  className="mt-0.5 shrink-0 text-cyan-on-navy"
+                />
+                <span className="text-sm text-white/80">
                   {street}
                   <br />
                   {cityLine} {zip}
                 </span>
               </li>
               <li className="flex items-center gap-3">
-                <Mail size={16} className="shrink-0 text-cyan-brand" />
+                <Mail size={16} className="shrink-0 text-cyan-on-navy" />
                 <a
                   href={`mailto:${resolvedEmail}`}
-                  className="text-sm text-white/70 transition-colors hover:text-cyan-brand"
+                  className="text-sm text-white/80 transition-colors hover:text-cyan-on-navy"
                 >
                   {resolvedEmail}
                 </a>
               </li>
             </ul>
             <div className="mt-5">
-              <p className="mb-1 text-xs tracking-widest text-white/50 uppercase">
+              <p className="mb-1 text-xs tracking-widest text-white uppercase">
                 Member Of
               </p>
-              <p className="text-sm font-medium text-white/80">USA Swimming</p>
-              <p className="text-sm font-medium text-white/80">
+              <p className="text-sm font-medium text-white/90">USA Swimming</p>
+              <p className="text-sm font-medium text-white/90">
                 Arizona Swimming
               </p>
             </div>

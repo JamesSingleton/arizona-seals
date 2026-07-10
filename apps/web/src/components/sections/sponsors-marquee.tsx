@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import type { SanityImageProps } from "@/types";
-import { SanityImage } from "../elements/sanity-image";
+import { SponsorLogo } from "../elements/sponsor-logo";
 
 export type SponsorsMarqueeSponsor = {
   _id?: string;
@@ -22,45 +22,17 @@ export type SponsorsMarqueeProps = {
   sponsors?: SponsorsMarqueeSponsor[] | null;
 };
 
-function SponsorLogo({ sponsor }: { sponsor: SponsorsMarqueeSponsor }) {
-  if (!sponsor.image?.id) {
-    return (
-      <span className="font-display text-sm font-bold tracking-wide text-seal-gray uppercase opacity-50">
-        {sponsor.name}
-      </span>
-    );
-  }
-
-  return (
-    <SanityImage
-      image={sponsor.image}
-      alt={sponsor.name ?? "Sponsor"}
-      className="h-10 w-auto object-contain opacity-50 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0"
-    />
-  );
-}
-
 function SponsorItem({ sponsor }: { sponsor: SponsorsMarqueeSponsor }) {
-  const content = (
-    <div className="mx-8 flex h-14 items-center justify-center">
-      <SponsorLogo sponsor={sponsor} />
+  return (
+    <div className="mx-3 flex items-center justify-center">
+      <SponsorLogo
+        name={sponsor.name}
+        image={sponsor.image}
+        url={sponsor.url}
+        size="sm"
+      />
     </div>
   );
-
-  if (sponsor.url) {
-    return (
-      <a
-        href={sponsor.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label={sponsor.name ?? "Sponsor"}
-      >
-        {content}
-      </a>
-    );
-  }
-
-  return content;
 }
 
 export function SponsorsMarquee({
@@ -105,7 +77,7 @@ export function SponsorsMarquee({
 
       <div className="relative">
         {reducedMotion ? (
-          <div className="flex flex-wrap items-center justify-center gap-y-4 px-4">
+          <div className="flex flex-wrap items-center justify-center gap-3 px-4">
             {sponsors.map((sponsor) => (
               <SponsorItem
                 key={sponsor._id ?? sponsor.name}

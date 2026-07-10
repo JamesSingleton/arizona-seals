@@ -53,7 +53,7 @@ export function CTABlock({
             <p
               className={cn(
                 "mb-3 font-display text-sm font-bold tracking-[0.2em] uppercase",
-                isCyan ? "text-white/80" : "text-cyan-brand",
+                isCyan ? "text-white/80" : "text-cyan-on-navy",
               )}
             >
               {eyebrow}
