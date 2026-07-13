@@ -3,7 +3,7 @@ import {
   buttonVariants,
 } from "@workspace/ui/components/button";
 import { cn } from "@workspace/ui/lib/utils";
-import { CheckCircle, ChevronRight } from "lucide-react";
+import { Award, ChevronRight, ClipboardCheck } from "lucide-react";
 import Link from "next/link";
 
 import type { SanityImageProps } from "@/types";
@@ -132,18 +132,18 @@ export function ProgramsList({
                     </p>
                   ) : null}
 
-                  {program.expectations?.length ? (
+                  {program.requirements?.length ? (
                     <div className="mb-6">
                       <h4 className="mb-3 font-display text-lg font-bold text-navy uppercase">
-                        What to Expect
+                        Requirements
                       </h4>
                       <ul className="space-y-2">
-                        {program.expectations.map((item) => (
+                        {program.requirements.map((item) => (
                           <li
                             key={item}
                             className="flex items-start gap-2 text-sm text-seal-gray"
                           >
-                            <CheckCircle
+                            <ClipboardCheck
                               size={16}
                               className="mt-0.5 shrink-0"
                               style={{ color: accent }}
@@ -178,17 +178,22 @@ export function ProgramsList({
                     </div>
                   ) : null}
 
-                  {program.requirements?.length ? (
-                    <div
-                      className="mb-8 border-l-4 bg-muted p-4"
-                      style={{ borderColor: accent }}
-                    >
-                      <h4 className="mb-2 font-display text-sm font-bold text-navy uppercase">
-                        Entry Requirements
+                  {program.expectations?.length ? (
+                    <div className="mb-8">
+                      <h4 className="mb-3 font-display text-lg font-bold text-navy uppercase">
+                        Expectations
                       </h4>
-                      <ul className="space-y-1">
-                        {program.requirements.map((item) => (
-                          <li key={item} className="text-sm text-seal-gray">
+                      <ul className="space-y-2">
+                        {program.expectations.map((item) => (
+                          <li
+                            key={item}
+                            className="flex items-start gap-2 text-sm text-seal-gray"
+                          >
+                            <Award
+                              size={16}
+                              className="mt-0.5 shrink-0"
+                              style={{ color: accent }}
+                            />
                             {item}
                           </li>
                         ))}
