@@ -276,8 +276,7 @@ export function SiteNavbar({
   const isScrolled = mounted && scrolled;
   const solid = isScrolled || menuOpen || sheetOpen;
   const navColumns = columns && columns.length > 0 ? columns : FALLBACK_COLUMNS;
-  const navButtons =
-    buttons && buttons.length > 0 ? buttons : FALLBACK_BUTTONS;
+  const navButtons = buttons && buttons.length > 0 ? buttons : FALLBACK_BUTTONS;
   const brandTitle = siteTitle || "Arizona Seals";
 
   const linkClass = cn(
@@ -360,11 +359,7 @@ export function SiteNavbar({
             )}
           />
 
-          <NavbarButtons
-            buttons={navButtons}
-            solid={solid}
-            className="ml-2"
-          />
+          <NavbarButtons buttons={navButtons} solid={solid} className="ml-2" />
         </div>
 
         <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
