@@ -6,7 +6,6 @@ import {
 } from "sanity";
 import slugify from "slugify";
 
-import { PathnameFieldComponent } from "../components/slug-field-component";
 import type { PathnameParams } from "./types";
 
 export function defineSlug(
