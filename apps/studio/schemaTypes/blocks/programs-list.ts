@@ -35,6 +35,24 @@ export const programsList = defineType({
         }),
       ],
     }),
+    defineField({
+      name: "requirementsLabel",
+      type: "string",
+      title: "Requirements heading",
+      initialValue: "Requirements",
+    }),
+    defineField({
+      name: "equipmentLabel",
+      type: "string",
+      title: "Equipment heading",
+      initialValue: "Required Equipment",
+    }),
+    defineField({
+      name: "expectationsLabel",
+      type: "string",
+      title: "Expectations heading",
+      initialValue: "Expectations",
+    }),
   ],
   preview: {
     select: { title: "title", eyebrow: "eyebrow" },

@@ -75,7 +75,7 @@ function FeaturedPersonCard({ member }: { member: TeamMember }) {
             {member.specialties.map((s) => (
               <span
                 key={s}
-                className="rounded-full bg-muted px-3 py-1 text-xs font-semibold text-navy"
+                className="rounded-full bg-muted px-3 py-1 text-xs font-semibold text-foreground"
               >
                 {s}
               </span>
@@ -98,7 +98,7 @@ function FeaturedPersonCard({ member }: { member: TeamMember }) {
         {member.email ? (
           <a
             href={`mailto:${member.email}`}
-            className="inline-flex items-center gap-2 text-sm font-medium text-cyan-brand hover:text-navy"
+            className="inline-flex items-center gap-2 text-sm font-medium text-cyan-brand hover:text-foreground"
           >
             <Mail size={14} />
             {member.email}
@@ -123,7 +123,7 @@ function SupportingPersonRow({ member }: { member: TeamMember }) {
       </div>
       <div className="flex-1 space-y-3">
         <div>
-          <h3 className="font-display text-xl font-bold text-navy uppercase">
+          <h3 className="font-display text-xl font-bold text-foreground uppercase">
             {member.name}
           </h3>
           {member.position ? (
@@ -182,7 +182,7 @@ export function TeamBlock({
                 {eyebrow}
               </p>
             ) : null}
-            <h2 className="font-display text-4xl font-bold text-navy uppercase md:text-5xl">
+            <h2 className="font-display text-4xl font-bold text-foreground uppercase md:text-5xl">
               {title}
             </h2>
           </div>
@@ -206,7 +206,7 @@ export function TeamBlock({
                   {assistantsEyebrow}
                 </p>
               ) : null}
-              <h2 className="font-display text-3xl font-bold text-navy uppercase md:text-4xl">
+              <h2 className="font-display text-3xl font-bold text-foreground uppercase md:text-4xl">
                 {assistantsTitle}
               </h2>
             </div>

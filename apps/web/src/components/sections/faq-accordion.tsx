@@ -40,7 +40,7 @@ export function FaqAccordion({
           ) : null}
           {title ? (
             <h2
-              className="font-display font-black leading-none text-navy uppercase"
+              className="font-display font-black leading-none text-foreground uppercase"
               style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)" }}
             >
               {title}
@@ -64,7 +64,7 @@ export function FaqAccordion({
                 key={`AccordionItem-${faq?._id}-${index}`}
                 className="border-b border-border py-0 data-open:bg-transparent"
               >
-                <AccordionTrigger className="gap-4 px-0 py-5 text-left font-display text-base font-bold tracking-wide text-navy uppercase hover:no-underline hover:text-cyan-brand aria-expanded:text-cyan-brand md:text-lg **:data-[slot=accordion-trigger-icon]:size-5 **:data-[slot=accordion-trigger-icon]:text-cyan-brand">
+                <AccordionTrigger className="gap-4 px-0 py-5 text-left font-display text-base font-bold tracking-wide text-foreground uppercase hover:no-underline hover:text-cyan-brand aria-expanded:text-cyan-brand md:text-lg **:data-[slot=accordion-trigger-icon]:size-5 **:data-[slot=accordion-trigger-icon]:text-cyan-brand">
                   {faq?.title}
                 </AccordionTrigger>
                 <AccordionContent className="px-0 pb-6 text-base leading-relaxed text-seal-gray">
@@ -88,7 +88,7 @@ export function FaqAccordion({
                 href={link?.href ?? "#"}
                 target={link?.openInNewTab ? "_blank" : undefined}
                 rel={link?.openInNewTab ? "noopener noreferrer" : undefined}
-                className="inline-flex items-center gap-2 border-b-2 border-navy pb-0.5 font-display text-sm font-bold tracking-widest text-navy uppercase transition-colors hover:border-cyan-brand hover:text-cyan-brand"
+                className="inline-flex items-center gap-2 border-b-2 border-foreground pb-0.5 font-display text-sm font-bold tracking-widest text-foreground uppercase transition-colors hover:border-cyan-brand hover:text-cyan-brand"
               >
                 {link?.description || "Learn more"}
                 <ArrowUpRight size={16} aria-hidden />

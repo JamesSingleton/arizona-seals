@@ -121,6 +121,15 @@ export const program = defineType({
       description: "e.g. 6–8 practices/week",
       group: GROUP.MAIN_CONTENT,
     }),
+    defineField({
+      name: "buttons",
+      type: "array",
+      title: "Buttons",
+      description:
+        "CTA for this group on the programs page (e.g. Inquire About This Group).",
+      group: GROUP.MAIN_CONTENT,
+      of: [{ type: "button" }],
+    }),
     orderRankField({ type: "program" }),
     defineField({
       name: "sortOrder",

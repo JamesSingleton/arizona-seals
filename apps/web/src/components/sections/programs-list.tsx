@@ -1,12 +1,8 @@
-import {
-  buttonCtaClassName,
-  buttonVariants,
-} from "@workspace/ui/components/button";
 import { cn } from "@workspace/ui/lib/utils";
 import { Award, ChevronRight, ClipboardCheck } from "lucide-react";
-import Link from "next/link";
 
-import type { SanityImageProps } from "@/types";
+import type { SanityButtonProps, SanityImageProps } from "@/types";
+import { SanityButtons } from "../elements/sanity-buttons";
 import { SanityImage } from "../elements/sanity-image";
 
 export type ProgramsListProgram = {
@@ -22,19 +18,26 @@ export type ProgramsListProgram = {
   equipment?: string[] | null;
   sessions?: string | null;
   image?: SanityImageProps | null;
+  buttons?: SanityButtonProps[] | null;
 };
 
 export type ProgramsListProps = {
   eyebrow?: string | null;
   title?: string | null;
   intro?: string | null;
+  requirementsLabel?: string | null;
+  equipmentLabel?: string | null;
+  expectationsLabel?: string | null;
   programs?: ProgramsListProgram[] | null;
 };
 
 export function ProgramsList({
   eyebrow,
-  title = "A Group for Every Swimmer",
+  title,
   intro,
+  requirementsLabel,
+  equipmentLabel,
+  expectationsLabel,
   programs,
 }: ProgramsListProps) {
   if (!programs?.length) return null;
@@ -50,7 +53,7 @@ export function ProgramsList({
               </p>
             ) : null}
             {title ? (
-              <h2 className="font-display text-3xl font-bold text-navy uppercase md:text-4xl">
+              <h2 className="font-display text-3xl font-bold text-foreground uppercase md:text-4xl">
                 {title}
               </h2>
             ) : null}
@@ -66,9 +69,9 @@ export function ProgramsList({
       {programs.map((program, index) => {
         const slug = program.id;
         if (!slug) return null;
-        const accent = program.accent || "#00AEEF";
+        const accent = program.accent || undefined;
         const imageOnRight = index % 2 === 1;
-        const bg = index % 2 === 0 ? "bg-[#F4F6F8]" : "bg-background";
+        const bg = index % 2 === 0 ? "bg-muted" : "bg-background";
 
         return (
           <section
@@ -78,8 +81,8 @@ export function ProgramsList({
           >
             <div className="mx-auto max-w-7xl px-6 sm:px-10 lg:px-16">
               <div
-                className="mb-8 h-1.5 w-24"
-                style={{ backgroundColor: accent }}
+                className={cn("mb-8 h-1.5 w-24", !accent && "bg-cyan-brand")}
+                style={accent ? { backgroundColor: accent } : undefined}
               />
               <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-2 lg:gap-16">
                 <div
@@ -91,7 +94,7 @@ export function ProgramsList({
                   {program.image?.id ? (
                     <SanityImage
                       image={program.image}
-                      alt={program.name ?? "Program"}
+                      alt={program.name ?? ""}
                       className="absolute inset-0 size-full object-cover"
                     />
                   ) : (
@@ -99,10 +102,7 @@ export function ProgramsList({
                   )}
                   <div className="absolute top-4 left-4 flex flex-wrap gap-2">
                     {program.level ? (
-                      <span
-                        className="rounded px-3 py-1 font-display text-xs font-bold tracking-wide text-white uppercase"
-                        style={{ backgroundColor: accent }}
-                      >
+                      <span className="rounded bg-navy px-3 py-1 font-display text-xs font-bold tracking-wide text-white uppercase">
                         {program.level}
                       </span>
                     ) : null}
@@ -116,14 +116,11 @@ export function ProgramsList({
 
                 <div className={imageOnRight ? "lg:order-1" : ""}>
                   {program.tagline ? (
-                    <p
-                      className="mb-2 font-display text-sm font-bold tracking-[0.2em] uppercase"
-                      style={{ color: accent }}
-                    >
+                    <p className="mb-2 font-display text-sm font-bold tracking-[0.2em] text-cyan-brand uppercase">
                       {program.tagline}
                     </p>
                   ) : null}
-                  <h3 className="mb-4 font-display text-3xl font-bold text-navy uppercase md:text-4xl">
+                  <h3 className="mb-4 font-display text-3xl font-bold text-foreground uppercase md:text-4xl">
                     {program.name}
                   </h3>
                   {program.description ? (
@@ -134,9 +131,11 @@ export function ProgramsList({
 
                   {program.requirements?.length ? (
                     <div className="mb-6">
-                      <h4 className="mb-3 font-display text-lg font-bold text-navy uppercase">
-                        Requirements
-                      </h4>
+                      {requirementsLabel ? (
+                        <h4 className="mb-3 font-display text-lg font-bold text-foreground uppercase">
+                          {requirementsLabel}
+                        </h4>
+                      ) : null}
                       <ul className="space-y-2">
                         {program.requirements.map((item) => (
                           <li
@@ -145,8 +144,8 @@ export function ProgramsList({
                           >
                             <ClipboardCheck
                               size={16}
-                              className="mt-0.5 shrink-0"
-                              style={{ color: accent }}
+                              className="mt-0.5 shrink-0 text-cyan-brand"
+                              aria-hidden
                             />
                             {item}
                           </li>
@@ -157,9 +156,11 @@ export function ProgramsList({
 
                   {program.equipment?.length ? (
                     <div className="mb-6">
-                      <h4 className="mb-3 font-display text-lg font-bold text-navy uppercase">
-                        Required Equipment
-                      </h4>
+                      {equipmentLabel ? (
+                        <h4 className="mb-3 font-display text-lg font-bold text-foreground uppercase">
+                          {equipmentLabel}
+                        </h4>
+                      ) : null}
                       <ul className="space-y-2">
                         {program.equipment.map((item) => (
                           <li
@@ -168,8 +169,8 @@ export function ProgramsList({
                           >
                             <ChevronRight
                               size={16}
-                              className="mt-0.5 shrink-0"
-                              style={{ color: accent }}
+                              className="mt-0.5 shrink-0 text-cyan-brand"
+                              aria-hidden
                             />
                             {item}
                           </li>
@@ -180,9 +181,11 @@ export function ProgramsList({
 
                   {program.expectations?.length ? (
                     <div className="mb-8">
-                      <h4 className="mb-3 font-display text-lg font-bold text-navy uppercase">
-                        Expectations
-                      </h4>
+                      {expectationsLabel ? (
+                        <h4 className="mb-3 font-display text-lg font-bold text-foreground uppercase">
+                          {expectationsLabel}
+                        </h4>
+                      ) : null}
                       <ul className="space-y-2">
                         {program.expectations.map((item) => (
                           <li
@@ -191,8 +194,8 @@ export function ProgramsList({
                           >
                             <Award
                               size={16}
-                              className="mt-0.5 shrink-0"
-                              style={{ color: accent }}
+                              className="mt-0.5 shrink-0 text-cyan-brand"
+                              aria-hidden
                             />
                             {item}
                           </li>
@@ -201,16 +204,14 @@ export function ProgramsList({
                     </div>
                   ) : null}
 
-                  <Link
-                    href="/contact"
-                    className={cn(
-                      buttonVariants({ variant: "default", size: "lg" }),
-                      buttonCtaClassName,
-                    )}
-                    style={{ backgroundColor: accent }}
-                  >
-                    Inquire About This Group
-                  </Link>
+                  {program.buttons?.length ? (
+                    <SanityButtons
+                      buttons={program.buttons}
+                      size="lg"
+                      className="gap-3"
+                      buttonClassName="font-display font-bold tracking-widest uppercase"
+                    />
+                  ) : null}
                 </div>
               </div>
             </div>

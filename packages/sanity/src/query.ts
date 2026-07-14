@@ -170,6 +170,7 @@ const programFields = /* groq */ `
   requirements,
   equipment,
   sessions,
+  ${buttonsFragment},
   ${imageFragment}
 `;
 
@@ -334,6 +335,9 @@ const latestNewsBlock = /* groq */ `
 const programsListBlock = /* groq */ `
   _type == "programsList" => {
     ...,
+    "requirementsLabel": coalesce(requirementsLabel, "Requirements"),
+    "equipmentLabel": coalesce(equipmentLabel, "Required Equipment"),
+    "expectationsLabel": coalesce(expectationsLabel, "Expectations"),
     "programs": select(
       count(programs) > 0 => programs[]->{
         ${programFields}

@@ -128,11 +128,78 @@ const FALLBACK_COLUMNS = [
   },
 ] as NonNullable<NavbarData["columns"]>;
 
+type NavbarButton = NonNullable<NavbarData["buttons"]>[number];
+
+const FALLBACK_BUTTONS: NavbarButton[] = [
+  {
+    _key: "fallback-join",
+    _type: "button",
+    text: "Join the Team",
+    variant: "default",
+    href: "/contact",
+    openInNewTab: false,
+  },
+];
+
 function normalizeHref(href?: string | null) {
   if (!href) return "#";
   return href.startsWith("/") || href.startsWith("http") || href.startsWith("#")
     ? href
     : `/${href}`;
+}
+
+function resolveButtonVariant(
+  variant: NavbarButton["variant"],
+  solid: boolean,
+): NonNullable<Parameters<typeof buttonVariants>[0]>["variant"] {
+  if (variant === "outline" && !solid) return "outlineInverse";
+  if (variant === "link" || variant === "secondary" || variant === "outline") {
+    return variant;
+  }
+  return "default";
+}
+
+function NavbarButtons({
+  buttons,
+  solid,
+  size = "default",
+  className,
+  buttonClassName,
+  onNavigate,
+}: {
+  buttons: NavbarButton[];
+  solid: boolean;
+  size?: "default" | "lg";
+  className?: string;
+  buttonClassName?: string;
+  onNavigate?: () => void;
+}) {
+  return (
+    <div className={cn("flex items-center gap-2", className)}>
+      {buttons.map((button) => {
+        const href = normalizeHref(button.href);
+        const variant = resolveButtonVariant(button.variant, solid);
+        const isPrimary = !button.variant || button.variant === "default";
+
+        return (
+          <Link
+            key={button._key}
+            href={href}
+            target={button.openInNewTab ? "_blank" : undefined}
+            rel={button.openInNewTab ? "noopener noreferrer" : undefined}
+            onClick={onNavigate}
+            className={cn(
+              buttonVariants({ variant, size }),
+              isPrimary && buttonCtaClassName,
+              buttonClassName,
+            )}
+          >
+            {button.text}
+          </Link>
+        );
+      })}
+    </div>
+  );
 }
 
 function isRenderableLogo(
@@ -209,9 +276,8 @@ export function SiteNavbar({
   const isScrolled = mounted && scrolled;
   const solid = isScrolled || menuOpen || sheetOpen;
   const navColumns = columns && columns.length > 0 ? columns : FALLBACK_COLUMNS;
-  const cta = buttons?.[0];
-  const ctaHref = normalizeHref(cta?.href) || "/contact";
-  const ctaLabel = cta?.text || "Join the Team";
+  const navButtons =
+    buttons && buttons.length > 0 ? buttons : FALLBACK_BUTTONS;
   const brandTitle = siteTitle || "Arizona Seals";
 
   const linkClass = cn(
@@ -294,16 +360,11 @@ export function SiteNavbar({
             )}
           />
 
-          <Link
-            href={ctaHref}
-            className={cn(
-              buttonVariants({ variant: "default", size: "default" }),
-              buttonCtaClassName,
-              "ml-2",
-            )}
-          >
-            {ctaLabel}
-          </Link>
+          <NavbarButtons
+            buttons={navButtons}
+            solid={solid}
+            className="ml-2"
+          />
         </div>
 
         <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
@@ -361,17 +422,14 @@ export function SiteNavbar({
                 </Link>
               ))}
               <Separator className="my-3" />
-              <Link
-                href={ctaHref}
-                onClick={() => setSheetOpen(false)}
-                className={cn(
-                  buttonVariants({ variant: "default", size: "lg" }),
-                  buttonCtaClassName,
-                  "mx-3 mt-1",
-                )}
-              >
-                {ctaLabel}
-              </Link>
+              <NavbarButtons
+                buttons={navButtons}
+                solid
+                size="lg"
+                className="mx-3 mt-1 flex-col items-stretch"
+                buttonClassName="w-full"
+                onNavigate={() => setSheetOpen(false)}
+              />
               <Separator className="my-3" />
               <div className="flex items-center justify-between px-3 py-1">
                 <span className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">

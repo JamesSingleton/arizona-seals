@@ -32,7 +32,7 @@ export function ContactForm({
         <div className="mb-5 flex size-16 items-center justify-center rounded-full bg-cyan-brand">
           <Send size={28} className="text-white" />
         </div>
-        <h3 className="mb-3 font-display text-2xl font-bold text-navy uppercase">
+        <h3 className="mb-3 font-display text-2xl font-bold text-foreground uppercase">
           Message Sent!
         </h3>
         <p className="mb-6 max-w-sm leading-relaxed text-seal-gray">
@@ -44,7 +44,7 @@ export function ContactForm({
             setShowSuccess(false);
             setResetKey((k) => k + 1);
           }}
-          className="rounded border-2 border-navy px-6 py-2 text-sm font-bold tracking-wide text-navy uppercase transition-colors hover:bg-navy hover:text-white"
+          className="rounded border-2 border-foreground px-6 py-2 text-sm font-bold tracking-wide text-foreground uppercase transition-colors hover:bg-foreground hover:text-background"
         >
           Send Another
         </button>
@@ -58,13 +58,13 @@ export function ContactForm({
       action={formAction}
       className="space-y-5 rounded-2xl border border-border bg-background p-6 md:p-8"
     >
-      <h3 className="font-display text-2xl font-bold text-navy uppercase">
+      <h3 className="font-display text-2xl font-bold text-foreground uppercase">
         Send Us a Message
       </h3>
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <label className="block space-y-1.5">
-          <span className="text-sm font-semibold text-navy">
+          <span className="text-sm font-semibold text-foreground">
             Name <span className="text-cyan-brand">*</span>
           </span>
           <input
@@ -74,7 +74,7 @@ export function ContactForm({
           />
         </label>
         <label className="block space-y-1.5">
-          <span className="text-sm font-semibold text-navy">
+          <span className="text-sm font-semibold text-foreground">
             Email <span className="text-cyan-brand">*</span>
           </span>
           <input
@@ -88,7 +88,7 @@ export function ContactForm({
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <label className="block space-y-1.5">
-          <span className="text-sm font-semibold text-navy">Phone</span>
+          <span className="text-sm font-semibold text-foreground">Phone</span>
           <input
             name="phone"
             type="tel"
@@ -96,7 +96,7 @@ export function ContactForm({
           />
         </label>
         <label className="block space-y-1.5">
-          <span className="text-sm font-semibold text-navy">
+          <span className="text-sm font-semibold text-foreground">
             Inquiry Type <span className="text-cyan-brand">*</span>
           </span>
           <select
@@ -118,7 +118,7 @@ export function ContactForm({
       </div>
 
       <label className="block space-y-1.5">
-        <span className="text-sm font-semibold text-navy">
+        <span className="text-sm font-semibold text-foreground">
           Message <span className="text-cyan-brand">*</span>
         </span>
         <textarea
@@ -138,7 +138,7 @@ export function ContactForm({
       <button
         type="submit"
         disabled={pending}
-        className="inline-flex items-center gap-2 rounded-md bg-cyan-brand px-6 py-3 font-display text-sm font-bold tracking-widest text-white uppercase transition-colors hover:bg-[#0095CC] disabled:opacity-60"
+        className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 font-display text-sm font-bold tracking-widest text-primary-foreground uppercase transition-colors hover:bg-primary/90 disabled:opacity-60"
       >
         <Send size={14} />
         {pending ? "Sending…" : "Send Message"}

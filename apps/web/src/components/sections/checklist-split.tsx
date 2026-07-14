@@ -17,8 +17,8 @@ export type ChecklistSplitProps = {
 
 const bgClass = {
   default: "bg-background",
-  muted: "bg-[#F4F6F8]",
-  soft: "bg-[#EAF4F8]",
+  muted: "bg-muted",
+  soft: "bg-accent",
 } as const;
 
 export function ChecklistSplit({
@@ -51,7 +51,7 @@ export function ChecklistSplit({
               </div>
             ) : null}
             {title ? (
-              <h2 className="mb-6 font-display text-3xl font-bold text-navy uppercase md:text-4xl">
+              <h2 className="mb-6 font-display text-3xl font-bold text-foreground uppercase md:text-4xl">
                 {title}
               </h2>
             ) : null}

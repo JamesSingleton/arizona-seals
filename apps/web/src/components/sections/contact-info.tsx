@@ -129,7 +129,7 @@ export function ContactInfoBlock({
                   {eyebrow}
                 </p>
               ) : null}
-              <h2 className="mb-5 font-display text-3xl font-bold text-balance text-navy uppercase">
+              <h2 className="mb-5 font-display text-3xl font-bold text-balance text-foreground uppercase">
                 {title}
               </h2>
               {description ? (
@@ -141,11 +141,11 @@ export function ContactInfoBlock({
               <div className="mb-10 flex flex-col gap-5">
                 {resolvedAddress ? (
                   <div className="flex items-start gap-4">
-                    <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#E8F6FD]">
+                    <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent">
                       <MapPin size={18} className="text-cyan-brand" />
                     </div>
                     <div>
-                      <p className="mb-0.5 text-sm font-bold text-navy">
+                      <p className="mb-0.5 text-sm font-bold text-foreground">
                         Primary Location
                       </p>
                       <p className="text-sm text-seal-gray">
@@ -162,11 +162,11 @@ export function ContactInfoBlock({
 
                 {resolvedPhone ? (
                   <div className="flex items-start gap-4">
-                    <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#E8F6FD]">
+                    <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent">
                       <Phone size={18} className="text-cyan-brand" />
                     </div>
                     <div>
-                      <p className="mb-0.5 text-sm font-bold text-navy">
+                      <p className="mb-0.5 text-sm font-bold text-foreground">
                         Phone
                       </p>
                       <a
@@ -181,11 +181,11 @@ export function ContactInfoBlock({
 
                 {resolvedEmail ? (
                   <div className="flex items-start gap-4">
-                    <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#E8F6FD]">
+                    <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent">
                       <Mail size={18} className="text-cyan-brand" />
                     </div>
                     <div>
-                      <p className="mb-0.5 text-sm font-bold text-navy">
+                      <p className="mb-0.5 text-sm font-bold text-foreground">
                         Email
                       </p>
                       <a
@@ -200,11 +200,11 @@ export function ContactInfoBlock({
 
                 {settings?.officeHours?.length ? (
                   <div className="flex items-start gap-4">
-                    <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#E8F6FD]">
+                    <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent">
                       <Clock size={18} className="text-cyan-brand" />
                     </div>
                     <div>
-                      <p className="mb-0.5 text-sm font-bold text-navy">
+                      <p className="mb-0.5 text-sm font-bold text-foreground">
                         Office Hours
                       </p>
                       {settings.officeHours.map((row) => (
@@ -259,7 +259,7 @@ export function ContactInfoBlock({
           allowFullScreen
         />
         <div className="relative z-10 mx-4 max-w-md rounded-xl bg-background/95 p-6 text-center shadow-lg backdrop-blur">
-          <p className="mb-1 font-display text-lg font-bold text-navy uppercase">
+          <p className="mb-1 font-display text-lg font-bold text-foreground uppercase">
             Copper Sky Aquatic Center
           </p>
           <p className="mb-4 text-sm text-seal-gray">

@@ -72,7 +72,7 @@ function FacilityCard({ facility }: { facility: FacilitiesListFacility }) {
 
       <div className="flex flex-col gap-6">
         <div>
-          <h3 className="mb-3 font-display text-3xl font-bold text-navy uppercase">
+          <h3 className="mb-3 font-display text-3xl font-bold text-foreground uppercase">
             {facility.name}
           </h3>
           {facility.longDescription || facility.description ? (
@@ -88,7 +88,7 @@ function FacilityCard({ facility }: { facility: FacilitiesListFacility }) {
               <MapPin size={16} className="mt-0.5 shrink-0 text-cyan-brand" />
               <div>
                 {facility.address.street ? (
-                  <p className="text-sm font-semibold text-navy">
+                  <p className="text-sm font-semibold text-foreground">
                     {facility.address.street}
                   </p>
                 ) : null}
@@ -106,7 +106,7 @@ function FacilityCard({ facility }: { facility: FacilitiesListFacility }) {
             <div className="flex items-start gap-3">
               <Clock size={16} className="mt-0.5 shrink-0 text-cyan-brand" />
               <div>
-                <p className="text-sm font-semibold text-navy">
+                <p className="text-sm font-semibold text-foreground">
                   {facility.hours?.label || "Hours"}
                 </p>
                 {periods.map((h) => (
@@ -123,7 +123,7 @@ function FacilityCard({ facility }: { facility: FacilitiesListFacility }) {
               <Phone size={16} className="shrink-0 text-cyan-brand" />
               <a
                 href={phoneHref}
-                className="text-sm font-medium text-cyan-brand transition-colors hover:text-navy"
+                className="text-sm font-medium text-cyan-brand transition-colors hover:text-foreground"
               >
                 {facility.phone}
               </a>
@@ -199,7 +199,7 @@ export function FacilitiesList({
               </p>
             ) : null}
             {title ? (
-              <h2 className="font-display text-4xl font-bold text-balance text-navy uppercase md:text-5xl">
+              <h2 className="font-display text-4xl font-bold text-balance text-foreground uppercase md:text-5xl">
                 {title}
               </h2>
             ) : null}
@@ -238,9 +238,9 @@ export function FacilitiesList({
                   key={f._key ?? f.title}
                   className="rounded-xl border border-white/10 bg-white/5 p-5 transition-colors hover:bg-white/10"
                 >
-                  <h4 className="mb-2 font-display text-base leading-tight font-bold text-white uppercase">
+                  <h3 className="mb-2 font-display text-base leading-tight font-bold text-white uppercase">
                     {f.title}
-                  </h4>
+                  </h3>
                   {f.description ? (
                     <p className="text-sm leading-relaxed text-white/80">
                       {f.description}
@@ -255,7 +255,7 @@ export function FacilitiesList({
 
       <section className="bg-background py-16">
         <div className="mx-auto max-w-3xl px-4 text-center">
-          <h2 className="mb-4 font-display text-3xl font-bold text-balance text-navy uppercase md:text-4xl">
+          <h2 className="mb-4 font-display text-3xl font-bold text-balance text-foreground uppercase md:text-4xl">
             Ready to Train With Us?
           </h2>
           <p className="mb-8 leading-relaxed text-seal-gray">
