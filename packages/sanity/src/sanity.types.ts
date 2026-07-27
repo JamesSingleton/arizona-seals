@@ -711,6 +711,17 @@ export type Settings = {
     state?: string;
     zip?: string;
   };
+  geo?: {
+    _type: "geopoint";
+    lat?: number;
+    lng?: number;
+    alt?: number;
+  };
+  serviceAreas?: Array<{
+    name?: string;
+    placeType?: "City" | "AdministrativeArea";
+    _key: string;
+  }>;
   officeHours?: Array<{
     days?: string;
     hours?: string;
@@ -4993,7 +5004,7 @@ export type QueryGlobalSeoSettingsResult = {
 
 // Source: ../../packages/sanity/src/query.ts
 // Variable: querySettingsData
-// Query: *[_type == "settings"][0]{    _id,    _type,    siteTitle,    siteDescription,    "logo": logo.asset->url + "?w=80&h=40&dpr=3&fit=max",    "logoImage": logo {        "id": asset._ref,  "preview": asset->metadata.lqip,  hotspot {    x,    y  },  crop {    bottom,    left,    right,    top  },  "alt": coalesce(alt, asset->altText, asset->originalFilename, "Image"),  "blurData": asset->metadata.lqip,  "dominantColor": asset->metadata.palette.dominant.background,    },    alternateLogo {        "id": asset._ref,  "preview": asset->metadata.lqip,  hotspot {    x,    y  },  crop {    bottom,    left,    right,    top  },  "alt": coalesce(alt, asset->altText, asset->originalFilename, "Image"),  "blurData": asset->metadata.lqip,  "dominantColor": asset->metadata.palette.dominant.background,    },    "socialLinks": socialLinks,    "contactEmail": contactEmail,    "contactPhone": contactPhone,    "primaryAddress": primaryAddress,    officeHours,    inquiryTypes,    mapUrl,  }
+// Query: *[_type == "settings"][0]{    _id,    _type,    siteTitle,    siteDescription,    "logo": logo.asset->url + "?w=80&h=40&dpr=3&fit=max",    "logoImage": logo {        "id": asset._ref,  "preview": asset->metadata.lqip,  hotspot {    x,    y  },  crop {    bottom,    left,    right,    top  },  "alt": coalesce(alt, asset->altText, asset->originalFilename, "Image"),  "blurData": asset->metadata.lqip,  "dominantColor": asset->metadata.palette.dominant.background,    },    alternateLogo {        "id": asset._ref,  "preview": asset->metadata.lqip,  hotspot {    x,    y  },  crop {    bottom,    left,    right,    top  },  "alt": coalesce(alt, asset->altText, asset->originalFilename, "Image"),  "blurData": asset->metadata.lqip,  "dominantColor": asset->metadata.palette.dominant.background,    },    "socialLinks": socialLinks,    "contactEmail": contactEmail,    "contactPhone": contactPhone,    "primaryAddress": primaryAddress,    geo,    serviceAreas[]{      name,      placeType,    },    officeHours,    inquiryTypes,    mapUrl,  }
 export type QuerySettingsDataResult = {
   _id: string;
   _type: "settings";
@@ -5049,6 +5060,16 @@ export type QuerySettingsDataResult = {
     state?: string;
     zip?: string;
   } | null;
+  geo: {
+    _type: "geopoint";
+    lat?: number;
+    lng?: number;
+    alt?: number;
+  } | null;
+  serviceAreas: Array<{
+    name: string | null;
+    placeType: "City" | "AdministrativeArea" | null;
+  }> | null;
   officeHours: Array<{
     days?: string;
     hours?: string;
@@ -5098,7 +5119,7 @@ declare module "@sanity/client" {
     '\n  *[_type == "navbar" && _id == "navbar"][0]{\n    _id,\n    columns[]{\n      _key,\n      _type == "navbarColumn" => {\n        "type": "column",\n        title,\n        links[]{\n          _key,\n          name,\n          icon,\n          description,\n          "openInNewTab": url.openInNewTab,\n          "href": select(\n            url.type == "internal" => select(\n              url.internal->_type == "homePage" => "/",\n              url.internal->slug.current\n            ),\n            url.type == "external" => url.external,\n            url.href\n          )\n        }\n      },\n      _type == "navbarLink" => {\n        "type": "link",\n        name,\n        description,\n        "openInNewTab": url.openInNewTab,\n        "href": select(\n          url.type == "internal" => select(\n            url.internal->_type == "homePage" => "/",\n            url.internal->slug.current\n          ),\n          url.type == "external" => url.external,\n          url.href\n        )\n      }\n    },\n    \n  buttons[]{\n    text,\n    variant,\n    _key,\n    _type,\n    "openInNewTab": url.openInNewTab,\n    "href": select(\n      url.type == "internal" => select(\n        url.internal->_type == "homePage" => "/",\n        url.internal->slug.current\n      ),\n      url.type == "external" => url.external,\n      url.href\n    ),\n  }\n,\n    "siteTitle": *[_type == "settings"][0].siteTitle,\n    "logo": *[_type == "settings"][0].logo {\n      \n  "id": asset._ref,\n  "preview": asset->metadata.lqip,\n  hotspot {\n    x,\n    y\n  },\n  crop {\n    bottom,\n    left,\n    right,\n    top\n  },\n  "alt": coalesce(alt, asset->altText, asset->originalFilename, "Image"),\n  "blurData": asset->metadata.lqip,\n  "dominantColor": asset->metadata.palette.dominant.background,\n\n    },\n    "alternateLogo": *[_type == "settings"][0].alternateLogo {\n      \n  "id": asset._ref,\n  "preview": asset->metadata.lqip,\n  hotspot {\n    x,\n    y\n  },\n  crop {\n    bottom,\n    left,\n    right,\n    top\n  },\n  "alt": coalesce(alt, asset->altText, asset->originalFilename, "Image"),\n  "blurData": asset->metadata.lqip,\n  "dominantColor": asset->metadata.palette.dominant.background,\n\n    },\n  }\n': QueryNavbarDataResult;
     '{\n  "slugPages": *[_type == "page" && defined(slug.current) && seoNoIndex != true]{\n    "slug": slug.current,\n    "lastModified": _updatedAt\n  },\n  "blogPages": *[_type == "blog" && defined(slug.current) && seoNoIndex != true]{\n    "slug": slug.current,\n    "lastModified": _updatedAt\n  }\n}': QuerySitemapDataResult;
     '\n  *[_type == "settings"][0]{\n    _id,\n    _type,\n    siteTitle,\n    logo {\n      \n  "id": asset._ref,\n  "preview": asset->metadata.lqip,\n  hotspot {\n    x,\n    y\n  },\n  crop {\n    bottom,\n    left,\n    right,\n    top\n  },\n  "alt": coalesce(alt, asset->altText, asset->originalFilename, "Image"),\n  "blurData": asset->metadata.lqip,\n  "dominantColor": asset->metadata.palette.dominant.background,\n\n    },\n    alternateLogo {\n      \n  "id": asset._ref,\n  "preview": asset->metadata.lqip,\n  hotspot {\n    x,\n    y\n  },\n  crop {\n    bottom,\n    left,\n    right,\n    top\n  },\n  "alt": coalesce(alt, asset->altText, asset->originalFilename, "Image"),\n  "blurData": asset->metadata.lqip,\n  "dominantColor": asset->metadata.palette.dominant.background,\n\n    },\n    siteDescription,\n    socialLinks{\n      linkedin,\n      facebook,\n      twitter,\n      instagram,\n      youtube\n    }\n  }\n': QueryGlobalSeoSettingsResult;
-    '\n  *[_type == "settings"][0]{\n    _id,\n    _type,\n    siteTitle,\n    siteDescription,\n    "logo": logo.asset->url + "?w=80&h=40&dpr=3&fit=max",\n    "logoImage": logo {\n      \n  "id": asset._ref,\n  "preview": asset->metadata.lqip,\n  hotspot {\n    x,\n    y\n  },\n  crop {\n    bottom,\n    left,\n    right,\n    top\n  },\n  "alt": coalesce(alt, asset->altText, asset->originalFilename, "Image"),\n  "blurData": asset->metadata.lqip,\n  "dominantColor": asset->metadata.palette.dominant.background,\n\n    },\n    alternateLogo {\n      \n  "id": asset._ref,\n  "preview": asset->metadata.lqip,\n  hotspot {\n    x,\n    y\n  },\n  crop {\n    bottom,\n    left,\n    right,\n    top\n  },\n  "alt": coalesce(alt, asset->altText, asset->originalFilename, "Image"),\n  "blurData": asset->metadata.lqip,\n  "dominantColor": asset->metadata.palette.dominant.background,\n\n    },\n    "socialLinks": socialLinks,\n    "contactEmail": contactEmail,\n    "contactPhone": contactPhone,\n    "primaryAddress": primaryAddress,\n    officeHours,\n    inquiryTypes,\n    mapUrl,\n  }\n': QuerySettingsDataResult;
+    '\n  *[_type == "settings"][0]{\n    _id,\n    _type,\n    siteTitle,\n    siteDescription,\n    "logo": logo.asset->url + "?w=80&h=40&dpr=3&fit=max",\n    "logoImage": logo {\n      \n  "id": asset._ref,\n  "preview": asset->metadata.lqip,\n  hotspot {\n    x,\n    y\n  },\n  crop {\n    bottom,\n    left,\n    right,\n    top\n  },\n  "alt": coalesce(alt, asset->altText, asset->originalFilename, "Image"),\n  "blurData": asset->metadata.lqip,\n  "dominantColor": asset->metadata.palette.dominant.background,\n\n    },\n    alternateLogo {\n      \n  "id": asset._ref,\n  "preview": asset->metadata.lqip,\n  hotspot {\n    x,\n    y\n  },\n  crop {\n    bottom,\n    left,\n    right,\n    top\n  },\n  "alt": coalesce(alt, asset->altText, asset->originalFilename, "Image"),\n  "blurData": asset->metadata.lqip,\n  "dominantColor": asset->metadata.palette.dominant.background,\n\n    },\n    "socialLinks": socialLinks,\n    "contactEmail": contactEmail,\n    "contactPhone": contactPhone,\n    "primaryAddress": primaryAddress,\n    geo,\n    serviceAreas[]{\n      name,\n      placeType,\n    },\n    officeHours,\n    inquiryTypes,\n    mapUrl,\n  }\n': QuerySettingsDataResult;
     '\n  *[_type == "page" && defined(image)][0]{\n    \n  image {\n    \n  "id": asset._ref,\n  "preview": asset->metadata.lqip,\n  hotspot {\n    x,\n    y\n  },\n  crop {\n    bottom,\n    left,\n    right,\n    top\n  },\n  "alt": coalesce(alt, asset->altText, asset->originalFilename, "Image"),\n  "blurData": asset->metadata.lqip,\n  "dominantColor": asset->metadata.palette.dominant.background,\n\n  }\n\n  }.image\n': QueryImageTypeResult;
   }
 }

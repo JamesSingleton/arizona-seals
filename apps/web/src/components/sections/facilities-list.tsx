@@ -186,7 +186,7 @@ export function FacilitiesList({
   const introText =
     intro ||
     primary?.description ||
-    "Arizona Seals trains at the premier aquatic facility in Maricopa. Copper Sky offers a competition-grade 50-meter pool and everything our athletes need to excel.";
+    "Arizona Seals trains at the premier aquatic facility in Maricopa. Copper Sky offers a competition pool and everything our athletes need to excel.";
 
   return (
     <>
@@ -260,7 +260,8 @@ export function FacilitiesList({
           </h2>
           <p className="mb-8 leading-relaxed text-seal-gray">
             Come see Copper Sky for yourself. Our coaches and staff are ready to
-            welcome you to the Arizona Seals family.
+            welcome you to the Arizona Seals family, whether you are coming from
+            Maricopa, Casa Grande, Coolidge, or anywhere else in Pinal County.
           </p>
           <div className="flex flex-col justify-center gap-3 sm:flex-row">
             <Link

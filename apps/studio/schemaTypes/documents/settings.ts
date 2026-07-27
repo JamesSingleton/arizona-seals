@@ -135,6 +135,53 @@ export const settings = defineType({
       ],
     }),
     defineField({
+      name: "geo",
+      type: "geopoint",
+      title: "Location coordinates",
+      description:
+        "Latitude/longitude for the primary practice location (used in SportsClub JSON-LD)",
+    }),
+    defineField({
+      name: "serviceAreas",
+      type: "array",
+      title: "Service areas",
+      description:
+        "Cities and regions the club serves (used in SportsClub areaServed schema)",
+      of: [
+        {
+          type: "object",
+          fields: [
+            defineField({
+              name: "name",
+              type: "string",
+              title: "Name",
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "placeType",
+              type: "string",
+              title: "Type",
+              options: {
+                list: [
+                  { title: "City", value: "City" },
+                  {
+                    title: "Administrative area",
+                    value: "AdministrativeArea",
+                  },
+                ],
+                layout: "radio",
+              },
+              initialValue: "City",
+              validation: (rule) => rule.required(),
+            }),
+          ],
+          preview: {
+            select: { title: "name", subtitle: "placeType" },
+          },
+        },
+      ],
+    }),
+    defineField({
       name: "officeHours",
       type: "array",
       title: "Office Hours",

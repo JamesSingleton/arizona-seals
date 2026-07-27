@@ -15,7 +15,7 @@ import { BlogCard, FeaturedBlogCard } from "@/components/blog-card";
 import { BreadcrumbJsonLd } from "@/components/json-ld";
 import { PageHero } from "@/components/page-hero";
 import { PageBuilder } from "@/components/pagebuilder";
-import { getSEOMetadata } from "@/lib/seo";
+import { getSEOMetadata, resolveSeoImageUrl } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
   if (!isSanityConfigured) {
@@ -41,6 +41,9 @@ export async function generateMetadata(): Promise<Metadata> {
             seoNoIndex: Boolean(
               "seoNoIndex" in result ? result.seoNoIndex : false,
             ),
+            ogTitle: result.ogTitle ?? undefined,
+            ogDescription: result.ogDescription ?? undefined,
+            seoImage: resolveSeoImageUrl(result.seoImage),
           }
         : { title: "Blog", slug: "/blog" },
     );

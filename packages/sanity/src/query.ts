@@ -757,6 +757,11 @@ export const querySettingsData = defineQuery(`
     "contactEmail": contactEmail,
     "contactPhone": contactPhone,
     "primaryAddress": primaryAddress,
+    geo,
+    serviceAreas[]{
+      name,
+      placeType,
+    },
     officeHours,
     inquiryTypes,
     mapUrl,

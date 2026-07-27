@@ -16,7 +16,7 @@ import { Suspense, ViewTransition } from "react";
 import { RichText } from "@/components/elements/rich-text";
 import { SanityImage } from "@/components/elements/sanity-image";
 import { ArticleJsonLd, BreadcrumbJsonLd } from "@/components/json-ld";
-import { getSEOMetadata } from "@/lib/seo";
+import { getSEOMetadata, resolveSeoImageUrl } from "@/lib/seo";
 
 function blogSlugPath(slug: string) {
   return slug.startsWith("/blog/") ? slug : `/blog/${slug}`;
@@ -80,6 +80,9 @@ export async function generateMetadata({
             contentType: data._type,
             pageType: "article",
             seoNoIndex: data.seoNoIndex ?? false,
+            ogTitle: data.ogTitle ?? undefined,
+            ogDescription: data.ogDescription ?? undefined,
+            seoImage: resolveSeoImageUrl(data.seoImage),
           }
         : { slug: `/blog/${slug}`, pageType: "article" },
     );

@@ -1,3 +1,5 @@
+import type { SanityImageSource } from "@sanity/image-url";
+import { urlFor } from "@workspace/sanity/client";
 import type { Metadata } from "next";
 
 import type { Maybe } from "@/types";
@@ -20,6 +22,10 @@ interface PageSeoData extends Metadata {
   contentType?: string;
   keywords?: string[];
   seoNoIndex?: boolean;
+  ogTitle?: string;
+  ogDescription?: string;
+  /** Absolute URL for Open Graph / Twitter image override */
+  seoImage?: string;
   pageType?: Extract<Metadata["openGraph"], { type: string }>["type"];
 }
 
@@ -33,15 +39,22 @@ interface OgImageParams {
 const siteConfig: SiteConfig = {
   title: "Arizona Seals Swimming",
   description:
-    "A premier competitive swim club in Arizona dedicated to developing athletes of all ages and skill levels.",
+    "Competitive swim team in Maricopa, AZ serving all of Pinal County. USA Swimming sanctioned, four training groups for ages 5 and up. Schedule a tryout today.",
   twitterHandle: "@arizonaseals",
   keywords: [
+    "competitive swim team",
     "swim club",
-    "Arizona",
-    "competitive swimming",
     "swim team",
+    "swim club near me",
+    "swim team near me",
     "USA Swimming",
+    "Arizona",
     "Maricopa",
+    "Casa Grande",
+    "Coolidge",
+    "Eloy",
+    "Florence",
+    "Pinal County",
   ],
 };
 
@@ -54,6 +67,18 @@ function generateOgImageUrl(params: OgImageParams = {}): string {
 
   const baseUrl = getBaseUrl();
   return `${baseUrl}/api/og?${searchParams.toString()}`;
+}
+
+/** Resolve a Sanity seoImage field to a CDN URL for Open Graph tags. */
+export function resolveSeoImageUrl(
+  seoImage?: SanityImageSource | null,
+): string | undefined {
+  if (!seoImage) return undefined;
+  try {
+    return urlFor(seoImage).width(1200).height(630).fit("crop").url();
+  } catch {
+    return undefined;
+  }
 }
 
 function buildPageUrl({
@@ -90,6 +115,9 @@ export function getSEOMetadata(page: PageSeoData = {}): Metadata {
     contentType,
     keywords: pageKeywords = [],
     seoNoIndex = false,
+    ogTitle,
+    ogDescription,
+    seoImage,
     pageType = "website",
     ...pageOverrides
   } = page;
@@ -106,10 +134,15 @@ export function getSEOMetadata(page: PageSeoData = {}): Metadata {
   const defaultDescription = pageDescription || siteConfig.description;
   const allKeywords = [...siteConfig.keywords, ...pageKeywords];
 
-  const ogImage = generateOgImageUrl({
-    type: contentType,
-    id: contentId,
-  });
+  const ogImage = seoImage
+    ? seoImage
+    : generateOgImageUrl({
+        type: contentType,
+        id: contentId,
+      });
+
+  const socialTitle = ogTitle || defaultTitle;
+  const socialDescription = ogDescription || defaultDescription;
 
   const fullTitle =
     defaultTitle === siteConfig.title
@@ -118,7 +151,8 @@ export function getSEOMetadata(page: PageSeoData = {}): Metadata {
 
   // Build default metadata object
   const defaultMetadata: Metadata = {
-    title: fullTitle,
+    // absolute: layout title.template would otherwise append the brand again
+    title: { absolute: fullTitle },
     description: defaultDescription,
     metadataBase: new URL(baseUrl),
     creator: siteConfig.title,
@@ -144,8 +178,8 @@ export function getSEOMetadata(page: PageSeoData = {}): Metadata {
       card: "summary_large_image",
       images: [ogImage],
       creator: siteConfig.twitterHandle,
-      title: defaultTitle,
-      description: defaultDescription,
+      title: socialTitle,
+      description: socialDescription,
     },
     alternates: {
       canonical: pageUrl,
@@ -155,14 +189,14 @@ export function getSEOMetadata(page: PageSeoData = {}): Metadata {
       locale: "en_US",
       siteName: siteConfig.title,
       countryName: "United States",
-      description: defaultDescription,
-      title: defaultTitle,
+      description: socialDescription,
+      title: socialTitle,
       images: [
         {
           url: ogImage,
           width: 1200,
           height: 630,
-          alt: defaultTitle,
+          alt: socialTitle,
           secureUrl: ogImage,
         },
       ],

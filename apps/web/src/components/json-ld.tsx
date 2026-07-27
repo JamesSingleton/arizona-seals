@@ -185,6 +185,60 @@ function formatPhoneToE164(phone?: string | null): string | undefined {
   return phone;
 }
 
+const DEFAULT_SERVICE_AREAS = [
+  { placeType: "City" as const, name: "Maricopa" },
+  { placeType: "City" as const, name: "Casa Grande" },
+  { placeType: "City" as const, name: "Coolidge" },
+  { placeType: "City" as const, name: "Eloy" },
+  { placeType: "City" as const, name: "Florence" },
+  { placeType: "City" as const, name: "San Tan Valley" },
+  { placeType: "City" as const, name: "Arizona City" },
+  {
+    placeType: "AdministrativeArea" as const,
+    name: "Ak-Chin Indian Community",
+  },
+  { placeType: "AdministrativeArea" as const, name: "Pinal County" },
+];
+
+type ServiceAreaPlace = {
+  name?: string | null;
+  placeType?: string | null;
+};
+
+function buildAreaServed(areas: ServiceAreaPlace[] | null | undefined) {
+  const source =
+    areas?.filter((area): area is { name: string; placeType?: string | null } =>
+      Boolean(area?.name),
+    ) ?? DEFAULT_SERVICE_AREAS;
+
+  if (!source.length) return undefined;
+
+  return source.map((area) =>
+    area.placeType === "AdministrativeArea"
+      ? ({
+          "@type": "AdministrativeArea" as const,
+          name: area.name,
+        } as const)
+      : ({
+          "@type": "City" as const,
+          name: area.name,
+        } as const),
+  );
+}
+
+function buildOpeningHours(
+  officeHours:
+    | { days?: string | null; hours?: string | null }[]
+    | null
+    | undefined,
+) {
+  if (!officeHours?.length) return undefined;
+  const hours = officeHours
+    .filter((row) => row.days && row.hours)
+    .map((row) => `${row.days} ${row.hours}`);
+  return hours.length ? hours : undefined;
+}
+
 // Organization JSON-LD Component (SportsClub for local swim-team search)
 interface OrganizationJsonLdProps {
   settings: QuerySettingsDataResult;
@@ -196,12 +250,23 @@ export function OrganizationJsonLd({ settings }: OrganizationJsonLdProps) {
   const baseUrl = getBaseUrl();
   const address = settings.primaryAddress;
   const phone = formatPhoneToE164(settings.contactPhone);
+  const areaServed = buildAreaServed(settings.serviceAreas);
+  const openingHours = buildOpeningHours(settings.officeHours);
+  const geo =
+    typeof settings.geo?.lat === "number" &&
+    typeof settings.geo?.lng === "number"
+      ? {
+          "@type": "GeoCoordinates" as const,
+          latitude: settings.geo.lat,
+          longitude: settings.geo.lng,
+        }
+      : undefined;
 
   const socialLinks = settings.socialLinks
     ? (Object.values(settings.socialLinks).filter(Boolean) as string[])
     : undefined;
 
-  const organizationJsonLd: WithContext<SportsClub> = {
+  const organizationJsonLd = {
     "@context": "https://schema.org",
     "@type": "SportsClub",
     name: settings.siteTitle!,
@@ -226,10 +291,24 @@ export function OrganizationJsonLd({ settings }: OrganizationJsonLdProps) {
           addressCountry: "US",
         } as PostalAddress)
       : undefined,
-    areaServed: address?.city
+    geo,
+    areaServed,
+    openingHours,
+    // schema-dts SportsClub omits sport; valid Schema.org property
+    sport: "Competitive Swimming",
+    location: address?.street
       ? {
-          "@type": "City",
-          name: `${address.city}${address.state ? `, ${address.state}` : ""}`,
+          "@type": "SportsActivityLocation",
+          name: "Copper Sky Aquatic Center",
+          address: {
+            "@type": "PostalAddress",
+            streetAddress: address.street,
+            addressLocality: address.city,
+            addressRegion: address.state,
+            postalCode: address.zip,
+            addressCountry: "US",
+          } as PostalAddress,
+          geo,
         }
       : undefined,
     contactPoint:
@@ -239,13 +318,23 @@ export function OrganizationJsonLd({ settings }: OrganizationJsonLdProps) {
             email: settings.contactEmail || undefined,
             telephone: phone,
             contactType: "customer service",
-            areaServed: "US",
+            areaServed: areaServed ?? "AZ",
             availableLanguage: "English",
           } as ContactPoint)
         : undefined,
     sameAs: socialLinks?.length ? socialLinks : undefined,
-    knowsAbout: ["Competitive swimming", "USA Swimming", "Youth athletics"],
-  };
+    memberOf: {
+      "@type": "Organization",
+      name: "USA Swimming",
+    },
+    knowsAbout: [
+      "Competitive swimming",
+      "USA Swimming",
+      "Youth athletics",
+      "Youth swim team",
+      "Competitive swimming club",
+    ],
+  } as WithContext<SportsClub>;
 
   return <JsonLdScript data={organizationJsonLd} id="organization-json-ld" />;
 }

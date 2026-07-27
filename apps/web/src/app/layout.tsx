@@ -29,7 +29,7 @@ const barlowCondensed = Barlow_Condensed({
 
 const siteName = "Arizona Seals Swimming";
 const siteDescription =
-  "Arizona Seals Swimming – a premier competitive swim club in Arizona dedicated to developing athletes of all ages and skill levels.";
+  "Competitive swim team in Maricopa, AZ serving all of Pinal County. USA Swimming sanctioned, four training groups for ages 5 and up. Schedule a tryout today.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(getBaseUrl()),
@@ -39,12 +39,19 @@ export const metadata: Metadata = {
   },
   description: siteDescription,
   keywords: [
+    "competitive swim team",
     "swim club",
-    "Arizona",
-    "competitive swimming",
     "swim team",
+    "swim club near me",
+    "swim team near me",
     "USA Swimming",
+    "Arizona",
     "Maricopa",
+    "Casa Grande",
+    "Coolidge",
+    "Eloy",
+    "Florence",
+    "Pinal County",
   ],
   // icons: {
   //   icon: [
@@ -59,14 +66,12 @@ export const metadata: Metadata = {
     locale: "en_US",
     siteName,
     title: siteName,
-    description:
-      "A premier competitive swim club in Maricopa, Arizona — USA Swimming sanctioned training for athletes of all ages.",
+    description: siteDescription,
   },
   twitter: {
     card: "summary_large_image",
     title: siteName,
-    description:
-      "A premier competitive swim club in Maricopa, Arizona — USA Swimming sanctioned training for athletes of all ages.",
+    description: siteDescription,
   },
 };
 

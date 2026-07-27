@@ -10,7 +10,7 @@ import { draftMode } from "next/headers";
 import { Suspense } from "react";
 
 import { PageBuilder } from "@/components/pagebuilder";
-import { getSEOMetadata } from "@/lib/seo";
+import { getSEOMetadata, resolveSeoImageUrl } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { isEnabled: isDraftMode } = await draftMode();
@@ -28,6 +28,9 @@ export async function generateMetadata(): Promise<Metadata> {
           contentId: data._id,
           contentType: data._type,
           seoNoIndex: Boolean("seoNoIndex" in data ? data.seoNoIndex : false),
+          ogTitle: data.ogTitle ?? undefined,
+          ogDescription: data.ogDescription ?? undefined,
+          seoImage: resolveSeoImageUrl(data.seoImage),
         }
       : { slug: "/" },
   );

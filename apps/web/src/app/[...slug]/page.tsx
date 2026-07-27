@@ -14,7 +14,7 @@ import { Suspense } from "react";
 
 import { BreadcrumbJsonLd } from "@/components/json-ld";
 import { PageBuilder } from "@/components/pagebuilder";
-import { getSEOMetadata } from "@/lib/seo";
+import { getSEOMetadata, resolveSeoImageUrl } from "@/lib/seo";
 
 function toSlugParam(slug: string[]) {
   return `/${slug.join("/")}`;
@@ -70,6 +70,9 @@ export async function generateMetadata({
             contentId: pageData._id,
             contentType: pageData._type,
             seoNoIndex: pageData.seoNoIndex ?? false,
+            ogTitle: pageData.ogTitle ?? undefined,
+            ogDescription: pageData.ogDescription ?? undefined,
+            seoImage: resolveSeoImageUrl(pageData.seoImage),
           }
         : { slug: slugString },
     );
