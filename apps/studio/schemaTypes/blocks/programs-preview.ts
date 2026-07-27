@@ -20,6 +20,13 @@ export const programsPreview = defineType({
       initialValue: "Our Programs",
     }),
     defineField({
+      name: "intro",
+      type: "text",
+      title: "Intro",
+      description: "Optional subparagraph below the section title",
+      rows: 3,
+    }),
+    defineField({
       name: "viewAllLabel",
       type: "string",
       title: "View All Label",

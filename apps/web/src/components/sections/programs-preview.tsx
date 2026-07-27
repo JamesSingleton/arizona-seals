@@ -16,6 +16,7 @@ export type ProgramsPreviewProgram = {
 export type ProgramsPreviewProps = {
   eyebrow?: string | null;
   title?: string | null;
+  intro?: string | null;
   viewAllLabel?: string | null;
   viewAllUrl?: { href?: string | null } | null;
   programs?: ProgramsPreviewProgram[] | null;
@@ -24,6 +25,7 @@ export type ProgramsPreviewProps = {
 export function ProgramsPreview({
   eyebrow = "Training Groups",
   title = "Our Programs",
+  intro,
   viewAllLabel = "View All Programs →",
   viewAllUrl,
   programs,
@@ -35,27 +37,34 @@ export function ProgramsPreview({
   return (
     <section className="bg-background py-20 md:py-28">
       <div className="mx-auto max-w-7xl px-6 sm:px-10 lg:px-16">
-        <div className="mb-14 flex flex-col justify-between gap-6 md:flex-row md:items-end">
-          <div>
-            <div className="mb-4 flex items-center gap-3">
-              <div className="h-0.5 w-8 bg-cyan-brand" />
-              <span className="font-display text-xs font-bold tracking-[0.25em] text-cyan-brand uppercase">
-                {eyebrow}
-              </span>
+        <div className="mb-14">
+          <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+            <div>
+              <div className="mb-4 flex items-center gap-3">
+                <div className="h-0.5 w-8 bg-cyan-brand" />
+                <span className="font-display text-xs font-bold tracking-[0.25em] text-cyan-brand uppercase">
+                  {eyebrow}
+                </span>
+              </div>
+              <h2
+                className="font-display font-black leading-none text-foreground uppercase"
+                style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)" }}
+              >
+                {title}
+              </h2>
             </div>
-            <h2
-              className="font-display font-black leading-none text-foreground uppercase"
-              style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)" }}
+            <Link
+              href={viewAllHref}
+              className="w-fit shrink-0 border-b-2 border-foreground pb-0.5 font-display text-sm font-bold tracking-widest text-foreground uppercase transition-colors hover:border-cyan-brand hover:text-cyan-brand"
             >
-              {title}
-            </h2>
+              {viewAllLabel}
+            </Link>
           </div>
-          <Link
-            href={viewAllHref}
-            className="w-fit border-b-2 border-foreground pb-0.5 font-display text-sm font-bold tracking-widest text-foreground uppercase transition-colors hover:border-cyan-brand hover:text-cyan-brand"
-          >
-            {viewAllLabel}
-          </Link>
+          {intro ? (
+            <p className="mt-5 max-w-2xl text-base leading-relaxed text-seal-gray md:mt-6">
+              {intro}
+            </p>
+          ) : null}
         </div>
 
         <div className="grid grid-cols-1 gap-0 sm:grid-cols-2 lg:grid-cols-4">
