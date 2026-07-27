@@ -63,7 +63,7 @@ export async function submitContactForm(
       from,
       to: [to],
       replyTo: email,
-      subject: `Contact form: ${subject}`,
+      subject: `${subject} — ${name}`,
       html,
       text,
     },
@@ -81,6 +81,6 @@ export async function submitContactForm(
   return {
     ok: true,
     message:
-      "Thank you for reaching out. A member of our team will be in touch within 24 hours.",
+      "Thank you for reaching out. A member of our team will be in touch as soon as possible.",
   };
 }

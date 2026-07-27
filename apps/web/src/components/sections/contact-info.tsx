@@ -90,7 +90,7 @@ function buildMapUrls(options: {
 export function ContactInfoBlock({
   eyebrow = "Get in Touch",
   title = "We're Here to Help",
-  description = "Have a question about tryouts, programs, or the club? Fill out the form and one of our staff members will respond within 24 hours.",
+  description = "Have a question about tryouts, programs, or the club? Fill out the form and one of our staff members will respond as soon as possible.",
   useSiteSettings = true,
   email,
   phone,
