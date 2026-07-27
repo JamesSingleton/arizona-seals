@@ -29,6 +29,8 @@
     "next-themes": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "react-email": "^6.9.1",
+    "resend": "^6.18.0",
     "sanity-image": "^1.1.0",
     "schema-dts": "^2.0.0",
     "server-only": "^0.0.1",
