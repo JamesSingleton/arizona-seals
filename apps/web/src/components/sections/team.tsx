@@ -60,7 +60,9 @@ function sortBoardOfficers(members: TeamMember[]): TeamMember[] {
   );
 }
 
-function hasImage(member: TeamMember): boolean {
+function hasImage(
+  member: TeamMember,
+): member is TeamMember & { image: NonNullable<TeamMember["image"]> } {
   return Boolean(member.image?.id);
 }
 
