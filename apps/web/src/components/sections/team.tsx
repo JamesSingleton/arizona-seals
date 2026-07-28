@@ -54,7 +54,7 @@ function boardOfficerSortRank(position?: string | null): number {
 }
 
 function sortBoardOfficers(members: TeamMember[]): TeamMember[] {
-  return members.toSorted(
+  return [...members].sort(
     (a, b) =>
       boardOfficerSortRank(a.position) - boardOfficerSortRank(b.position),
   );
