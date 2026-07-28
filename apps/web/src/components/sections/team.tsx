@@ -55,7 +55,8 @@ function boardOfficerSortRank(position?: string | null): number {
 
 function sortBoardOfficers(members: TeamMember[]): TeamMember[] {
   return members.toSorted(
-    (a, b) => boardOfficerSortRank(a.position) - boardOfficerSortRank(b.position),
+    (a, b) =>
+      boardOfficerSortRank(a.position) - boardOfficerSortRank(b.position),
   );
 }
 
@@ -234,9 +235,7 @@ function PersonCard({
           <PersonIdentity member={member} />
         </div>
       </div>
-      {showBody ? (
-        <PersonBody member={member} showBio={showBio} />
-      ) : null}
+      {showBody ? <PersonBody member={member} showBio={showBio} /> : null}
     </article>
   );
 }

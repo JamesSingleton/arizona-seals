@@ -144,8 +144,7 @@ export const resources = defineType({
       name: "groups",
       type: "array",
       title: "Groups",
-      description:
-        "Categorized lists of downloadable PDFs and external links",
+      description: "Categorized lists of downloadable PDFs and external links",
       of: [resourceGroup],
       validation: (Rule) => Rule.required().min(1),
     }),
