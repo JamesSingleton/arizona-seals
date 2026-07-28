@@ -164,14 +164,14 @@ export const structure = (
                         title: "Coaches",
                         icon: User,
                         filter:
-                          'role == "coaching" || (!defined(role) && tier in ["head", "assistant"])',
+                          '"coaching" in roles || role == "coaching" || (!defined(roles) && !defined(role) && tier in ["head", "assistant"])',
                       }),
                       createOrderableList(S, context, {
                         type: "staff",
                         id: "staff-board",
                         title: "Board / Leadership",
                         icon: User,
-                        filter: 'role == "board"',
+                        filter: '"board" in roles || role == "board"',
                       }),
                       createOrderableList(S, context, {
                         type: "staff",
@@ -179,7 +179,7 @@ export const structure = (
                         title: "Operations",
                         icon: User,
                         filter:
-                          'role == "operations" || (!defined(role) && tier == "staff")',
+                          '"operations" in roles || role == "operations" || (!defined(roles) && !defined(role) && tier == "staff")',
                       }),
                       createOrderableList(S, context, {
                         type: "staff",

@@ -223,11 +223,23 @@ const imageLinkCardsBlock = /* groq */ `
   }
 `;
 
+const staffRolesNormalized = /* groq */ `select(
+  defined(roles) && count(roles) > 0 => roles,
+  defined(role) => [role],
+  [select(
+    tier in ["head", "assistant"] => "coaching",
+    tier == "staff" => "operations",
+    "coaching"
+  )]
+)`;
+
 const staffCardFragment = /* groq */ `
   _id,
   name,
   position,
+  "roles": ${staffRolesNormalized},
   "role": coalesce(
+    roles[0],
     role,
     select(
       tier in ["head", "assistant"] => "coaching",
@@ -237,7 +249,11 @@ const staffCardFragment = /* groq */ `
   ),
   "featured": coalesce(featured, tier == "head"),
   "tier": coalesce(
-    select(featured == true => "head", role == "operations" => "staff", "assistant"),
+    select(
+      featured == true => "head",
+      "operations" in ${staffRolesNormalized} => "staff",
+      "assistant"
+    ),
     tier
   ),
   email,
@@ -252,6 +268,11 @@ const teamBlock = /* groq */ `
   _type == "team" => {
     ...,
     "roleFilter": coalesce(roleFilter, "coaching"),
+    // Board defaults to equal cards so a featured coach on the board isn't elevated above officers
+    "layout": coalesce(
+      layout,
+      select(coalesce(roleFilter, "coaching") == "board" => "uniform", "split")
+    ),
     "teamMembers": select(
       count(teamMembers) > 0 => teamMembers[]->{
         ${staffCardFragment}
@@ -260,14 +281,7 @@ const teamBlock = /* groq */ `
         ${staffCardFragment}
       },
       // ^.roleFilter: parent scope — bare roleFilter is undefined inside *[...]
-      *[_type == "staff" && coalesce(
-        role,
-        select(
-          tier in ["head", "assistant"] => "coaching",
-          tier == "staff" => "operations",
-          "coaching"
-        )
-      ) == coalesce(^.roleFilter, "coaching")] | ${documentOrder}{
+      *[_type == "staff" && coalesce(^.roleFilter, "coaching") in ${staffRolesNormalized}] | ${documentOrder}{
         ${staffCardFragment}
       }
     )
@@ -504,6 +518,26 @@ const subscribeNewsletterBlock = /* groq */ `
   }
 `;
 
+const resourcesBlock = /* groq */ `
+  _type == "resources" => {
+    ...,
+    groups[]{
+      ...,
+      items[]{
+        ...,
+        file{
+          asset->{
+            url,
+            originalFilename,
+            size,
+            mimeType
+          }
+        }
+      }
+    }
+  }
+`;
+
 const pageBuilderFragment = /* groq */ `
   pageBuilder[]{
     ...,
@@ -528,7 +562,8 @@ const pageBuilderFragment = /* groq */ `
     ${faqAccordionBlock},
     ${subscribeNewsletterBlock},
     ${imageLinkCardsBlock},
-    ${teamBlock}
+    ${teamBlock},
+    ${resourcesBlock}
   }
 `;
 

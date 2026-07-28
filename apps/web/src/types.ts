@@ -22,7 +22,8 @@ export type SealsPageBuilderBlockTypes =
   | "facilitiesList"
   | "team"
   | "featureCardsIcon"
-  | "cta";
+  | "cta"
+  | "resources";
 
 export type PageBuilderBlockTypes =
   | NonNullable<

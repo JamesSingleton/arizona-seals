@@ -21,6 +21,7 @@ import { LatestNews } from "./sections/latest-news";
 import { PageHeroBlock } from "./sections/page-hero-block";
 import { ProgramsList } from "./sections/programs-list";
 import { ProgramsPreview } from "./sections/programs-preview";
+import { ResourcesBlock } from "./sections/resources";
 import { SponsorTiers } from "./sections/sponsor-tiers";
 import { SponsorsGrid } from "./sections/sponsors-grid";
 import { SponsorsHero } from "./sections/sponsors-hero";
@@ -88,6 +89,9 @@ const BLOCK_COMPONENTS = {
     PagebuilderType<"imageLinkCards">
   >,
   team: TeamBlock as React.ComponentType<any>,
+  resources: ResourcesBlock as React.ComponentType<
+    PagebuilderType<"resources">
+  >,
   splitContent: AboutPreview as React.ComponentType<any>,
   stats: StatsSection as React.ComponentType<any>,
   programsPreview: ProgramsPreview as React.ComponentType<any>,

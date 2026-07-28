@@ -16,6 +16,20 @@ export type CtaFullBleedProps = {
   secondaryCta?: { label: string; href: string };
 };
 
+/** Sanity hotspot is 0–1; maps to CSS object-position under object-cover. */
+function objectPositionFromHotspot(
+  hotspot?: { x: number; y: number } | null,
+): string {
+  if (
+    hotspot &&
+    typeof hotspot.x === "number" &&
+    typeof hotspot.y === "number"
+  ) {
+    return `${hotspot.x * 100}% ${hotspot.y * 100}%`;
+  }
+  return "center";
+}
+
 export function CtaFullBleed({
   eyebrow = "Get Started",
   titleLines = ["Master the Basics", "at Arizona Seals"],
@@ -34,7 +48,10 @@ export function CtaFullBleed({
         <SanityImage
           image={image}
           alt={imageAlt}
-          className="absolute inset-0 size-full object-cover object-center"
+          className="absolute inset-0 size-full object-cover"
+          style={{
+            objectPosition: objectPositionFromHotspot(image.hotspot),
+          }}
         />
       ) : null}
       <div className="absolute inset-0 bg-linear-to-t from-navy/90 via-navy/40 to-transparent" />

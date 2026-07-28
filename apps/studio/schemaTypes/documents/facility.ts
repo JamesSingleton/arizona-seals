@@ -167,18 +167,6 @@ export const facility = defineType({
       group: GROUP.CARD,
     }),
     orderRankField({ type: "facility" }),
-    defineField({
-      name: "sortOrder",
-      type: "number",
-      title: "Sort Order (Deprecated)",
-      deprecated: {
-        reason: "Use drag-and-drop ordering in the Club desk instead.",
-      },
-      readOnly: true,
-      hidden: ({ value }) => value === undefined,
-      initialValue: undefined,
-      group: GROUP.CARD,
-    }),
   ],
   orderings: [orderRankOrdering],
   preview: {

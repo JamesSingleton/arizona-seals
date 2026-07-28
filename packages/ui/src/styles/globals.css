@@ -15,13 +15,15 @@
 
   /*
    * Brand palette
-   * - cyan-brand: interactive accent on light surfaces (theme-aware for AA)
+   * - cyan-brand: interactive accent on light/dark app surfaces (theme-aware for AA)
    * - cyan-on-navy: accent text/icons on bg-navy (always light cyan)
+   * - cyan-band: solid cyan fill for bands with white text (constant — do not theme)
    * - navy: deep brand surface (always dark — use for bg-navy bands)
    * - seal-gray: secondary body text (theme-aware)
    */
   --color-cyan-brand: var(--cyan-brand);
   --color-cyan-on-navy: var(--cyan-on-navy);
+  --color-cyan-band: var(--cyan-band);
   --color-navy: var(--navy);
   --color-seal-gray: var(--seal-gray);
 
@@ -72,6 +74,8 @@
   --navy: #1b3a6b;
   /* AA normal text on white/muted; white on this cyan ≈ 5.6:1 */
   --cyan-brand: #006f9a;
+  /* Solid cyan band fill — always deep enough for white text (do not theme) */
+  --cyan-band: #006f9a;
   /* AA on navy (~6:1) — use for eyebrows/accents on bg-navy */
   --cyan-on-navy: #5ec9f2;
   --seal-gray: #4a5a6a;
@@ -115,6 +119,8 @@
   --navy: #1b3a6b;
   /* Brighter cyan for AA on dark app surfaces */
   --cyan-brand: #5ec9f2;
+  /* Band fill stays deep so white text remains AA */
+  --cyan-band: #006f9a;
   --cyan-on-navy: #5ec9f2;
   /* Body secondary text — AA on #0d1520 / #131e2e */
   --seal-gray: #b8c7d6;

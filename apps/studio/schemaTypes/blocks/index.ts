@@ -10,6 +10,7 @@ import { latestNews } from "./latest-news";
 import { pageHero } from "./page-hero";
 import { programsList } from "./programs-list";
 import { programsPreview } from "./programs-preview";
+import { resources } from "./resources";
 import { splitContent } from "./split-content";
 import { sponsorTiers } from "./sponsor-tiers";
 import { sponsorsGrid } from "./sponsors-grid";
@@ -42,4 +43,5 @@ export const pageBuilderBlocks = [
   imageLinkCards,
   subscribeNewsletter,
   team,
+  resources,
 ];

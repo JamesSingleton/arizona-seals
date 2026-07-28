@@ -7,6 +7,19 @@ import { defineField, defineType } from "sanity";
 
 import { GROUP, GROUPS } from "../../utils/constant";
 
+const ROLE_LABELS: Record<string, string> = {
+  coaching: "Coaching",
+  board: "Board",
+  operations: "Operations",
+};
+
+function isBoardOnly(roles: unknown, legacyRole?: unknown): boolean {
+  if (Array.isArray(roles) && roles.length > 0) {
+    return roles.length === 1 && roles[0] === "board";
+  }
+  return legacyRole === "board";
+}
+
 export const staff = defineType({
   name: "staff",
   title: "Person",
@@ -33,22 +46,23 @@ export const staff = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "role",
-      type: "string",
-      title: "Role Group",
+      name: "roles",
+      type: "array",
+      title: "Role Groups",
       description:
-        "Where this person appears on the site. Someone can be edited once and shown on Coaches or Board pages via this field.",
+        "Where this person appears on the site. Select every group that applies — e.g. Head Coach who sits on the board selects both Coaching and Board.",
       group: GROUP.MAIN_CONTENT,
+      of: [{ type: "string" }],
       options: {
         list: [
           { title: "Coaching", value: "coaching" },
           { title: "Board / Leadership", value: "board" },
           { title: "Operations / Staff", value: "operations" },
         ],
-        layout: "radio",
+        layout: "grid",
       },
-      initialValue: "coaching",
-      validation: (Rule) => Rule.required(),
+      initialValue: ["coaching"],
+      validation: (Rule) => Rule.required().min(1),
     }),
     defineField({
       name: "featured",
@@ -94,7 +108,7 @@ export const staff = defineType({
       title: "Certifications",
       of: [{ type: "string" }],
       group: GROUP.MAIN_CONTENT,
-      hidden: ({ parent }) => parent?.role === "board",
+      hidden: ({ parent }) => isBoardOnly(parent?.roles, parent?.role),
     }),
     defineField({
       name: "specialties",
@@ -102,7 +116,7 @@ export const staff = defineType({
       title: "Specialties",
       of: [{ type: "string" }],
       group: GROUP.MAIN_CONTENT,
-      hidden: ({ parent }) => parent?.role === "board",
+      hidden: ({ parent }) => isBoardOnly(parent?.roles, parent?.role),
     }),
     orderRankField({ type: "staff" }),
     defineField({
@@ -123,21 +137,22 @@ export const staff = defineType({
     select: {
       title: "name",
       position: "position",
+      roles: "roles",
       role: "role",
       media: "image",
     },
-    prepare: ({ title, position, role, media }) => {
-      const roleLabel =
-        role === "board"
-          ? "Board"
-          : role === "operations"
-            ? "Operations"
-            : role === "coaching"
-              ? "Coaching"
-              : null;
+    prepare: ({ title, position, roles, role, media }) => {
+      const roleValues: string[] = Array.isArray(roles)
+        ? roles
+        : role
+          ? [role]
+          : [];
+      const roleLabels = roleValues
+        .map((r) => ROLE_LABELS[r] ?? r)
+        .filter(Boolean);
       return {
         title,
-        subtitle: [position, roleLabel].filter(Boolean).join(" · "),
+        subtitle: [position, roleLabels.join(", ")].filter(Boolean).join(" · "),
         media,
       };
     },

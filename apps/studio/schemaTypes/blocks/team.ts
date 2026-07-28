@@ -36,10 +36,32 @@ export const team = defineType({
       initialValue: "coaching",
     }),
     defineField({
+      name: "layout",
+      type: "string",
+      title: "Layout",
+      description:
+        "Uniform Grid shows everyone as equal cards (best for Board). Featured + Supporting elevates people marked Featured (best for Coaches).",
+      options: {
+        list: [
+          {
+            title: "Featured + Supporting",
+            value: "split",
+          },
+          {
+            title: "Uniform Grid (equal cards)",
+            value: "uniform",
+          },
+        ],
+        layout: "radio",
+      },
+      initialValue: "split",
+    }),
+    defineField({
       name: "assistantsEyebrow",
       type: "string",
       title: "Supporting Section Eyebrow",
       initialValue: "The Full Staff",
+      hidden: ({ parent }) => parent?.layout === "uniform",
     }),
     defineField({
       name: "assistantsTitle",
@@ -47,6 +69,7 @@ export const team = defineType({
       title: "Supporting Section Title",
       description: "Heading for non-featured people in this list",
       initialValue: "Assistant Coaches",
+      hidden: ({ parent }) => parent?.layout === "uniform",
     }),
     defineField({
       name: "teamMembers",

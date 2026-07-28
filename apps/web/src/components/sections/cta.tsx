@@ -48,26 +48,21 @@ export function CTABlock({
     const isCyan = layout === "cyanBand";
     return (
       <section
-        className={cn("py-16 md:py-20", isCyan ? "bg-cyan-brand" : "bg-navy")}
+        className={cn("py-16 md:py-20", isCyan ? "bg-cyan-band" : "bg-navy")}
       >
         <div className="mx-auto max-w-3xl px-6 text-center sm:px-10">
           {eyebrow ? (
             <p
               className={cn(
                 "mb-3 font-display text-sm font-bold tracking-[0.2em] uppercase",
-                isCyan ? "text-white/80" : "text-cyan-on-navy",
+                isCyan ? "text-white/85" : "text-cyan-on-navy",
               )}
             >
               {eyebrow}
             </p>
           ) : null}
           {title ? (
-            <h2
-              className={cn(
-                "mb-4 font-display text-3xl font-bold uppercase md:text-4xl",
-                "text-white",
-              )}
-            >
+            <h2 className="mb-4 font-display text-3xl font-bold text-white uppercase md:text-4xl">
               {title}
             </h2>
           ) : null}
@@ -86,7 +81,7 @@ export function CTABlock({
                 size: "lg",
               }),
               buttonCtaClassName,
-              isCyan && "bg-white text-navy hover:bg-white/90 border-0",
+              isCyan && "border-0 bg-white text-navy hover:bg-white/90",
             )}
           />
         </div>
