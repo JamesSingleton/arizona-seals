@@ -14,23 +14,13 @@ import { notFound } from "next/navigation";
 import { Suspense, ViewTransition } from "react";
 
 import { RichText } from "@/components/elements/rich-text";
-import { SanityImage } from "@/components/elements/sanity-image";
 import { ArticleJsonLd, BreadcrumbJsonLd } from "@/components/json-ld";
+import { PageHero } from "@/components/page-hero";
+import { formatDate } from "@/lib/format-date";
 import { getSEOMetadata, resolveSeoImageUrl } from "@/lib/seo";
 
 function blogSlugPath(slug: string) {
   return slug.startsWith("/blog/") ? slug : `/blog/${slug}`;
-}
-
-function formatDate(value?: string | null) {
-  if (!value) return "";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return date.toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
 }
 
 export async function generateStaticParams() {
@@ -176,31 +166,18 @@ async function CachedBlogPost({
           ]}
         />
 
-        <section className="relative flex h-72 items-end overflow-hidden md:h-96">
-          {image?.id ? (
-            <SanityImage
-              image={image}
-              alt={title ?? "Blog post"}
-              loading="eager"
-              className="absolute inset-0 size-full object-cover"
-            />
-          ) : (
-            <div className="absolute inset-0 bg-navy" />
-          )}
-          {image?.id ? <div className="absolute inset-0 bg-navy/70" /> : null}
-          <div className="relative z-10 mx-auto w-full max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
-            <div className="border-l-4 border-cyan-brand pl-5">
-              {category ? (
-                <span className="mb-3 inline-block bg-cyan-brand px-3 py-1 font-display text-xs font-bold tracking-widest text-primary-foreground uppercase">
-                  {category}
-                </span>
-              ) : null}
-              <h1 className="font-display text-balance text-4xl font-bold tracking-wide text-white uppercase md:text-6xl">
-                {title}
-              </h1>
-            </div>
-          </div>
-        </section>
+        <PageHero
+          title={title ?? "Article"}
+          image={image}
+          size="tall"
+          beforeTitle={
+            category ? (
+              <span className="mb-3 inline-block bg-cyan-brand px-3 py-1 font-display text-xs font-bold tracking-widest text-primary-foreground uppercase">
+                {category}
+              </span>
+            ) : null
+          }
+        />
 
         <div className="mx-auto max-w-3xl px-6 py-12 sm:px-10 md:py-16">
           <div className="mb-8 flex flex-wrap items-center gap-4">

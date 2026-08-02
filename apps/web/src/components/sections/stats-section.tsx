@@ -1,17 +1,18 @@
-import { urlFor } from "@workspace/sanity/client";
-import Image from "next/image";
-
 import type { SanityImageProps } from "@/types";
+import {
+  objectPositionFromHotspot,
+  SanityImage,
+} from "../elements/sanity-image";
 
 /** Original stats side image used on the hardcoded homepage. */
-const DEFAULT_STATS_IMAGE = urlFor({
-  _id: "image-5eab7ec38166ec7e22db4124e92ff6db561278dc-6000x4000-avif",
-})
-  .width(1200)
-  .height(1040)
-  .fit("crop")
-  .quality(80)
-  .url();
+const DEFAULT_STATS_IMAGE: SanityImageProps = {
+  id: "image-5eab7ec38166ec7e22db4124e92ff6db561278dc-6000x4000-avif",
+  alt: "Arizona Seals swimmer competing at a meet",
+  hotspot: null,
+  crop: null,
+  preview: null,
+  dominantColor: null,
+};
 
 export type StatsItem = {
   _key?: string;
@@ -26,18 +27,6 @@ export type StatsSectionProps = {
   image?: SanityImageProps | null;
 };
 
-function resolveStatsSrc(image?: SanityImageProps | null): string {
-  if (image?.id) {
-    return urlFor({ _id: image.id })
-      .width(1200)
-      .height(1040)
-      .fit("crop")
-      .quality(80)
-      .url();
-  }
-  return DEFAULT_STATS_IMAGE;
-}
-
 export function StatsSection({
   eyebrow = "By the Numbers",
   title = "We've Got a Lot to Be Proud About",
@@ -46,7 +35,7 @@ export function StatsSection({
 }: StatsSectionProps) {
   if (!stats?.length) return null;
 
-  const src = resolveStatsSrc(image);
+  const resolvedImage = image?.id ? image : DEFAULT_STATS_IMAGE;
 
   return (
     <section className="bg-navy py-20 md:py-28">
@@ -89,13 +78,17 @@ export function StatsSection({
           </div>
 
           <div className="mt-12 lg:mt-0 lg:sticky lg:top-24 lg:self-start">
-            <div className="relative h-64 overflow-hidden lg:h-[520px]">
-              <Image
-                src={src}
-                alt="Arizona Seals swimmer competing at a meet"
-                fill
+            <div className="relative h-64 overflow-hidden lg:h-130">
+              <SanityImage
+                image={resolvedImage}
+                width={1200}
                 sizes="(min-width: 1024px) 50vw, 100vw"
-                className="object-cover object-top"
+                className="absolute inset-0 size-full object-cover"
+                style={{
+                  objectPosition: objectPositionFromHotspot(
+                    resolvedImage.hotspot,
+                  ),
+                }}
               />
             </div>
           </div>

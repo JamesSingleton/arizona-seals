@@ -2,7 +2,10 @@ import { Star } from "lucide-react";
 
 import type { SanityButtonProps, SanityImageProps } from "@/types";
 import { SanityButtons } from "../elements/sanity-buttons";
-import { SanityImage } from "../elements/sanity-image";
+import {
+  objectPositionFromHotspot,
+  SanityImage,
+} from "../elements/sanity-image";
 
 export type ChecklistSplitProps = {
   eyebrow?: string | null;
@@ -94,7 +97,12 @@ export function ChecklistSplit({
             {image?.id ? (
               <SanityImage
                 image={image}
+                width={1200}
+                sizes="(min-width: 1024px) 50vw, 100vw"
                 className="absolute inset-0 size-full object-cover"
+                style={{
+                  objectPosition: objectPositionFromHotspot(image.hotspot),
+                }}
               />
             ) : null}
           </div>

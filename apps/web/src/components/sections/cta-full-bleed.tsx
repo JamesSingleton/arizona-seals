@@ -6,7 +6,10 @@ import { cn } from "@workspace/ui/lib/utils";
 import Link from "next/link";
 
 import type { SanityImageProps } from "@/types";
-import { SanityImage } from "../elements/sanity-image";
+import {
+  objectPositionFromHotspot,
+  SanityImage,
+} from "../elements/sanity-image";
 
 export type CtaFullBleedProps = {
   eyebrow?: string;
@@ -16,20 +19,6 @@ export type CtaFullBleedProps = {
   secondaryCta?: { label: string; href: string };
 };
 
-/** Sanity hotspot is 0–1; maps to CSS object-position under object-cover. */
-function objectPositionFromHotspot(
-  hotspot?: { x: number; y: number } | null,
-): string {
-  if (
-    hotspot &&
-    typeof hotspot.x === "number" &&
-    typeof hotspot.y === "number"
-  ) {
-    return `${hotspot.x * 100}% ${hotspot.y * 100}%`;
-  }
-  return "center";
-}
-
 export function CtaFullBleed({
   eyebrow = "Get Started",
   titleLines = ["Master the Basics", "at Arizona Seals"],
@@ -37,17 +26,13 @@ export function CtaFullBleed({
   primaryCta = { label: "Join the Team", href: "/contact" },
   secondaryCta = { label: "Explore Programs", href: "/programs" },
 }: CtaFullBleedProps) {
-  const imageAlt =
-    typeof image?.alt === "string" && image.alt
-      ? image.alt
-      : "Arizona Seals team at the pool";
-
   return (
     <section className="relative flex h-[480px] items-end overflow-hidden bg-navy md:h-[560px]">
       {image?.id ? (
         <SanityImage
           image={image}
-          alt={imageAlt}
+          width={1600}
+          sizes="100vw"
           className="absolute inset-0 size-full object-cover"
           style={{
             objectPosition: objectPositionFromHotspot(image.hotspot),

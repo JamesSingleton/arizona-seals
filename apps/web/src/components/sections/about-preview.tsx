@@ -5,7 +5,10 @@ import type {
 } from "@/types";
 import { RichText } from "../elements/rich-text";
 import { SanityButtons } from "../elements/sanity-buttons";
-import { SanityImage } from "../elements/sanity-image";
+import {
+  objectPositionFromHotspot,
+  SanityImage,
+} from "../elements/sanity-image";
 
 export type SplitContentProps = {
   eyebrow?: string | null;
@@ -129,12 +132,12 @@ export function AboutPreview({
           >
             <SanityImage
               image={image}
-              alt={
-                typeof image.alt === "string"
-                  ? image.alt
-                  : "Arizona Seals athletes racing at a swim meet"
-              }
+              width={1200}
+              sizes="(min-width: 1024px) 50vw, 100vw"
               className="absolute inset-0 size-full object-cover"
+              style={{
+                objectPosition: objectPositionFromHotspot(image?.hotspot),
+              }}
             />
           </div>
         </div>

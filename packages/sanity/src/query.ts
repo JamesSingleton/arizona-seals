@@ -14,7 +14,6 @@ const imageFields = /* groq */ `
     top
   },
   "alt": coalesce(alt, asset->altText, asset->originalFilename, "Image"),
-  "blurData": asset->metadata.lqip,
   "dominantColor": asset->metadata.palette.dominant.background,
 `;
 

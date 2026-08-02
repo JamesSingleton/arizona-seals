@@ -47,9 +47,28 @@ export const hero = defineType({
       name: "image",
       type: "image",
       title: "Image",
+      description:
+        "Set the focal point (hotspot) on the subject — e.g. the swimmer’s face — so mobile crops keep them in frame. Check the Mobile preview below the image.",
       options: {
-        hotspot: true,
+        hotspot: {
+          previews: [
+            { title: "Mobile", aspectRatio: 9 / 16 },
+            { title: "Desktop", aspectRatio: 16 / 9 },
+            { title: "Square", aspectRatio: 1 },
+            { title: "3:4", aspectRatio: 3 / 4 },
+          ],
+        },
       },
+      fields: [
+        defineField({
+          name: "alt",
+          type: "string",
+          title: "Alternative text",
+          description: "Describe the image for accessibility and SEO",
+          validation: (rule) =>
+            rule.warning("Alt text helps accessibility and SEO"),
+        }),
+      ],
     }),
     buttonsField,
   ],

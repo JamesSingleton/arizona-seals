@@ -34,7 +34,9 @@ export function SponsorLogo({
       {image?.id ? (
         <SanityImage
           image={image}
-          alt={name ?? "Sponsor"}
+          width={200}
+          height={80}
+          sizes="200px"
           className={cn(
             "w-auto object-contain",
             size === "sm" ? "h-12 max-w-36" : "h-14 max-w-40",

@@ -2,7 +2,10 @@ import { cn } from "@workspace/ui/lib/utils";
 import Link from "next/link";
 
 import type { PagebuilderType } from "@/types";
-import { SanityImage } from "./elements/sanity-image";
+import {
+  objectPositionFromHotspot,
+  SanityImage,
+} from "./elements/sanity-image";
 
 type ImageLinkCard = NonNullable<
   NonNullable<PagebuilderType<"imageLinkCards">["cards"]>
@@ -30,7 +33,11 @@ export function CTACard({ card, className }: CTACardProps) {
             loading="eager"
             width={1920}
             height={1080}
+            sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw"
             className="object-cover grayscale pointer-events-none group-hover:opacity-100 group-hover:transition-opacity duration-1000 opacity-40 dark:opacity-60 dark:hover:opacity-[2] dark:saturate-200"
+            style={{
+              objectPosition: objectPositionFromHotspot(image.hotspot),
+            }}
           />
         </div>
       )}

@@ -30,7 +30,6 @@ export type ContactInfoBlockProps = {
     mapUrl?: string | null;
   } | null;
   showContactForm?: boolean | null;
-  showForm?: boolean | null;
 };
 
 const quickLinks = [
@@ -97,9 +96,8 @@ export function ContactInfoBlock({
   address,
   settings,
   showContactForm,
-  showForm,
 }: ContactInfoBlockProps) {
-  const showFormResolved = showContactForm ?? showForm ?? true;
+  const showFormResolved = showContactForm ?? true;
   const resolvedEmail =
     useSiteSettings !== false
       ? (settings?.contactEmail ?? email)
