@@ -31,7 +31,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-email": "^6.9.1",
-    "resend": "^6.18.0",
+    "resend": "^6.18.1",
     "sanity-image": "^1.1.0",
     "schema-dts": "^2.0.0",
     "server-only": "^0.0.1",
@@ -43,7 +43,7 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@workspace/typescript-config": "workspace:*",
-    "postcss": "^8.5.23",
+    "postcss": "^8.5.25",
     "tailwindcss": "catalog:",
     "typescript": "catalog:"
   }
