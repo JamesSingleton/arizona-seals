@@ -1,43 +1,57 @@
 "use client";
 
 import {
+  objectPositionFromHotspot,
   processImageData,
   SANITY_BASE_URL,
   type SanityImageProps,
 } from "@workspace/sanity/image";
-import { memo } from "react";
+import type { ElementType } from "react";
 import {
   SanityImage as BaseSanityImage,
   type WrapperProps,
 } from "sanity-image";
 
-const ImageWrapper = <T extends React.ElementType = "img">(
-  props: WrapperProps<T>,
-) => <BaseSanityImage baseUrl={SANITY_BASE_URL} {...props} />;
-
-function SanityImageComponent({
+/**
+ * App wrapper around [`sanity-image`](https://github.com/coreyward/sanity-image).
+ *
+ * Accepts the GROQ image bag (`id`, `hotspot`, `crop`, `preview`, `alt`) and
+ * configures `baseUrl` once. Alt always comes from `imageFields`
+ * (`coalesce(alt, asset->altText, asset->originalFilename, "Image")`) — do not
+ * pass an `alt` prop.
+ *
+ * @example
+ * ```tsx
+ * <SanityImage
+ *   image={member.image}
+ *   width={800}
+ *   sizes="(min-width: 768px) 50vw, 100vw"
+ * />
+ * ```
+ */
+export function SanityImage<T extends ElementType = "img">({
   image,
-  alt: altProp,
+  queryParams,
   ...props
-}: SanityImageProps) {
-  const processedImageData = processImageData(image);
+}: SanityImageProps<T>) {
+  const processed = processImageData(image);
 
-  if (!processedImageData) {
+  if (!processed) {
     return null;
   }
 
-  const { alt, hotspot, crop, preview, id } = processedImageData;
-
   return (
-    <ImageWrapper
-      {...props}
-      id={id}
-      alt={typeof altProp === "string" ? altProp : alt}
-      preview={preview}
-      hotspot={hotspot}
-      crop={crop}
+    <BaseSanityImage
+      baseUrl={SANITY_BASE_URL}
+      {...(props as WrapperProps<T>)}
+      id={processed.id}
+      hotspot={processed.hotspot}
+      crop={processed.crop}
+      preview={processed.preview}
+      alt={processed.alt}
+      queryParams={{ q: 80, ...queryParams }}
     />
   );
 }
 
-export const SanityImage = memo(SanityImageComponent);
+export { objectPositionFromHotspot };

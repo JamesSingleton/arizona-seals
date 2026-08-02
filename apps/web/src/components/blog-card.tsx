@@ -1,7 +1,11 @@
 import type { QueryBlogIndexPageDataResult } from "@workspace/sanity/types";
 import Link from "next/link";
 
-import { SanityImage } from "./elements/sanity-image";
+import { formatDate } from "@/lib/format-date";
+import {
+  objectPositionFromHotspot,
+  SanityImage,
+} from "./elements/sanity-image";
 
 type Blog = NonNullable<
   NonNullable<QueryBlogIndexPageDataResult>["blogs"]
@@ -9,17 +13,6 @@ type Blog = NonNullable<
 
 interface BlogCardProps {
   blog: Blog;
-}
-
-function formatDate(value?: string | null): string {
-  if (!value) return "";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return date.toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
 }
 
 function blogHref(slug?: string | null): string {
@@ -42,8 +35,12 @@ export function FeaturedBlogCard({ blog }: BlogCardProps) {
           {image?.id ? (
             <SanityImage
               image={image}
-              alt={title ?? "Blog post image"}
+              width={1200}
+              sizes="(min-width: 1024px) 50vw, 100vw"
               className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-105"
+              style={{
+                objectPosition: objectPositionFromHotspot(image.hotspot),
+              }}
             />
           ) : (
             <div className="absolute inset-0 bg-navy" />
@@ -101,8 +98,12 @@ export function BlogCard({ blog }: BlogCardProps) {
           {image?.id ? (
             <SanityImage
               image={image}
-              alt={title ?? "Blog post image"}
+              width={1200}
+              sizes="(min-width: 768px) 50vw, 100vw"
               className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-105"
+              style={{
+                objectPosition: objectPositionFromHotspot(image.hotspot),
+              }}
             />
           ) : null}
           {category ? (

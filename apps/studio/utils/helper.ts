@@ -171,7 +171,7 @@ export function buildTree(pages: Page[]): Tree {
           children: { "": currentFolder[segment] },
         };
       }
-      // biome-ignore lint/style/noParameterAssign: needed for tree traversal
+
       currentFolder = currentFolder[segment].children as Tree;
     });
   }
@@ -196,7 +196,7 @@ export function findTreeByPath(root: Tree, path?: string): Tree {
 
   for (const segment of segments) {
     const node = currentTree[segment];
-    if (!node || node._type !== "folder") break;
+    if (node?._type !== "folder") break;
     currentTree = node.children;
   }
 

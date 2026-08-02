@@ -2,7 +2,10 @@ import { Award, Mail } from "lucide-react";
 
 import type { SanityImageProps, SanityRichTextProps } from "@/types";
 import { RichText } from "../elements/rich-text";
-import { SanityImage } from "../elements/sanity-image";
+import {
+  objectPositionFromHotspot,
+  SanityImage,
+} from "../elements/sanity-image";
 
 export type TeamMember = {
   _id?: string;
@@ -192,6 +195,49 @@ function PersonBody({
 }
 
 /**
+ * Shared portrait media for team cards — hotspot-aware cover crop.
+ */
+function TeamMemberPhoto({
+  member,
+  width,
+  sizes,
+  fallbackClassName,
+}: {
+  member: TeamMember;
+  width: number;
+  sizes: string;
+  fallbackClassName?: string;
+}) {
+  if (hasImage(member)) {
+    return (
+      <SanityImage
+        image={member.image}
+        width={width}
+        sizes={sizes}
+        className="absolute inset-0 size-full object-cover"
+        style={{
+          objectPosition: objectPositionFromHotspot(member.image?.hotspot),
+        }}
+      />
+    );
+  }
+
+  return (
+    <div
+      aria-hidden
+      className={
+        fallbackClassName ??
+        "absolute inset-0 flex items-center justify-center bg-linear-to-br from-navy to-[#132847]"
+      }
+    >
+      <span className="font-display text-6xl font-bold tracking-wide text-cyan-on-navy/40 uppercase md:text-7xl">
+        {initialsFromName(member.name)}
+      </span>
+    </div>
+  );
+}
+
+/**
  * Equal-weight person card. Photo and no-photo variants share the same
  * portrait slot height so a mixed board grid stays visually balanced.
  * When a row mate has a contact footer, cards without one grow the portrait
@@ -204,7 +250,6 @@ function PersonCard({
   member: TeamMember;
   showBio?: boolean;
 }) {
-  const showPhoto = hasImage(member);
   const showBody =
     hasExpandedBody(member, { includeBio: showBio }) || Boolean(member.email);
 
@@ -217,22 +262,11 @@ function PersonCard({
             : "relative min-h-72 flex-1 bg-navy md:min-h-80"
         }
       >
-        {showPhoto ? (
-          <SanityImage
-            image={member.image}
-            alt={member.name ?? "Team member"}
-            className="absolute inset-0 size-full object-cover object-top"
-          />
-        ) : (
-          <div
-            aria-hidden
-            className="absolute inset-0 flex items-center justify-center bg-linear-to-br from-navy to-[#132847]"
-          >
-            <span className="font-display text-6xl font-bold tracking-wide text-cyan-on-navy/40 uppercase md:text-7xl">
-              {initialsFromName(member.name)}
-            </span>
-          </div>
-        )}
+        <TeamMemberPhoto
+          member={member}
+          width={1200}
+          sizes="(min-width: 768px) 50vw, 100vw"
+        />
         <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-navy via-navy/70 to-transparent p-5 pt-16">
           <PersonIdentity member={member} />
         </div>
@@ -243,17 +277,11 @@ function PersonCard({
 }
 
 function SupportingPersonRow({ member }: { member: TeamMember }) {
-  const showPhoto = hasImage(member);
-
   return (
     <article className="flex flex-col gap-5 border-b border-border py-8 last:border-0 sm:flex-row sm:items-start">
       <div className="relative flex size-24 shrink-0 items-center justify-center overflow-hidden rounded-full bg-navy sm:size-28">
-        {showPhoto ? (
-          <SanityImage
-            image={member.image}
-            alt={member.name ?? "Team member"}
-            className="absolute inset-0 size-full object-cover object-top"
-          />
+        {hasImage(member) ? (
+          <TeamMemberPhoto member={member} width={400} sizes="112px" />
         ) : (
           <span
             aria-hidden

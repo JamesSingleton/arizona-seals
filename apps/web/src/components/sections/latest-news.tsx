@@ -1,7 +1,11 @@
 import Link from "next/link";
 
+import { formatDate } from "@/lib/format-date";
 import type { SanityImageProps } from "@/types";
-import { SanityImage } from "../elements/sanity-image";
+import {
+  objectPositionFromHotspot,
+  SanityImage,
+} from "../elements/sanity-image";
 
 export type LatestNewsPost = {
   _id?: string;
@@ -18,17 +22,6 @@ export type LatestNewsProps = {
   title?: string | null;
   posts?: LatestNewsPost[] | null;
 };
-
-function formatDate(value?: string | null): string {
-  if (!value) return "";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return date.toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
-}
 
 export function LatestNews({
   eyebrow = "Stay Updated",
@@ -78,7 +71,14 @@ export function LatestNews({
                     {item.image?.id ? (
                       <SanityImage
                         image={item.image}
+                        width={1200}
+                        sizes="(min-width: 768px) 33vw, 100vw"
                         className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        style={{
+                          objectPosition: objectPositionFromHotspot(
+                            item.image.hotspot,
+                          ),
+                        }}
                       />
                     ) : null}
                     {item.category ? (

@@ -4,32 +4,81 @@ import { useOptimistic } from "@sanity/visual-editing/react";
 import { dataset, projectId, studioUrl } from "@workspace/sanity/api";
 import type { QueryHomePageDataResult } from "@workspace/sanity/types";
 import { cn } from "@workspace/ui/lib/utils";
+import dynamic from "next/dynamic";
 import { createDataAttribute } from "next-sanity";
 import { useCallback, useMemo } from "react";
 
 import type { PageBuilderBlockTypes, PagebuilderType } from "@/types";
-import { AboutPreview } from "./sections/about-preview";
-import { ChecklistSplit } from "./sections/checklist-split";
-import { ContactInfoBlock } from "./sections/contact-info";
-import { CTABlock } from "./sections/cta";
-import { FacilitiesList } from "./sections/facilities-list";
-import { FaqAccordion } from "./sections/faq-accordion";
-import { FeatureCardsWithIcon } from "./sections/feature-cards-with-icon";
-import { HeroBlock } from "./sections/hero";
-import { ImageLinkCards } from "./sections/image-link-cards";
-import { LatestNews } from "./sections/latest-news";
-import { PageHeroBlock } from "./sections/page-hero-block";
-import { ProgramsList } from "./sections/programs-list";
-import { ProgramsPreview } from "./sections/programs-preview";
-import { ResourcesBlock } from "./sections/resources";
-import { SponsorTiers } from "./sections/sponsor-tiers";
-import { SponsorsGrid } from "./sections/sponsors-grid";
-import { SponsorsHero } from "./sections/sponsors-hero";
-import { SponsorsMarquee } from "./sections/sponsors-marquee";
-import { StatsSection } from "./sections/stats-section";
-import { SubscribeNewsletter } from "./sections/subscribe-newsletter";
-import { TeamBlock } from "./sections/team";
-import { Timeline } from "./sections/timeline";
+
+/** Heavy blocks — code-split so published pages don't load every section upfront. */
+const AboutPreview = dynamic(() =>
+  import("./sections/about-preview").then((m) => m.AboutPreview),
+);
+const ChecklistSplit = dynamic(() =>
+  import("./sections/checklist-split").then((m) => m.ChecklistSplit),
+);
+const ContactInfoBlock = dynamic(() =>
+  import("./sections/contact-info").then((m) => m.ContactInfoBlock),
+);
+const CTABlock = dynamic(() =>
+  import("./sections/cta").then((m) => m.CTABlock),
+);
+const FacilitiesList = dynamic(() =>
+  import("./sections/facilities-list").then((m) => m.FacilitiesList),
+);
+const FaqAccordion = dynamic(() =>
+  import("./sections/faq-accordion").then((m) => m.FaqAccordion),
+);
+const FeatureCardsWithIcon = dynamic(() =>
+  import("./sections/feature-cards-with-icon").then(
+    (m) => m.FeatureCardsWithIcon,
+  ),
+);
+const HeroBlock = dynamic(() =>
+  import("./sections/hero").then((m) => m.HeroBlock),
+);
+const ImageLinkCards = dynamic(() =>
+  import("./sections/image-link-cards").then((m) => m.ImageLinkCards),
+);
+const LatestNews = dynamic(() =>
+  import("./sections/latest-news").then((m) => m.LatestNews),
+);
+const PageHeroBlock = dynamic(() =>
+  import("./sections/page-hero-block").then((m) => m.PageHeroBlock),
+);
+const ProgramsList = dynamic(() =>
+  import("./sections/programs-list").then((m) => m.ProgramsList),
+);
+const ProgramsPreview = dynamic(() =>
+  import("./sections/programs-preview").then((m) => m.ProgramsPreview),
+);
+const ResourcesBlock = dynamic(() =>
+  import("./sections/resources").then((m) => m.ResourcesBlock),
+);
+const SponsorTiers = dynamic(() =>
+  import("./sections/sponsor-tiers").then((m) => m.SponsorTiers),
+);
+const SponsorsGrid = dynamic(() =>
+  import("./sections/sponsors-grid").then((m) => m.SponsorsGrid),
+);
+const SponsorsHero = dynamic(() =>
+  import("./sections/sponsors-hero").then((m) => m.SponsorsHero),
+);
+const SponsorsMarquee = dynamic(() =>
+  import("./sections/sponsors-marquee").then((m) => m.SponsorsMarquee),
+);
+const StatsSection = dynamic(() =>
+  import("./sections/stats-section").then((m) => m.StatsSection),
+);
+const SubscribeNewsletter = dynamic(() =>
+  import("./sections/subscribe-newsletter").then((m) => m.SubscribeNewsletter),
+);
+const TeamBlock = dynamic(() =>
+  import("./sections/team").then((m) => m.TeamBlock),
+);
+const Timeline = dynamic(() =>
+  import("./sections/timeline").then((m) => m.Timeline),
+);
 
 type PageBuilderBlock = NonNullable<
   NonNullable<QueryHomePageDataResult>["pageBuilder"]

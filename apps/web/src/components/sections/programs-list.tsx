@@ -3,7 +3,10 @@ import { Award, ChevronRight, ClipboardCheck } from "lucide-react";
 
 import type { SanityButtonProps, SanityImageProps } from "@/types";
 import { SanityButtons } from "../elements/sanity-buttons";
-import { SanityImage } from "../elements/sanity-image";
+import {
+  objectPositionFromHotspot,
+  SanityImage,
+} from "../elements/sanity-image";
 
 export type ProgramsListProgram = {
   _id?: string;
@@ -94,8 +97,14 @@ export function ProgramsList({
                   {program.image?.id ? (
                     <SanityImage
                       image={program.image}
-                      alt={program.name ?? ""}
+                      width={1200}
+                      sizes="(min-width: 1024px) 50vw, 100vw"
                       className="absolute inset-0 size-full object-cover"
+                      style={{
+                        objectPosition: objectPositionFromHotspot(
+                          program.image.hotspot,
+                        ),
+                      }}
                     />
                   ) : (
                     <div className="absolute inset-0 bg-muted" />

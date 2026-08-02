@@ -25,6 +25,16 @@ const imageLinkCard = defineField({
       title: "Card Image",
       type: "image",
       description: "Add an image or illustration for this card",
+      options: { hotspot: true },
+      fields: [
+        defineField({
+          name: "alt",
+          type: "string",
+          title: "Alternative Text",
+          validation: (Rule) =>
+            Rule.required().warning("Add alt text for accessibility."),
+        }),
+      ],
     }),
     defineField({
       name: "url",

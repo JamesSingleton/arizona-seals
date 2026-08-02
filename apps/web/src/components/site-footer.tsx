@@ -168,7 +168,6 @@ function SiteFooterView({
               {footerLogo ? (
                 <SanityImage
                   image={footerLogo as SanityImageProps}
-                  alt={footerLogo.alt || siteTitle || "Arizona Seals Swimming"}
                   width={56}
                   height={56}
                   className="h-14 w-14 object-contain"

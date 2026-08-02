@@ -8,7 +8,10 @@ import { Clock, ExternalLink, MapPin, Phone } from "lucide-react";
 import Link from "next/link";
 
 import type { SanityImageProps } from "@/types";
-import { SanityImage } from "../elements/sanity-image";
+import {
+  objectPositionFromHotspot,
+  SanityImage,
+} from "../elements/sanity-image";
 
 export type FacilitiesListFacility = {
   _id?: string;
@@ -60,7 +63,12 @@ function FacilityCard({ facility }: { facility: FacilitiesListFacility }) {
         {facility.image?.id ? (
           <SanityImage
             image={facility.image}
+            width={1200}
+            sizes="(min-width: 1024px) 50vw, 100vw"
             className="absolute inset-0 size-full object-cover"
+            style={{
+              objectPosition: objectPositionFromHotspot(facility.image.hotspot),
+            }}
           />
         ) : null}
         {facility.isPrimary ? (

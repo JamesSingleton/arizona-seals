@@ -37,7 +37,6 @@ export function InteractiveGridPattern({
   const [hoveredSquare, setHoveredSquare] = useState<number | null>(null);
 
   return (
-    // biome-ignore lint/a11y/noSvgWithoutTitle: <explanation>
     <svg
       width={width * horizontal}
       height={height * vertical}

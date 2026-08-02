@@ -211,24 +211,20 @@ function isRenderableLogo(
 function BrandMark({
   logo,
   alternateLogo,
-  siteTitle,
   solid,
 }: {
   logo?: NavbarLogo;
   alternateLogo?: NavbarData["alternateLogo"];
-  siteTitle?: string | null;
   solid: boolean;
 }) {
   const primary = isRenderableLogo(logo) ? logo : null;
   const alternate = isRenderableLogo(alternateLogo) ? alternateLogo : primary;
-  const alt = primary?.alt || alternate?.alt || siteTitle || "Arizona Seals";
 
   return (
     <>
       {primary ? (
         <SanityImage
           image={primary as SanityImageProps}
-          alt={alt}
           width={56}
           height={56}
           className={cn(
@@ -240,7 +236,6 @@ function BrandMark({
       {alternate ? (
         <SanityImage
           image={alternate as SanityImageProps}
-          alt={alt}
           width={56}
           height={56}
           className={cn(
@@ -277,7 +272,13 @@ export function SiteNavbar({
   const solid = isScrolled || menuOpen || sheetOpen;
   const navColumns = columns && columns.length > 0 ? columns : FALLBACK_COLUMNS;
   const navButtons = buttons && buttons.length > 0 ? buttons : FALLBACK_BUTTONS;
-  const brandTitle = siteTitle || "Arizona Seals";
+  const brandTitle = siteTitle || "Arizona Seals Swimming";
+  const brandParts = brandTitle.trim().split(/\s+/);
+  const brandAccent =
+    brandParts.length > 1 ? brandParts[brandParts.length - 1] : null;
+  const brandName = brandAccent
+    ? brandParts.slice(0, -1).join(" ")
+    : brandTitle;
 
   const linkClass = cn(
     "text-sm font-semibold tracking-wide uppercase transition-colors",
@@ -307,12 +308,7 @@ export function SiteNavbar({
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 sm:px-6 lg:px-8">
         <Link href="/" className="relative flex shrink-0 items-center gap-3">
-          <BrandMark
-            logo={logo}
-            alternateLogo={alternateLogo}
-            siteTitle={brandTitle}
-            solid={solid}
-          />
+          <BrandMark logo={logo} alternateLogo={alternateLogo} solid={solid} />
           <div className="hidden leading-none sm:block">
             <p
               className={cn(
@@ -320,16 +316,18 @@ export function SiteNavbar({
                 solid ? "text-foreground" : "text-white",
               )}
             >
-              Arizona Seals
+              {brandName}
             </p>
-            <p
-              className={cn(
-                "font-display mt-0.5 text-xs font-bold tracking-[0.18em] uppercase",
-                solid ? "text-cyan-brand" : "text-[#5ec9f2]",
-              )}
-            >
-              Swimming
-            </p>
+            {brandAccent ? (
+              <p
+                className={cn(
+                  "font-display mt-0.5 text-xs font-bold tracking-[0.18em] uppercase",
+                  solid ? "text-cyan-brand" : "text-[#5ec9f2]",
+                )}
+              >
+                {brandAccent}
+              </p>
+            ) : null}
           </div>
         </Link>
 
@@ -385,7 +383,6 @@ export function SiteNavbar({
                 {sheetLogo ? (
                   <SanityImage
                     image={sheetLogo as SanityImageProps}
-                    alt={sheetLogo.alt || brandTitle}
                     width={48}
                     height={48}
                     className="size-12 object-contain"
@@ -393,11 +390,13 @@ export function SiteNavbar({
                 ) : null}
                 <div>
                   <p className="font-display text-base leading-tight font-bold text-foreground uppercase">
-                    Arizona Seals
+                    {brandName}
                   </p>
-                  <p className="font-display text-xs font-bold tracking-widest text-cyan-brand uppercase">
-                    Swimming
-                  </p>
+                  {brandAccent ? (
+                    <p className="font-display text-xs font-bold tracking-widest text-cyan-brand uppercase">
+                      {brandAccent}
+                    </p>
+                  ) : null}
                 </div>
               </Link>
             </SheetHeader>

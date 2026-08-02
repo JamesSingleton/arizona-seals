@@ -1,7 +1,10 @@
 import Link from "next/link";
 
 import type { SanityImageProps } from "@/types";
-import { SanityImage } from "../elements/sanity-image";
+import {
+  objectPositionFromHotspot,
+  SanityImage,
+} from "../elements/sanity-image";
 
 export type ProgramsPreviewProgram = {
   _id?: string;
@@ -82,8 +85,14 @@ export function ProgramsPreview({
                 {prog.image?.id ? (
                   <SanityImage
                     image={prog.image}
-                    alt={prog.name ?? "Program"}
+                    width={1200}
+                    sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
                     className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    style={{
+                      objectPosition: objectPositionFromHotspot(
+                        prog.image.hotspot,
+                      ),
+                    }}
                   />
                 ) : (
                   <div className="absolute inset-0 bg-navy" />
