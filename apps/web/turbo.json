@@ -1,0 +1,12 @@
+{
+  "extends": "//",
+  "tasks": {
+    "build": {
+      "env": [
+        "NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN",
+        "NEXT_PUBLIC_POSTHOG_HOST",
+        "SANITY_REVALIDATE_SECRET"
+      ]
+    }
+  }
+}
