@@ -4,7 +4,7 @@ import type {
   QueryBlogSlugPageDataResult,
   QuerySettingsDataResult,
 } from "@workspace/sanity/types";
-import { stegaClean } from "next-sanity";
+import { type StegaBranded, stegaClean } from "next-sanity";
 import type {
   Answer,
   Article,
@@ -118,7 +118,7 @@ function buildSafeImageUrl(image?: { id?: string | null }) {
 
 // Article JSON-LD Component
 interface ArticleJsonLdProps {
-  article: QueryBlogSlugPageDataResult;
+  article: StegaBranded<QueryBlogSlugPageDataResult>;
   settings?: QuerySettingsDataResult;
 }
 export function ArticleJsonLd({ article, settings }: ArticleJsonLdProps) {

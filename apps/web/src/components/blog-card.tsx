@@ -1,5 +1,6 @@
 import type { QueryBlogIndexPageDataResult } from "@workspace/sanity/types";
 import Link from "next/link";
+import type { StegaBranded } from "next-sanity";
 
 import { formatDate } from "@/lib/format-date";
 import {
@@ -12,7 +13,7 @@ type Blog = NonNullable<
 >[number];
 
 interface BlogCardProps {
-  blog: Blog;
+  blog: StegaBranded<Blog>;
 }
 
 function blogHref(slug?: string | null): string {

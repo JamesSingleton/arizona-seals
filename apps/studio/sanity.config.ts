@@ -46,16 +46,23 @@ export default defineConfig({
     presentationUrl(),
   ],
 
-  // form: {
-  //   image: {
-  //     assetSources: (previousAssetSources) => {
-  //       return previousAssetSources.filter(
-  //         (assetSource) =>
-  //           assetSource === mediaAssetSource
-  //       );
-  //     },
-  //   },
-  // },
+  form: {
+    components: {
+      portableText: {
+        plugins: (props) => {
+          return props.renderDefault({
+            ...props,
+            plugins: {
+              ...props.plugins,
+              table: {
+                enabled: true,
+              },
+            },
+          });
+        },
+      },
+    },
+  },
   document: {
     newDocumentOptions: (prev, { creationContext }) => {
       const { type } = creationContext;
