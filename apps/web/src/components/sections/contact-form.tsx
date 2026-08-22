@@ -1,6 +1,7 @@
 "use client";
 
 import { Send } from "lucide-react";
+import posthog from "posthog-js";
 import { useActionState, useEffect, useState } from "react";
 
 import {
@@ -56,6 +57,12 @@ export function ContactForm({
     <form
       key={resetKey}
       action={formAction}
+      onSubmit={(event) => {
+        const formData = new FormData(event.currentTarget);
+        posthog.capture("contact_form_submitted", {
+          inquiry_type: String(formData.get("subject") ?? ""),
+        });
+      }}
       className="space-y-5 rounded-2xl border border-border bg-background p-6 md:p-8"
     >
       <h3 className="font-display text-2xl font-bold text-foreground uppercase">

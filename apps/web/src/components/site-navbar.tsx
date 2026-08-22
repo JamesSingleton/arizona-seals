@@ -24,6 +24,7 @@ import {
 import { cn } from "@workspace/ui/lib/utils";
 import { Menu } from "lucide-react";
 import Link from "next/link";
+import posthog from "posthog-js";
 import { useEffect, useState } from "react";
 
 import { SanityImage } from "@/components/elements/sanity-image";
@@ -187,7 +188,12 @@ function NavbarButtons({
             href={href}
             target={button.openInNewTab ? "_blank" : undefined}
             rel={button.openInNewTab ? "noopener noreferrer" : undefined}
-            onClick={onNavigate}
+            onClick={() => {
+              posthog.capture("navigation_cta_clicked", {
+                cta_variant: variant,
+              });
+              onNavigate?.();
+            }}
             className={cn(
               buttonVariants({ variant, size }),
               isPrimary && buttonCtaClassName,
@@ -360,7 +366,13 @@ export function SiteNavbar({
           <NavbarButtons buttons={navButtons} solid={solid} className="ml-2" />
         </div>
 
-        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+        <Sheet
+          open={sheetOpen}
+          onOpenChange={(open) => {
+            posthog.capture("mobile_navigation_toggled", { open });
+            setSheetOpen(open);
+          }}
+        >
           <SheetTrigger
             className={cn(
               "inline-flex size-7 items-center justify-center rounded-md lg:hidden",

@@ -28,6 +28,7 @@
     "next": "catalog:",
     "next-sanity": "catalog:",
     "next-themes": "catalog:",
+    "posthog-js": "^1.407.2",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-email": "^6.9.1",
