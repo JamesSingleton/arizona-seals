@@ -2,6 +2,7 @@
 import { Button } from "@workspace/ui/components/button";
 import { ChevronRight, LoaderCircle } from "lucide-react";
 import Form from "next/form";
+import posthog from "posthog-js";
 import { useFormStatus } from "react-dom";
 
 import { newsletterSubmission } from "@/action/newsletter-submission";
@@ -62,6 +63,9 @@ export function SubscribeNewsletter({
           <Form
             className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-2"
             action={newsletterSubmission}
+            onSubmit={() => {
+              posthog.capture("newsletter_subscription_submitted");
+            }}
           >
             <div className="flex items-center justify-between rounded-xl border bg-background p-2 pl-4 drop-shadow-lg md:w-96 dark:bg-zinc-200">
               <label htmlFor="newsletter-email" className="sr-only">
