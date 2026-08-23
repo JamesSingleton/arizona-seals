@@ -81,20 +81,32 @@ export async function generateMetadata({
   }
 }
 
-export default async function SlugPage({
+export default function SlugPage({
   params,
 }: {
   params: Promise<{ slug: string[] }>;
 }) {
   if (!isSanityConfigured) notFound();
 
+  return (
+    <Suspense fallback={<PageFallback />}>
+      <SlugPageContent params={params} />
+    </Suspense>
+  );
+}
+
+async function SlugPageContent({
+  params,
+}: {
+  params: Promise<{ slug: string[] }>;
+}) {
   const { isEnabled: isDraftMode } = await draftMode();
   if (isDraftMode) {
-    return (
-      <Suspense fallback={<PageFallback />}>
-        <DynamicSlugPage params={params} />
-      </Suspense>
-    );
+    const [{ slug }, options] = await Promise.all([
+      params,
+      getDynamicFetchOptions(),
+    ]);
+    return <CachedSlugPage slug={toSlugParam(slug)} {...options} />;
   }
 
   const { slug } = await params;
@@ -105,18 +117,6 @@ export default async function SlugPage({
       stega={false}
     />
   );
-}
-
-async function DynamicSlugPage({
-  params,
-}: {
-  params: Promise<{ slug: string[] }>;
-}) {
-  const [{ slug }, options] = await Promise.all([
-    params,
-    getDynamicFetchOptions(),
-  ]);
-  return <CachedSlugPage slug={toSlugParam(slug)} {...options} />;
 }
 
 async function CachedSlugPage({
