@@ -2,14 +2,15 @@ import type { QueryBlogIndexPageDataResult } from "@workspace/sanity/types";
 import Link from "next/link";
 
 import { formatDate } from "@/lib/format-date";
+import type { StegaAware } from "@/types";
 import {
   objectPositionFromHotspot,
   SanityImage,
 } from "./elements/sanity-image";
 
-type Blog = NonNullable<
-  NonNullable<QueryBlogIndexPageDataResult>["blogs"]
->[number];
+type Blog = StegaAware<
+  NonNullable<NonNullable<QueryBlogIndexPageDataResult>["blogs"]>[number]
+>;
 
 interface BlogCardProps {
   blog: Blog;

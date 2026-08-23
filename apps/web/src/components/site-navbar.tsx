@@ -24,23 +24,24 @@ import {
 import { cn } from "@workspace/ui/lib/utils";
 import { Menu } from "lucide-react";
 import Link from "next/link";
+import { stegaClean } from "next-sanity";
 import posthog from "posthog-js";
 import { useEffect, useState } from "react";
 
 import { SanityImage } from "@/components/elements/sanity-image";
 import { ThemeToggle } from "@/components/theme-toggle";
-import type { SanityImageProps } from "@/types";
+import type { SanityImageProps, StegaAware } from "@/types";
 
 type NavbarData = NonNullable<QueryNavbarDataResult>;
 type NavColumn = NonNullable<NavbarData["columns"]>[number];
 type NavbarLogo = NavbarData["logo"];
 
 type SiteNavbarProps = {
-  columns?: NavbarData["columns"];
-  buttons?: NavbarData["buttons"];
-  logo?: NavbarLogo;
-  alternateLogo?: NavbarData["alternateLogo"];
-  siteTitle?: NavbarData["siteTitle"];
+  columns?: StegaAware<NavbarData>["columns"];
+  buttons?: StegaAware<NavbarData>["buttons"];
+  logo?: StegaAware<NavbarData>["logo"];
+  alternateLogo?: StegaAware<NavbarData>["alternateLogo"];
+  siteTitle?: StegaAware<NavbarData>["siteTitle"];
 };
 
 const FALLBACK_COLUMNS = [
@@ -130,6 +131,7 @@ const FALLBACK_COLUMNS = [
 ] as NonNullable<NavbarData["columns"]>;
 
 type NavbarButton = NonNullable<NavbarData["buttons"]>[number];
+type StegaNavbarButton = NonNullable<StegaAware<NavbarData>["buttons"]>[number];
 
 const FALLBACK_BUTTONS: NavbarButton[] = [
   {
@@ -150,12 +152,13 @@ function normalizeHref(href?: string | null) {
 }
 
 function resolveButtonVariant(
-  variant: NavbarButton["variant"],
+  variant: StegaNavbarButton["variant"],
   solid: boolean,
 ): NonNullable<Parameters<typeof buttonVariants>[0]>["variant"] {
-  if (variant === "outline" && !solid) return "outlineInverse";
-  if (variant === "link" || variant === "secondary" || variant === "outline") {
-    return variant;
+  const cleaned = stegaClean(variant);
+  if (cleaned === "outline" && !solid) return "outlineInverse";
+  if (cleaned === "link" || cleaned === "secondary" || cleaned === "outline") {
+    return cleaned;
   }
   return "default";
 }
@@ -168,7 +171,7 @@ function NavbarButtons({
   buttonClassName,
   onNavigate,
 }: {
-  buttons: NavbarButton[];
+  buttons: StegaNavbarButton[];
   solid: boolean;
   size?: "default" | "lg";
   className?: string;
@@ -180,7 +183,8 @@ function NavbarButtons({
       {buttons.map((button) => {
         const href = normalizeHref(button.href);
         const variant = resolveButtonVariant(button.variant, solid);
-        const isPrimary = !button.variant || button.variant === "default";
+        const cleanedVariant = stegaClean(button.variant);
+        const isPrimary = !cleanedVariant || cleanedVariant === "default";
 
         return (
           <Link
@@ -346,7 +350,7 @@ export function SiteNavbar({
               {navColumns.map((item) => (
                 <DesktopNavItem
                   key={item._key}
-                  item={item}
+                  item={item as NavColumn}
                   linkClass={linkClass}
                   triggerClass={triggerClass}
                 />
@@ -451,6 +455,18 @@ export function SiteNavbar({
   );
 }
 
+function isColumnNavItem(
+  item: NavColumn,
+): item is Extract<NavColumn, { type: "column" }> {
+  return stegaClean(item.type) === "column";
+}
+
+function isLinkNavItem(
+  item: NavColumn,
+): item is Extract<NavColumn, { type: "link" }> {
+  return stegaClean(item.type) === "link";
+}
+
 function DesktopNavItem({
   item,
   linkClass,
@@ -460,10 +476,11 @@ function DesktopNavItem({
   linkClass: string;
   triggerClass: string;
 }) {
-  if (item.type === "column") {
+  if (isColumnNavItem(item)) {
     const links = item.links ?? [];
+    const columnTitle = stegaClean(item.title);
     return (
-      <NavigationMenuItem value={item.title ?? item._key}>
+      <NavigationMenuItem value={columnTitle ?? item._key}>
         <NavigationMenuTrigger className={triggerClass}>
           {item.title}
         </NavigationMenuTrigger>
@@ -473,7 +490,7 @@ function DesktopNavItem({
               <li
                 key={link._key}
                 className={
-                  index === 0 && item.title === "Programs" ? "mb-1" : ""
+                  index === 0 && columnTitle === "Programs" ? "mb-1" : ""
                 }
               >
                 <NavigationMenuLink
@@ -481,7 +498,7 @@ function DesktopNavItem({
                   className={cn(
                     "block rounded-md px-3 py-2.5 text-popover-foreground hover:bg-muted focus:bg-muted",
                     index === 0 &&
-                      item.title === "Programs" &&
+                      columnTitle === "Programs" &&
                       "bg-muted hover:bg-muted/80",
                   )}
                 >
@@ -489,7 +506,7 @@ function DesktopNavItem({
                     className={cn(
                       "text-sm font-semibold text-popover-foreground",
                       index === 0 &&
-                        item.title === "Programs" &&
+                        columnTitle === "Programs" &&
                         "font-bold tracking-wide uppercase",
                     )}
                   >
@@ -521,17 +538,19 @@ function DesktopNavItem({
   );
 }
 
-function flattenMobileLinks(columns?: NavbarData["columns"]) {
+function flattenMobileLinks(columns?: StegaAware<NavbarData>["columns"]) {
   const links: { label: string; href: string }[] = [];
   for (const item of columns ?? []) {
-    if (item.type === "link" && item.name) {
-      links.push({ label: item.name, href: normalizeHref(item.href) });
-    } else if (item.type === "column") {
+    const navItem = item as NavColumn;
+    if (isLinkNavItem(navItem) && navItem.name) {
+      links.push({ label: navItem.name, href: normalizeHref(navItem.href) });
+    } else if (isColumnNavItem(navItem)) {
       // Prefer top-level destinations for mobile (first link or column title page)
-      const first = item.links?.[0];
-      if (item.title === "About") {
+      const first = navItem.links?.[0];
+      const columnTitle = stegaClean(navItem.title);
+      if (columnTitle === "About") {
         links.push({ label: "About", href: "/about" });
-      } else if (item.title === "Programs") {
+      } else if (columnTitle === "Programs") {
         links.push({ label: "Programs", href: "/programs" });
       } else if (first?.name) {
         links.push({

@@ -11,6 +11,7 @@ import type { Metadata } from "next";
 import { draftMode } from "next/headers";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { stegaClean } from "next-sanity";
 import { Suspense, ViewTransition } from "react";
 
 import { RichText } from "@/components/elements/rich-text";
@@ -152,7 +153,7 @@ async function CachedBlogPost({
       default="none"
     >
       <article>
-        <ArticleJsonLd article={data} />
+        <ArticleJsonLd article={stegaClean(data)} />
         <BreadcrumbJsonLd
           items={[
             { name: "Home", path: "/" },

@@ -3,6 +3,10 @@ import type {
   QueryHomePageDataResult,
   QueryImageTypeResult,
 } from "@workspace/sanity/types";
+import type { StegaBranded, StegaCleaned } from "next-sanity";
+
+/** Accepts both clean TypeGen results and stega-branded draft-mode results. */
+export type StegaAware<T> = StegaCleaned<T> | StegaBranded<T>;
 
 /** Seals CMS blocks not yet present in generated QueryHomePageDataResult */
 export type SealsPageBuilderBlockTypes =
