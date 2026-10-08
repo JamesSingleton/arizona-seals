@@ -18,9 +18,9 @@
     "check:types": "turbo run check:types"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.10",
+    "@biomejs/biome": "^2.5.15",
     "@workspace/typescript-config": "workspace:*",
-    "turbo": "^2.10.11",
+    "turbo": "^2.11.7",
     "typescript": "catalog:"
   }
 }
