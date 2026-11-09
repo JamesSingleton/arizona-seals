@@ -20,8 +20,8 @@ PostHog AI
 
 ```javascript
 posthog.identify(
-  'distinct_id',  // Replace 'distinct_id' with your user's unique identifier
-  { email: 'max@hedgehogmail.com', name: 'Max Hedgehog' } // optional: set additional person properties
+  "distinct_id", // Replace 'distinct_id' with your user's unique identifier
+  { email: "max@hedgehogmail.com", name: "Max Hedgehog" }, // optional: set additional person properties
 );
 ```
 
@@ -48,10 +48,11 @@ PostHogSDK.shared.identify("distinct_id", // Replace "distinct_id" with your use
 ### React Native
 
 ```jsx
-posthog.identify('distinct_id', { // Replace "distinct_id" with your user's unique identifier
-    email: 'max@hedgehogmail.com', // optional: set additional person properties
-    name: 'Max Hedgehog'
-})
+posthog.identify("distinct_id", {
+  // Replace "distinct_id" with your user's unique identifier
+  email: "max@hedgehogmail.com", // optional: set additional person properties
+  name: "Max Hedgehog",
+});
 ```
 
 ### Dart
@@ -109,18 +110,18 @@ Web
 PostHog AI
 
 ```javascript
-posthog.init('<ph_project_token>', {
-    api_host: 'https://us.i.posthog.com',
-    defaults: '2026-05-30',
-    loaded: (posthog) => {
-        if (currentUser?.id) {
-            posthog.identify(currentUser.id, {
-                email: currentUser.email,
-                name: currentUser.name,
-            })
-        }
-    },
-})
+posthog.init("<ph_project_token>", {
+  api_host: "https://us.i.posthog.com",
+  defaults: "2026-05-30",
+  loaded: (posthog) => {
+    if (currentUser?.id) {
+      posthog.identify(currentUser.id, {
+        email: currentUser.email,
+        name: currentUser.name,
+      });
+    }
+  },
+});
 ```
 
 In this example, `currentUser` represents user data already available from your authentication system. If your app loads the user asynchronously, call `posthog.identify()` as soon as that data becomes available instead.
@@ -149,7 +150,7 @@ PostHog AI
 ### Web
 
 ```javascript
-posthog.reset()
+posthog.reset();
 ```
 
 ### iOS
@@ -167,7 +168,7 @@ PostHog.reset()
 ### React Native
 
 ```jsx
-posthog.reset()
+posthog.reset();
 ```
 
 ### Dart
@@ -176,14 +177,14 @@ posthog.reset()
 await Posthog().reset();
 ```
 
-If you *also* want to reset the `device_id` so that the device will be considered a new device in future events, you can pass `true` as an argument:
+If you _also_ want to reset the `device_id` so that the device will be considered a new device in future events, you can pass `true` as an argument:
 
 Web
 
 PostHog AI
 
 ```javascript
-posthog.reset(true)
+posthog.reset(true);
 ```
 
 ### 4\. Person profiles and properties
