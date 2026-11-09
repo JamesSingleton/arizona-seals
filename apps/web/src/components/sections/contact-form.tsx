@@ -1,13 +1,13 @@
 "use client";
 
 import { Send } from "lucide-react";
-import posthog from "posthog-js";
 import { useActionState, useEffect, useState } from "react";
 
 import {
   type ContactFormState,
   submitContactForm,
 } from "@/action/contact-submission";
+import { captureContactFormSubmitted } from "@/lib/analytics";
 
 const initialState: ContactFormState = { ok: false, message: "" };
 
@@ -59,9 +59,7 @@ export function ContactForm({
       action={formAction}
       onSubmit={(event) => {
         const formData = new FormData(event.currentTarget);
-        posthog.capture("contact_form_submitted", {
-          inquiry_type: String(formData.get("subject") ?? ""),
-        });
+        captureContactFormSubmitted(String(formData.get("subject") ?? ""));
       }}
       className="space-y-5 rounded-2xl border border-border bg-background p-6 md:p-8"
     >

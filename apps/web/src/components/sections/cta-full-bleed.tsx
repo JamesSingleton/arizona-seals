@@ -1,10 +1,4 @@
-import {
-  buttonCtaClassName,
-  buttonVariants,
-} from "@workspace/ui/components/button";
-import { cn } from "@workspace/ui/lib/utils";
-import Link from "next/link";
-
+import { TrackedCtaLink } from "@/components/elements/tracked-cta-link";
 import type { SanityImageProps } from "@/types";
 import {
   objectPositionFromHotspot,
@@ -60,24 +54,17 @@ export function CtaFullBleed({
           ))}
         </h2>
         <div className="flex flex-wrap gap-4">
-          <Link
+          <TrackedCtaLink
+            label={primaryCta.label}
             href={primaryCta.href}
-            className={cn(
-              buttonVariants({ variant: "default", size: "xl" }),
-              buttonCtaClassName,
-            )}
-          >
-            {primaryCta.label}
-          </Link>
-          <Link
+            placement="cta_full_bleed_primary"
+          />
+          <TrackedCtaLink
+            label={secondaryCta.label}
             href={secondaryCta.href}
-            className={cn(
-              buttonVariants({ variant: "outlineInverse", size: "xl" }),
-              buttonCtaClassName,
-            )}
-          >
-            {secondaryCta.label}
-          </Link>
+            placement="cta_full_bleed_secondary"
+            variant="outlineInverse"
+          />
         </div>
       </div>
     </section>
