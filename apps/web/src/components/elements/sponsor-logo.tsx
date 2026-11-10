@@ -1,3 +1,4 @@
+import { trackClick } from "@workspace/analytics";
 import { cn } from "@workspace/ui/lib/utils";
 
 import type { SanityImageProps } from "@/types";
@@ -54,6 +55,12 @@ export function SponsorLogo({
     return (
       <a
         href={url}
+        {...trackClick("outbound_link_clicked", {
+          link_type: "sponsor",
+          placement: "sponsor_logo",
+          url,
+          label: name ?? undefined,
+        })}
         target="_blank"
         rel="noopener noreferrer"
         aria-label={name ?? "Sponsor"}

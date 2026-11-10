@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@workspace/analytics";
 import type { QueryNavbarDataResult } from "@workspace/sanity/types";
 import {
   buttonCtaClassName,
@@ -25,7 +26,6 @@ import { cn } from "@workspace/ui/lib/utils";
 import { Menu } from "lucide-react";
 import Link from "next/link";
 import { stegaClean } from "next-sanity";
-import posthog from "posthog-js";
 import { useEffect, useState } from "react";
 
 import { SanityImage } from "@/components/elements/sanity-image";
@@ -193,8 +193,10 @@ function NavbarButtons({
             target={button.openInNewTab ? "_blank" : undefined}
             rel={button.openInNewTab ? "noopener noreferrer" : undefined}
             onClick={() => {
-              posthog.capture("navigation_cta_clicked", {
-                cta_variant: variant,
+              track("navigation_cta_clicked", {
+                cta_label: button.text ?? "",
+                cta_href: href,
+                cta_variant: variant ?? "default",
               });
               onNavigate?.();
             }}
@@ -373,7 +375,7 @@ export function SiteNavbar({
         <Sheet
           open={sheetOpen}
           onOpenChange={(open) => {
-            posthog.capture("mobile_navigation_toggled", { open });
+            track("mobile_navigation_toggled", { open });
             setSheetOpen(open);
           }}
         >

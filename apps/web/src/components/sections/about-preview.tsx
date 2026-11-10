@@ -77,6 +77,7 @@ export function AboutPreview({
           {buttons && buttons.length > 0 ? (
             <div className="mt-8 flex justify-center">
               <SanityButtons
+                placement="about_preview"
                 buttons={buttons}
                 className="gap-4"
                 buttonClassName="inline-flex h-auto items-center gap-2 rounded-none border-0 border-b-2 border-foreground bg-transparent px-0 pb-0.5 font-display text-sm font-bold tracking-widest text-foreground uppercase shadow-none hover:border-cyan-brand hover:bg-transparent hover:text-cyan-brand"
@@ -120,6 +121,7 @@ export function AboutPreview({
 
             {buttons && buttons.length > 0 ? (
               <SanityButtons
+                placement="about_preview"
                 buttons={buttons}
                 className="gap-4"
                 buttonClassName="inline-flex h-auto items-center gap-2 rounded-none border-0 border-b-2 border-foreground bg-transparent px-0 pb-0.5 font-display text-sm font-bold tracking-widest text-foreground uppercase shadow-none hover:border-cyan-brand hover:bg-transparent hover:text-cyan-brand"

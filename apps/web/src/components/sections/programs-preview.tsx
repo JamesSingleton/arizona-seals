@@ -1,3 +1,4 @@
+import { trackClick } from "@workspace/analytics";
 import Link from "next/link";
 
 import type { SanityImageProps } from "@/types";
@@ -58,6 +59,11 @@ export function ProgramsPreview({
             </div>
             <Link
               href={viewAllHref}
+              {...trackClick("marketing_cta_clicked", {
+                cta_label: viewAllLabel ?? "View All",
+                cta_href: viewAllHref,
+                placement: "programs_preview_view_all",
+              })}
               className="w-fit shrink-0 border-b-2 border-foreground pb-0.5 font-display text-sm font-bold tracking-widest text-foreground uppercase transition-colors hover:border-cyan-brand hover:text-cyan-brand"
             >
               {viewAllLabel}
@@ -80,6 +86,11 @@ export function ProgramsPreview({
               <Link
                 key={prog._id ?? slug}
                 href={`/programs#${slug}`}
+                {...trackClick("marketing_cta_clicked", {
+                  cta_label: prog.name ?? slug,
+                  cta_href: `/programs#${slug}`,
+                  placement: "programs_preview_card",
+                })}
                 className="group relative block h-80 overflow-hidden"
               >
                 {prog.image?.id ? (

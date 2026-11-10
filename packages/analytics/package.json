@@ -1,0 +1,30 @@
+{
+  "name": "@workspace/analytics",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./index.ts",
+    "./instrumentation-client": "./instrumentation-client.ts",
+    "./keys": "./keys.ts",
+    "./server": "./server.ts"
+  },
+  "scripts": {
+    "clean": "git clean -xdf .turbo node_modules",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "check:types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@t3-oss/env-nextjs": "^0.13.11",
+    "posthog-js": "catalog:",
+    "posthog-node": "catalog:",
+    "server-only": "^0.0.1",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@workspace/typescript-config": "workspace:*",
+    "typescript": "catalog:"
+  }
+}

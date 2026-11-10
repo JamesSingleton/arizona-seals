@@ -84,6 +84,7 @@ export function ChecklistSplit({
             ) : null}
             {buttons?.length ? (
               <SanityButtons
+                placement="checklist_split"
                 buttons={buttons}
                 className="gap-3"
                 buttonClassName="font-display text-sm font-bold tracking-widest uppercase"

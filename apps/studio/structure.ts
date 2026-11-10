@@ -35,17 +35,18 @@ type Base<T = SchemaType> = {
   icon?: LucideIcon;
 };
 
-type CreateSingleTon = {
+type SingletonItem = {
   S: StructureBuilder;
-} & Base<SingletonType>;
-
-const createSingleTon = ({ S, type, title, icon }: CreateSingleTon) => {
-  const newTitle = title ?? getTitleCase(type);
-  return S.listItem()
-    .title(newTitle)
-    .icon(icon ?? File)
-    .child(S.document().schemaType(type).documentId(type));
+  id: SingletonType;
+  icon?: LucideIcon;
 };
+
+// Singletons are registered in `document.singletons` (sanity.config.ts);
+// title/document id/template come from the registry.
+const createSingleton = ({ S, id, icon }: SingletonItem) =>
+  S.listItem()
+    .singleton(id)
+    .icon(icon ?? File);
 
 type CreateList = {
   S: StructureBuilder;
@@ -76,14 +77,10 @@ const createIndexList = ({ S, index, list }: CreateIndexList) => {
         .title(indexTitle)
         .items([
           S.listItem()
+            .singleton(index.type)
             .title(indexTitle)
             .icon(index.icon ?? File)
-            .child(
-              S.document()
-                .views([S.view.form()])
-                .schemaType(index.type)
-                .documentId(index.type),
-            ),
+            .child(S.document().singleton(index.type).views([S.view.form()])),
           S.documentTypeListItem(list.type)
             .title(`${listTitle}`)
             .icon(list.icon ?? File),
@@ -110,7 +107,7 @@ export const structure = (
   return S.list()
     .title("Content")
     .items([
-      createSingleTon({ S, type: "homePage", icon: HomeIcon }),
+      createSingleton({ S, id: "homePage", icon: HomeIcon }),
       S.divider(),
 
       S.listItem()
@@ -227,24 +224,9 @@ export const structure = (
           S.list()
             .title("Site Configuration")
             .items([
-              createSingleTon({
-                S,
-                type: "navbar",
-                title: "Navigation",
-                icon: PanelTopDashedIcon,
-              }),
-              createSingleTon({
-                S,
-                type: "footer",
-                title: "Footer",
-                icon: PanelBottomIcon,
-              }),
-              createSingleTon({
-                S,
-                type: "settings",
-                title: "Global Settings",
-                icon: CogIcon,
-              }),
+              createSingleton({ S, id: "navbar", icon: PanelTopDashedIcon }),
+              createSingleton({ S, id: "footer", icon: PanelBottomIcon }),
+              createSingleton({ S, id: "settings", icon: CogIcon }),
             ]),
         ),
     ]);

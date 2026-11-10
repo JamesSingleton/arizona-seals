@@ -1,3 +1,4 @@
+import { trackClick } from "@workspace/analytics";
 import {
   type DynamicFetchOptions,
   getDynamicFetchOptions,
@@ -190,6 +191,12 @@ function SiteFooterView({
                 <a
                   key={s.ariaLabel}
                   href={s.href}
+                  {...trackClick("outbound_link_clicked", {
+                    link_type: "social",
+                    placement: "footer",
+                    url: s.href,
+                    label: s.ariaLabel,
+                  })}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={s.ariaLabel}
@@ -257,6 +264,10 @@ function SiteFooterView({
                 <Mail size={16} className="shrink-0 text-cyan-on-navy" />
                 <a
                   href={`mailto:${resolvedEmail}`}
+                  {...trackClick("contact_method_clicked", {
+                    method: "email",
+                    placement: "footer",
+                  })}
                   className="text-sm text-white/80 transition-colors hover:text-cyan-on-navy"
                 >
                   {resolvedEmail}

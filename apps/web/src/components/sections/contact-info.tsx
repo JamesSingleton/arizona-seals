@@ -1,3 +1,4 @@
+import { trackClick } from "@workspace/analytics";
 import { Clock, Mail, MapPin, Phone } from "lucide-react";
 import Link from "next/link";
 
@@ -169,6 +170,10 @@ export function ContactInfoBlock({
                       </p>
                       <a
                         href={`tel:${resolvedPhone.replace(/[^\d+]/g, "")}`}
+                        {...trackClick("contact_method_clicked", {
+                          method: "phone",
+                          placement: "contact_info",
+                        })}
                         className="text-sm text-seal-gray transition-colors hover:text-cyan-brand"
                       >
                         {resolvedPhone}
@@ -188,6 +193,10 @@ export function ContactInfoBlock({
                       </p>
                       <a
                         href={`mailto:${resolvedEmail}`}
+                        {...trackClick("contact_method_clicked", {
+                          method: "email",
+                          placement: "contact_info",
+                        })}
                         className="text-sm text-seal-gray transition-colors hover:text-cyan-brand"
                       >
                         {resolvedEmail}
@@ -270,6 +279,11 @@ export function ContactInfoBlock({
           </p>
           <a
             href={mapUrl}
+            {...trackClick("outbound_link_clicked", {
+              link_type: "map",
+              placement: "contact_info",
+              url: mapUrl,
+            })}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 font-display text-sm font-bold tracking-wide text-cyan-brand uppercase"

@@ -1,3 +1,4 @@
+import { trackClick } from "@workspace/analytics";
 import { ArrowUpRight, FileText } from "lucide-react";
 
 import type { PagebuilderType } from "@/types";
@@ -42,6 +43,11 @@ function ResourceRow({ item }: { item: ResourceItem }) {
     <li>
       <a
         href={href}
+        {...trackClick("resource_opened", {
+          resource_title: item.title,
+          resource_kind: item.kind ?? "file",
+          url: href,
+        })}
         target="_blank"
         rel="noopener noreferrer"
         className="group flex items-start gap-4 border-b border-border py-5 transition-colors hover:border-cyan-brand"

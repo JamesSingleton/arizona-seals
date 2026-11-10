@@ -51,6 +51,7 @@ export function CtaBand({
           />
         ) : null}
         <SanityButtons
+          placement="cta_band"
           buttons={buttons}
           className="justify-center gap-3"
           buttonClassName={cn(

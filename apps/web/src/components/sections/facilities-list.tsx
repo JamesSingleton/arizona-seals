@@ -1,3 +1,4 @@
+import { trackClick } from "@workspace/analytics";
 import { Badge } from "@workspace/ui/components/badge";
 import {
   buttonCtaClassName,
@@ -131,6 +132,10 @@ function FacilityCard({ facility }: { facility: FacilitiesListFacility }) {
               <Phone size={16} className="shrink-0 text-cyan-brand" />
               <a
                 href={phoneHref}
+                {...trackClick("contact_method_clicked", {
+                  method: "phone",
+                  placement: "facility_card",
+                })}
                 className="text-sm font-medium text-cyan-brand transition-colors hover:text-foreground"
               >
                 {facility.phone}
@@ -143,6 +148,12 @@ function FacilityCard({ facility }: { facility: FacilitiesListFacility }) {
           {facility.mapUrl ? (
             <a
               href={facility.mapUrl}
+              {...trackClick("outbound_link_clicked", {
+                link_type: "map",
+                placement: "facility_card",
+                url: facility.mapUrl,
+                label: facility.name ?? undefined,
+              })}
               target="_blank"
               rel="noopener noreferrer"
               className={cn(
@@ -158,6 +169,12 @@ function FacilityCard({ facility }: { facility: FacilitiesListFacility }) {
           {facility.citySiteUrl ? (
             <a
               href={facility.citySiteUrl}
+              {...trackClick("outbound_link_clicked", {
+                link_type: "partner",
+                placement: "facility_card",
+                url: facility.citySiteUrl,
+                label: "City of Maricopa",
+              })}
               target="_blank"
               rel="noopener noreferrer"
               className={cn(
@@ -274,6 +291,11 @@ export function FacilitiesList({
           <div className="flex flex-col justify-center gap-3 sm:flex-row">
             <Link
               href="/contact"
+              {...trackClick("marketing_cta_clicked", {
+                cta_label: "Contact Us",
+                cta_href: "/contact",
+                placement: "facilities_footer",
+              })}
               className={cn(
                 buttonVariants({ variant: "default", size: "lg" }),
                 buttonCtaClassName,
@@ -283,6 +305,11 @@ export function FacilitiesList({
             </Link>
             <Link
               href="/programs"
+              {...trackClick("marketing_cta_clicked", {
+                cta_label: "View Programs",
+                cta_href: "/programs",
+                placement: "facilities_footer",
+              })}
               className={cn(
                 buttonVariants({ variant: "outlineStrong", size: "lg" }),
                 buttonCtaClassName,

@@ -1,6 +1,6 @@
 import { assist } from "@sanity/assist";
 import { visionTool } from "@sanity/vision";
-import { defineConfig } from "sanity";
+import { defineConfig, defineSingleton } from "sanity";
 import { presentationTool } from "sanity/presentation";
 import { structureTool } from "sanity/structure";
 import { iconPicker } from "sanity-plugin-icon-picker";
@@ -57,6 +57,36 @@ export default defineConfig({
   //   },
   // },
   document: {
+    // First-class singletons: fixed document ids, no "create new" or
+    // "duplicate" affordances. Document ids match the schema type names so
+    // existing content keeps working.
+    singletons: [
+      defineSingleton({
+        documentId: "homePage",
+        schemaType: "homePage",
+        title: "Home Page",
+      }),
+      defineSingleton({
+        documentId: "blogIndex",
+        schemaType: "blogIndex",
+        title: "Blog Index",
+      }),
+      defineSingleton({
+        documentId: "navbar",
+        schemaType: "navbar",
+        title: "Navigation",
+      }),
+      defineSingleton({
+        documentId: "footer",
+        schemaType: "footer",
+        title: "Footer",
+      }),
+      defineSingleton({
+        documentId: "settings",
+        schemaType: "settings",
+        title: "Global Settings",
+      }),
+    ],
     newDocumentOptions: (prev, { creationContext }) => {
       const { type } = creationContext;
       if (type === "global") return [];

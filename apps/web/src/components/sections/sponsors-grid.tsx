@@ -1,3 +1,5 @@
+import { trackClick } from "@workspace/analytics";
+
 import type { SanityImageProps } from "@/types";
 import { SponsorLogo } from "../elements/sponsor-logo";
 
@@ -100,6 +102,10 @@ export function SponsorsGrid({
             {footerNote || "Interested in becoming a sponsor?"}{" "}
             <a
               href={`mailto:${footerEmail}`}
+              {...trackClick("contact_method_clicked", {
+                method: "email",
+                placement: "sponsors_grid",
+              })}
               className="font-semibold text-cyan-brand hover:text-foreground"
             >
               {footerEmail}

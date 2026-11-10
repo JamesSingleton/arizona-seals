@@ -37,6 +37,7 @@ function HeroSplit({
             </div>
 
             <SanityButtons
+              placement="hero"
               buttons={buttons}
               buttonClassName="w-full sm:w-auto"
               className="mb-8 grid w-full gap-2 sm:w-fit sm:grid-flow-col lg:justify-start"

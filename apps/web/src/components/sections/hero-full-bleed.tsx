@@ -1,3 +1,4 @@
+import { trackClick } from "@workspace/analytics";
 import {
   buttonCtaClassName,
   buttonVariants,
@@ -102,6 +103,12 @@ export function HeroFullBleed({
         <div className="flex flex-wrap items-center gap-4">
           <Link
             href={primaryCta.href}
+            {...trackClick("marketing_cta_clicked", {
+              cta_label: primaryCta.label,
+              cta_href: primaryCta.href,
+              cta_variant: "default",
+              placement: "hero_primary",
+            })}
             className={cn(
               buttonVariants({ variant: "default", size: "xl" }),
               buttonCtaClassName,
@@ -111,6 +118,12 @@ export function HeroFullBleed({
           </Link>
           <Link
             href={secondaryCta.href}
+            {...trackClick("marketing_cta_clicked", {
+              cta_label: secondaryCta.label,
+              cta_href: secondaryCta.href,
+              cta_variant: "outlineInverse",
+              placement: "hero_secondary",
+            })}
             className={cn(
               buttonVariants({ variant: "outlineInverse", size: "xl" }),
               buttonCtaClassName,

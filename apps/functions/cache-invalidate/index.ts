@@ -38,17 +38,34 @@ async function expireTags(target: URL, tags: string[], secret: string) {
 }
 
 export const handler = syncTagInvalidateEventHandler(
-  async ({ event, done }) => {
+  async ({ context, event, done }) => {
     const start = performance.now();
     const { syncTags } = event.data;
 
-    const target = new URL("https://www.arizonaseals.com/api/revalidate-tags");
-    console.info(`Forwarding ${syncTags.length} tags to api`);
+    try {
+      const secret = process.env.SANITY_REVALIDATE_SECRET;
+      if (context.local) {
+        console.info(
+          `Local run: skipping revalidation of ${syncTags.length} tags`,
+        );
+      } else if (!secret) {
+        console.error(
+          "SANITY_REVALIDATE_SECRET is not set; skipping revalidation",
+        );
+      } else {
+        const target = new URL(
+          "https://www.arizonaseals.com/api/revalidate-tags",
+        );
+        console.info(`Forwarding ${syncTags.length} tags to api`);
+        await expireTags(target, syncTags, secret);
+      }
+    } catch (error) {
+      console.error("Failed to revalidate tags", error);
+    } finally {
+      // Always acknowledge, or Live Content API clients stall waiting on us.
+      await ack(done, syncTags);
+    }
 
-    const secret = process.env.SANITY_REVALIDATE_SECRET!;
-    await expireTags(target, syncTags, secret);
-
-    await ack(done, syncTags);
     console.info(
       `Total handler time: ${Math.round(performance.now() - start)}ms`,
     );

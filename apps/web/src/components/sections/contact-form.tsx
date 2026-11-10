@@ -1,8 +1,8 @@
 "use client";
 
+import { track } from "@workspace/analytics";
 import { Send } from "lucide-react";
-import posthog from "posthog-js";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 
 import {
   type ContactFormState,
@@ -22,9 +22,22 @@ export function ContactForm({
   );
   const [resetKey, setResetKey] = useState(0);
   const [showSuccess, setShowSuccess] = useState(false);
+  // Inquiry type of the in-flight submission, so the result event can carry it.
+  const inquiryTypeRef = useRef("");
 
   useEffect(() => {
-    if (state.ok) setShowSuccess(true);
+    if (state === initialState) return;
+
+    const inquiry_type = inquiryTypeRef.current;
+    if (state.ok) {
+      setShowSuccess(true);
+      track("contact_form_succeeded", { inquiry_type });
+      if (/tryout/i.test(inquiry_type)) {
+        track("tryout_inquiry_submitted", { inquiry_type });
+      }
+    } else {
+      track("contact_form_failed", { inquiry_type, error: state.message });
+    }
   }, [state]);
 
   if (showSuccess) {
@@ -59,9 +72,9 @@ export function ContactForm({
       action={formAction}
       onSubmit={(event) => {
         const formData = new FormData(event.currentTarget);
-        posthog.capture("contact_form_submitted", {
-          inquiry_type: String(formData.get("subject") ?? ""),
-        });
+        const inquiry_type = String(formData.get("subject") ?? "");
+        inquiryTypeRef.current = inquiry_type;
+        track("contact_form_submitted", { inquiry_type });
       }}
       className="space-y-5 rounded-2xl border border-border bg-background p-6 md:p-8"
     >

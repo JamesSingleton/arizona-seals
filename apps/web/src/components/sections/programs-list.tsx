@@ -215,6 +215,7 @@ export function ProgramsList({
 
                   {program.buttons?.length ? (
                     <SanityButtons
+                      placement="programs_list"
                       buttons={program.buttons}
                       size="lg"
                       className="gap-3"

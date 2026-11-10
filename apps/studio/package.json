@@ -21,8 +21,6 @@
   "dependencies": {
     "@sanity/asset-utils": "^2.3.0",
     "@sanity/assist": "^6.2.6",
-    "@sanity/blueprints": "^0.34.1",
-    "@sanity/functions": "^1.11.0",
     "@sanity/icons": "^5.3.0",
     "@sanity/image-url": "^2.1.1",
     "@sanity/orderable-document-list": "^2.0.28",

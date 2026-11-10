@@ -1,3 +1,4 @@
+import { trackClick } from "@workspace/analytics";
 import {
   buttonCtaClassName,
   buttonVariants,
@@ -62,6 +63,12 @@ export function CtaFullBleed({
         <div className="flex flex-wrap gap-4">
           <Link
             href={primaryCta.href}
+            {...trackClick("marketing_cta_clicked", {
+              cta_label: primaryCta.label,
+              cta_href: primaryCta.href,
+              cta_variant: "default",
+              placement: "cta_full_bleed_primary",
+            })}
             className={cn(
               buttonVariants({ variant: "default", size: "xl" }),
               buttonCtaClassName,
@@ -71,6 +78,12 @@ export function CtaFullBleed({
           </Link>
           <Link
             href={secondaryCta.href}
+            {...trackClick("marketing_cta_clicked", {
+              cta_label: secondaryCta.label,
+              cta_href: secondaryCta.href,
+              cta_variant: "outlineInverse",
+              placement: "cta_full_bleed_secondary",
+            })}
             className={cn(
               buttonVariants({ variant: "outlineInverse", size: "xl" }),
               buttonCtaClassName,

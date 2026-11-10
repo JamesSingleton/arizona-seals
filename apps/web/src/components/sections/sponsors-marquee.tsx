@@ -1,5 +1,6 @@
 "use client";
 
+import { trackClick } from "@workspace/analytics";
 import { Marquee } from "@workspace/ui/components/marquee";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -69,6 +70,11 @@ export function SponsorsMarquee({
         </div>
         <Link
           href={viewAllHref}
+          {...trackClick("marketing_cta_clicked", {
+            cta_label: viewAllLabel ?? "View All",
+            cta_href: viewAllHref,
+            placement: "sponsors_marquee_view_all",
+          })}
           className="shrink-0 text-sm font-bold tracking-wide text-cyan-brand uppercase transition-colors hover:text-foreground"
         >
           {viewAllLabel}

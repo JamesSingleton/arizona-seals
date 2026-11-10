@@ -1,3 +1,4 @@
+import { trackClick } from "@workspace/analytics";
 import { Award, Mail } from "lucide-react";
 
 import type { SanityImageProps, SanityRichTextProps } from "@/types";
@@ -128,6 +129,10 @@ function EmailLink({
   return (
     <a
       href={`mailto:${email}`}
+      {...trackClick("contact_method_clicked", {
+        method: "email",
+        placement: "team",
+      })}
       className={
         className ??
         "inline-flex items-center gap-2 text-sm font-medium text-cyan-brand hover:text-foreground"
@@ -316,6 +321,10 @@ function SupportingPersonRow({ member }: { member: TeamMember }) {
           {member.email ? (
             <a
               href={`mailto:${member.email}`}
+              {...trackClick("contact_method_clicked", {
+                method: "email",
+                placement: "team",
+              })}
               className="inline-flex items-center gap-1.5 text-xs font-medium text-cyan-brand"
             >
               <Mail size={12} />

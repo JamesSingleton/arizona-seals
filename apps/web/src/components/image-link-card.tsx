@@ -1,3 +1,4 @@
+import { trackClick } from "@workspace/analytics";
 import { cn } from "@workspace/ui/lib/utils";
 import Link from "next/link";
 
@@ -21,6 +22,11 @@ export function CTACard({ card, className }: CTACardProps) {
   return (
     <Link
       href={href ?? "#"}
+      {...trackClick("marketing_cta_clicked", {
+        cta_label: title ?? "",
+        cta_href: href ?? "#",
+        placement: "image_link_card",
+      })}
       className={cn(
         "rounded-3xl p-4 md:p-8 transition-colors relative overflow-hidden group flex flex-col justify-end xl:h-[400px]",
         className,

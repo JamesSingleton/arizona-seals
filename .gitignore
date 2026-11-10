@@ -37,3 +37,6 @@ npm-debug.log*
 *.pem
 
 next-env.d.ts
+# Sanity Blueprints: local stack link + function build output
+/.sanity
+**/.build
