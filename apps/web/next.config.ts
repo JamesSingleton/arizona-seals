@@ -1,3 +1,4 @@
+import { withBotId } from "botid/next/config";
 import type { NextConfig } from "next";
 import { sanity } from "next-sanity/live/cache-life";
 
@@ -26,6 +27,16 @@ const nextConfig: NextConfig = {
   experimental: {
     inlineCss: true,
   },
+  // Short URLs parents guess (and that old links used) land on the real pages.
+  async redirects() {
+    return [
+      { source: "/join", destination: "/tryouts", permanent: false },
+      { source: "/tryout", destination: "/tryouts", permanent: false },
+      { source: "/pricing", destination: "/schedule", permanent: false },
+      { source: "/dues", destination: "/schedule", permanent: false },
+      { source: "/news", destination: "/blog", permanent: false },
+    ];
+  },
   logging: {
     fetches: {},
   },
@@ -40,4 +51,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withBotId(nextConfig);

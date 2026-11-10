@@ -169,6 +169,13 @@ const programFields = /* groq */ `
   requirements,
   equipment,
   sessions,
+  ageRange,
+  practiceTimes[]{
+    _key,
+    days,
+    time
+  },
+  monthlyDues,
   ${buttonsFragment},
   ${imageFragment}
 `;
@@ -362,6 +369,59 @@ const programsListBlock = /* groq */ `
   }
 `;
 
+const scheduleDuesBlock = /* groq */ `
+  _type == "scheduleDues" => {
+    ...,
+    ${buttonsFragment},
+    "programs": select(
+      count(programs) > 0 => programs[]->{
+        ${programFields}
+      },
+      *[_type == "program"] | ${documentOrder}{
+        ${programFields}
+      }
+    )
+  }
+`;
+
+const processStepsBlock = /* groq */ `
+  _type == "processSteps" => {
+    ...,
+    ${buttonsFragment}
+  }
+`;
+
+const pathwaysBlock = /* groq */ `
+  _type == "pathways" => {
+    ...,
+    "cards": cards[]{
+      _key,
+      kicker,
+      title,
+      description,
+      linkLabel,
+      "openInNewTab": url.openInNewTab,
+      "href": select(
+        url.type == "internal" => select(
+          url.internal->_type == "homePage" => "/",
+          url.internal->slug.current
+        ),
+        url.type == "external" => url.external,
+        url.href
+      ),
+      ${imageFragment}
+    }
+  }
+`;
+
+const resultsBoardBlock = /* groq */ `
+  _type == "resultsBoard" => {
+    ...,
+    ${buttonsFragment},
+    ${imageFragment}
+  }
+`;
+
 const sponsorsHeroBlock = /* groq */ `
   _type == "sponsorsHero" => {
     ...
@@ -547,6 +607,10 @@ const pageBuilderFragment = /* groq */ `
     ${statsBlock},
     ${programsPreviewBlock},
     ${programsListBlock},
+    ${scheduleDuesBlock},
+    ${processStepsBlock},
+    ${pathwaysBlock},
+    ${resultsBoardBlock},
     ${latestNewsBlock},
     ${sponsorsMarqueeBlock},
     ${sponsorsHeroBlock},

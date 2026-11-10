@@ -27,7 +27,11 @@ export type SealsPageBuilderBlockTypes =
   | "team"
   | "featureCardsIcon"
   | "cta"
-  | "resources";
+  | "resources"
+  | "scheduleDues"
+  | "processSteps"
+  | "pathways"
+  | "resultsBoard";
 
 export type PageBuilderBlockTypes =
   | NonNullable<

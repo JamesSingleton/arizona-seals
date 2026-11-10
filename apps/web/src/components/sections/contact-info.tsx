@@ -31,9 +31,14 @@ export type ContactInfoBlockProps = {
     mapUrl?: string | null;
   } | null;
   showContactForm?: boolean | null;
+  formTitle?: string | null;
+  defaultInquiryType?: string | null;
+  showMap?: boolean | null;
 };
 
 const quickLinks = [
+  { label: "How Tryouts Work", href: "/tryouts" },
+  { label: "Practice Schedule & Dues", href: "/schedule" },
   { label: "View All Programs", href: "/programs" },
   { label: "Meet Our Coaches", href: "/coaches" },
   { label: "About the Club", href: "/about" },
@@ -97,6 +102,9 @@ export function ContactInfoBlock({
   address,
   settings,
   showContactForm,
+  formTitle,
+  defaultInquiryType,
+  showMap,
 }: ContactInfoBlockProps) {
   const showFormResolved = showContactForm ?? true;
   const resolvedEmail =
@@ -119,7 +127,7 @@ export function ContactInfoBlock({
 
   return (
     <>
-      <section className="bg-background py-20">
+      <section id="contact-form" className="scroll-mt-24 bg-background py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
             <div className="lg:col-span-1">
@@ -249,50 +257,56 @@ export function ContactInfoBlock({
 
             <div className="lg:col-span-2">
               {showFormResolved ? (
-                <ContactForm inquiryTypes={inquiryTypes} />
+                <ContactForm
+                  inquiryTypes={inquiryTypes}
+                  title={formTitle || undefined}
+                  defaultInquiryType={defaultInquiryType || undefined}
+                />
               ) : null}
             </div>
           </div>
         </div>
       </section>
 
-      <section className="relative flex h-72 items-center justify-center overflow-hidden bg-muted sm:h-80">
-        <iframe
-          title="Map of Copper Sky Aquatic Center"
-          src={mapEmbedUrl}
-          className="absolute inset-0 size-full border-0"
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-          allowFullScreen
-        />
-        <div className="relative z-10 mx-4 max-w-md rounded-xl bg-background/95 p-6 text-center shadow-lg backdrop-blur">
-          <p className="mb-1 font-display text-lg font-bold text-foreground uppercase">
-            Copper Sky Aquatic Center
-          </p>
-          <p className="mb-4 text-sm text-seal-gray">
-            {resolvedAddress?.street}
-            <br />
-            {[resolvedAddress?.city, resolvedAddress?.state]
-              .filter(Boolean)
-              .join(", ")}{" "}
-            {resolvedAddress?.zip}
-          </p>
-          <a
-            href={mapUrl}
-            {...trackClick("outbound_link_clicked", {
-              link_type: "map",
-              placement: "contact_info",
-              url: mapUrl,
-            })}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 font-display text-sm font-bold tracking-wide text-cyan-brand uppercase"
-          >
-            <MapPin size={14} />
-            Open in Google Maps
-          </a>
-        </div>
-      </section>
+      {showMap === false ? null : (
+        <section className="relative flex h-72 items-center justify-center overflow-hidden bg-muted sm:h-80">
+          <iframe
+            title="Map of Copper Sky Aquatic Center"
+            src={mapEmbedUrl}
+            className="absolute inset-0 size-full border-0"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            allowFullScreen
+          />
+          <div className="relative z-10 mx-4 max-w-md rounded-xl bg-background/95 p-6 text-center shadow-lg backdrop-blur">
+            <p className="mb-1 font-display text-lg font-bold text-foreground uppercase">
+              Copper Sky Aquatic Center
+            </p>
+            <p className="mb-4 text-sm text-seal-gray">
+              {resolvedAddress?.street}
+              <br />
+              {[resolvedAddress?.city, resolvedAddress?.state]
+                .filter(Boolean)
+                .join(", ")}{" "}
+              {resolvedAddress?.zip}
+            </p>
+            <a
+              href={mapUrl}
+              {...trackClick("outbound_link_clicked", {
+                link_type: "map",
+                placement: "contact_info",
+                url: mapUrl,
+              })}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 font-display text-sm font-bold tracking-wide text-cyan-brand uppercase"
+            >
+              <MapPin size={14} />
+              Open in Google Maps
+            </a>
+          </div>
+        </section>
+      )}
     </>
   );
 }

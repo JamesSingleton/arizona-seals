@@ -8,9 +8,13 @@ import { hero } from "./hero";
 import { imageLinkCards } from "./image-link-cards";
 import { latestNews } from "./latest-news";
 import { pageHero } from "./page-hero";
+import { pathways } from "./pathways";
+import { processSteps } from "./process-steps";
 import { programsList } from "./programs-list";
 import { programsPreview } from "./programs-preview";
 import { resources } from "./resources";
+import { resultsBoard } from "./results-board";
+import { scheduleDues } from "./schedule-dues";
 import { splitContent } from "./split-content";
 import { sponsorTiers } from "./sponsor-tiers";
 import { sponsorsGrid } from "./sponsors-grid";
@@ -29,6 +33,10 @@ export const pageBuilderBlocks = [
   stats,
   programsPreview,
   programsList,
+  scheduleDues,
+  processSteps,
+  pathways,
+  resultsBoard,
   latestNews,
   sponsorsMarquee,
   sponsorsHero,

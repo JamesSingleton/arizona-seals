@@ -11,7 +11,25 @@ type HeroBlockProps = PagebuilderType<"hero"> & {
   /** @deprecated Prefer `variant` — kept for legacy CMS documents */
   layout?: "split" | "fullBleed" | null;
   titleAccent?: string | null;
+  stats?:
+    | { _key?: string; number?: string | null; label?: string | null }[]
+    | null;
 };
+
+/** Immersive hero shows the rich text as one plain supporting line. */
+function plainText(richText: HeroBlockProps["richText"]): string | undefined {
+  if (!Array.isArray(richText)) return undefined;
+  const text = richText
+    .map((block) =>
+      "children" in block && Array.isArray(block.children)
+        ? block.children.map((child) => child.text ?? "").join("")
+        : "",
+    )
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+  return text || undefined;
+}
 
 function HeroSplit({
   title,
@@ -82,6 +100,7 @@ export function HeroBlock({
   variant,
   layout,
   titleAccent,
+  stats,
 }: HeroBlockProps) {
   if (isImmersive(variant, layout)) {
     const primary = buttons?.[0];
@@ -91,6 +110,8 @@ export function HeroBlock({
         eyebrow={badge ?? undefined}
         titleLines={title ? title.split("\n").filter(Boolean) : undefined}
         accentWord={titleAccent ?? undefined}
+        subtitle={plainText(richText)}
+        stats={stats ?? undefined}
         sanityImage={image as SanityImageProps | null | undefined}
         imageAlt={
           image && "alt" in image && typeof image.alt === "string"

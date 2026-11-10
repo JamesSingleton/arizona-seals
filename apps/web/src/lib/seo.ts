@@ -144,10 +144,11 @@ export function getSEOMetadata(page: PageSeoData = {}): Metadata {
   const socialTitle = ogTitle || defaultTitle;
   const socialDescription = ogDescription || defaultDescription;
 
-  const fullTitle =
-    defaultTitle === siteConfig.title
-      ? defaultTitle
-      : `${defaultTitle} | ${siteConfig.title}`;
+  // Editors often write the club name into the SEO title themselves; appending
+  // the brand again produced "… | Arizona Seals | Arizona Seals Swimming".
+  const fullTitle = /arizona seals/i.test(defaultTitle)
+    ? defaultTitle
+    : `${defaultTitle} | ${siteConfig.title}`;
 
   // Build default metadata object
   const defaultMetadata: Metadata = {

@@ -1,10 +1,20 @@
 "use server";
 
+import { checkBotId } from "botid/server";
 import { createElement } from "react";
 import { render } from "react-email";
 import { Resend } from "resend";
 
 import { ContactFormNotification } from "@/emails/contact-form-notification";
+import { inspectSubmission, isValidEmail } from "@/lib/spam-guard";
+
+const SUCCESS: ContactFormState = {
+  ok: true,
+  message:
+    "Thank you for reaching out. A member of our team will be in touch as soon as possible.",
+};
+
+const LIMITS = { name: 120, phone: 40, subject: 120, message: 5000 } as const;
 
 export type ContactFormState = {
   ok: boolean;
@@ -26,6 +36,45 @@ export async function submitContactForm(
       ok: false,
       message: "Please fill in all required fields.",
     };
+  }
+
+  if (!isValidEmail(email)) {
+    return { ok: false, message: "Please enter a valid email address." };
+  }
+
+  if (
+    name.length > LIMITS.name ||
+    phone.length > LIMITS.phone ||
+    subject.length > LIMITS.subject ||
+    message.length > LIMITS.message
+  ) {
+    return {
+      ok: false,
+      message: "Your message is too long. Please shorten it and try again.",
+    };
+  }
+
+  // Layer 1: honeypot, fill-time and link heuristics (free, no network).
+  const verdict = inspectSubmission(formData, { name, message });
+  if (verdict.kind === "bot") {
+    // Report success so automated senders get no signal to adapt to.
+    console.warn(`[contact] dropped bot submission (${verdict.reason})`);
+    return SUCCESS;
+  }
+  if (verdict.kind === "reject") {
+    return { ok: false, message: verdict.message };
+  }
+
+  // Layer 2: Vercel BotID. Always passes in local development.
+  try {
+    const { isBot } = await checkBotId();
+    if (isBot) {
+      console.warn("[contact] dropped bot submission (botid)");
+      return SUCCESS;
+    }
+  } catch (error) {
+    // Never lose a real family's message because the classifier is unreachable.
+    console.error("[contact] BotID check failed, allowing submission:", error);
   }
 
   const apiKey = process.env.RESEND_API_KEY;
@@ -78,9 +127,5 @@ export async function submitContactForm(
     };
   }
 
-  return {
-    ok: true,
-    message:
-      "Thank you for reaching out. A member of our team will be in touch as soon as possible.",
-  };
+  return SUCCESS;
 }

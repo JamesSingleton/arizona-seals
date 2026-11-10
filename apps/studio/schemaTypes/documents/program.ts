@@ -122,6 +122,51 @@ export const program = defineType({
       group: GROUP.MAIN_CONTENT,
     }),
     defineField({
+      name: "ageRange",
+      type: "string",
+      title: "Ages",
+      description: "Shown in the schedule table, e.g. 5+ or 13 and up",
+      group: GROUP.MAIN_CONTENT,
+    }),
+    defineField({
+      name: "practiceTimes",
+      type: "array",
+      title: "Practice Times",
+      description:
+        "One row per block of days that share a time. Shown in the Practice Schedule & Dues block.",
+      group: GROUP.MAIN_CONTENT,
+      of: [
+        {
+          type: "object",
+          fields: [
+            defineField({
+              name: "days",
+              type: "string",
+              title: "Days",
+              description: "e.g. Monday to Thursday",
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: "time",
+              type: "string",
+              title: "Time",
+              description: "e.g. 4:30 to 6:00 p.m.",
+              validation: (Rule) => Rule.required(),
+            }),
+          ],
+          preview: { select: { title: "days", subtitle: "time" } },
+        },
+      ],
+    }),
+    defineField({
+      name: "monthlyDues",
+      type: "string",
+      title: "Monthly Dues",
+      description:
+        "e.g. $95 per month. Leave empty to show the fallback text set on the schedule block.",
+      group: GROUP.MAIN_CONTENT,
+    }),
+    defineField({
       name: "buttons",
       type: "array",
       title: "Buttons",

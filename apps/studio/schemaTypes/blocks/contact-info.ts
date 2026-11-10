@@ -61,6 +61,27 @@ export const contactInfo = defineType({
       title: "Show Contact Form",
       initialValue: true,
     }),
+    defineField({
+      name: "formTitle",
+      type: "string",
+      title: "Form Heading",
+      description: "Defaults to Send Us a Message",
+      hidden: ({ parent }) => parent?.showContactForm === false,
+    }),
+    defineField({
+      name: "defaultInquiryType",
+      type: "string",
+      title: "Preselected Inquiry Type",
+      description:
+        "Must match one of the Contact Inquiry Types in Settings exactly, e.g. Schedule a Tryout",
+      hidden: ({ parent }) => parent?.showContactForm === false,
+    }),
+    defineField({
+      name: "showMap",
+      type: "boolean",
+      title: "Show Map",
+      initialValue: true,
+    }),
   ],
   preview: {
     select: {

@@ -24,6 +24,7 @@
     "@workspace/sanity": "workspace:*",
     "@workspace/ui": "workspace:*",
     "babel-plugin-react-compiler": "19.1.0-rc.2",
+    "botid": "^1.5.13",
     "embla-carousel-autoplay": "^8.6.0",
     "lucide-react": "catalog:",
     "next": "catalog:",

@@ -71,6 +71,35 @@ export const hero = defineType({
       ],
     }),
     buttonsField,
+    defineField({
+      name: "stats",
+      type: "array",
+      title: "Proof strip",
+      description:
+        "Up to four short facts shown along the bottom of the immersive hero, e.g. 2004 / Founded in Pinal County.",
+      hidden: ({ parent }) => parent?.variant !== "immersive",
+      validation: (rule) => rule.max(4),
+      of: [
+        {
+          type: "object",
+          fields: [
+            defineField({
+              name: "number",
+              type: "string",
+              title: "Number or short fact",
+              validation: (rule) => rule.required().max(12),
+            }),
+            defineField({
+              name: "label",
+              type: "string",
+              title: "Label",
+              validation: (rule) => rule.required(),
+            }),
+          ],
+          preview: { select: { title: "number", subtitle: "label" } },
+        },
+      ],
+    }),
   ],
   preview: {
     select: {

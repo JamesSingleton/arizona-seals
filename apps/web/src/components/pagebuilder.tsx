@@ -46,6 +46,12 @@ const LatestNews = dynamic(() =>
 const PageHeroBlock = dynamic(() =>
   import("./sections/page-hero-block").then((m) => m.PageHeroBlock),
 );
+const Pathways = dynamic(() =>
+  import("./sections/pathways").then((m) => m.Pathways),
+);
+const ProcessSteps = dynamic(() =>
+  import("./sections/process-steps").then((m) => m.ProcessSteps),
+);
 const ProgramsList = dynamic(() =>
   import("./sections/programs-list").then((m) => m.ProgramsList),
 );
@@ -54,6 +60,12 @@ const ProgramsPreview = dynamic(() =>
 );
 const ResourcesBlock = dynamic(() =>
   import("./sections/resources").then((m) => m.ResourcesBlock),
+);
+const ResultsBoard = dynamic(() =>
+  import("./sections/results-board").then((m) => m.ResultsBoard),
+);
+const ScheduleDues = dynamic(() =>
+  import("./sections/schedule-dues").then((m) => m.ScheduleDues),
 );
 const SponsorTiers = dynamic(() =>
   import("./sections/sponsor-tiers").then((m) => m.SponsorTiers),
@@ -120,6 +132,10 @@ const FULL_BLEED_TYPES = new Set<string>([
   "facilitiesList",
   "team",
   "featureCardsIcon",
+  "scheduleDues",
+  "processSteps",
+  "pathways",
+  "resultsBoard",
 ]);
 
 const BLOCK_COMPONENTS = {
@@ -155,6 +171,10 @@ const BLOCK_COMPONENTS = {
   timeline: Timeline as React.ComponentType<any>,
   contactInfo: ContactInfoBlock as React.ComponentType<any>,
   facilitiesList: FacilitiesList as React.ComponentType<any>,
+  scheduleDues: ScheduleDues as React.ComponentType<any>,
+  processSteps: ProcessSteps as React.ComponentType<any>,
+  pathways: Pathways as React.ComponentType<any>,
+  resultsBoard: ResultsBoard as React.ComponentType<any>,
 } as const;
 
 function createSanityDataAttribute(config: SanityDataAttributeConfig): string {

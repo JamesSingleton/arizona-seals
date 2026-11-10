@@ -8,13 +8,19 @@ import {
   type ContactFormState,
   submitContactForm,
 } from "@/action/contact-submission";
+import { HONEYPOT_FIELD, STARTED_AT_FIELD } from "@/lib/spam-guard";
 
 const initialState: ContactFormState = { ok: false, message: "" };
 
 export function ContactForm({
   inquiryTypes = [],
+  title = "Send Us a Message",
+  defaultInquiryType,
 }: {
   inquiryTypes?: string[];
+  title?: string;
+  /** Preselects the inquiry dropdown when it matches one of `inquiryTypes`. */
+  defaultInquiryType?: string;
 }) {
   const [state, formAction, pending] = useActionState(
     submitContactForm,
@@ -24,6 +30,18 @@ export function ContactForm({
   const [showSuccess, setShowSuccess] = useState(false);
   // Inquiry type of the in-flight submission, so the result event can carry it.
   const inquiryTypeRef = useRef("");
+  // Stamped after hydration: script-less bots never get one (see spam-guard).
+  // Held in state (not a ref) so React's post-action form reset keeps it.
+  const [startedAt, setStartedAt] = useState("");
+  const preselected =
+    defaultInquiryType && inquiryTypes.includes(defaultInquiryType)
+      ? defaultInquiryType
+      : "";
+
+  // Restamp when the form remounts after "Send Another".
+  useEffect(() => {
+    setStartedAt(String(Date.now()));
+  }, [resetKey]);
 
   useEffect(() => {
     if (state === initialState) return;
@@ -76,11 +94,28 @@ export function ContactForm({
         inquiryTypeRef.current = inquiry_type;
         track("contact_form_submitted", { inquiry_type });
       }}
-      className="space-y-5 rounded-2xl border border-border bg-background p-6 md:p-8"
+      className="relative space-y-5 rounded-2xl border border-border bg-background p-6 md:p-8"
     >
       <h3 className="font-display text-2xl font-bold text-foreground uppercase">
-        Send Us a Message
+        {title}
       </h3>
+
+      <input type="hidden" name={STARTED_AT_FIELD} value={startedAt} readOnly />
+      {/* Honeypot: hidden from people and assistive tech; bots fill it in. */}
+      <div
+        aria-hidden
+        className="absolute -left-[9999px] size-px overflow-hidden"
+      >
+        <label>
+          Company website (leave blank)
+          <input
+            name={HONEYPOT_FIELD}
+            type="text"
+            tabIndex={-1}
+            autoComplete="off"
+          />
+        </label>
+      </div>
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <label className="block space-y-1.5">
@@ -90,6 +125,8 @@ export function ContactForm({
           <input
             name="name"
             required
+            autoComplete="name"
+            maxLength={120}
             className="w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm outline-none focus:border-cyan-brand"
           />
         </label>
@@ -101,6 +138,7 @@ export function ContactForm({
             name="email"
             type="email"
             required
+            autoComplete="email"
             className="w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm outline-none focus:border-cyan-brand"
           />
         </label>
@@ -112,6 +150,8 @@ export function ContactForm({
           <input
             name="phone"
             type="tel"
+            autoComplete="tel"
+            maxLength={40}
             className="w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm outline-none focus:border-cyan-brand"
           />
         </label>
@@ -122,7 +162,7 @@ export function ContactForm({
           <select
             name="subject"
             required
-            defaultValue=""
+            defaultValue={preselected}
             className="w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm outline-none focus:border-cyan-brand"
           >
             <option value="" disabled>
@@ -145,6 +185,7 @@ export function ContactForm({
           name="message"
           required
           rows={6}
+          maxLength={5000}
           className="w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm outline-none focus:border-cyan-brand"
         />
       </label>

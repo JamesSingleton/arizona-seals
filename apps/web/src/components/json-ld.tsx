@@ -386,6 +386,8 @@ export function WebSiteJsonLd({ settings }: WebSiteJsonLdProps) {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: settings.siteTitle!,
+    // Short names Google may show as the site name above search results.
+    alternateName: ["Arizona Seals", "AZ Seals"],
     description: settings.siteDescription || undefined,
     url: baseUrl,
     publisher: {

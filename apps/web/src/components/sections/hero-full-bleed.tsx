@@ -28,6 +28,10 @@ export type HeroFullBleedProps = {
   /** Sanity CMS image object — preferred when editors upload a hero image */
   sanityImage?: SanityImageProps | null;
   imageAlt?: string;
+  /** Short supporting line under the title. */
+  subtitle?: string;
+  /** Up to four proof points shown in a strip along the bottom of the hero. */
+  stats?: { _key?: string; number?: string | null; label?: string | null }[];
   primaryCta?: { label: string; href: string };
   secondaryCta?: { label: string; href: string };
 };
@@ -59,13 +63,16 @@ export function HeroFullBleed({
   accentWord = "Swimming",
   sanityImage,
   imageAlt = "Arizona Seals swimmers racing in the pool",
+  subtitle,
+  stats,
   primaryCta = { label: "Join the Team", href: "/contact" },
   secondaryCta = { label: "Our Programs", href: "/programs" },
 }: HeroFullBleedProps) {
   const image = resolveHeroImage(sanityImage, imageAlt);
+  const proof = stats?.filter((s) => s?.number && s?.label).slice(0, 4) ?? [];
 
   return (
-    <section className="relative flex h-screen max-h-225 min-h-150 flex-col justify-end overflow-hidden">
+    <section className="relative flex min-h-[max(100svh,37.5rem)] flex-col justify-end overflow-hidden lg:min-h-150 lg:h-screen lg:max-h-240">
       <SanityImage
         image={image}
         width={2400}
@@ -80,16 +87,21 @@ export function HeroFullBleed({
         }}
       />
 
-      <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/40 to-black/20" />
+      <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/45 to-black/25" />
 
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-6 pb-16 sm:px-10 md:pb-24 lg:px-16">
+      <div
+        className={cn(
+          "relative z-10 mx-auto w-full max-w-7xl px-6 pt-32 sm:px-10 lg:px-16",
+          proof.length ? "pb-10 md:pb-14" : "pb-16 md:pb-24",
+        )}
+      >
         <p className="mb-3 font-display text-xs font-bold tracking-[0.3em] text-[#5ec9f2] uppercase drop-shadow-[0_1px_8px_rgba(0,0,0,0.55)] sm:text-sm">
           {eyebrow}
         </p>
 
         <h1
           className="mb-6 font-display font-black leading-[0.9] text-balance text-white uppercase drop-shadow-[0_2px_16px_rgba(0,0,0,0.45)]"
-          style={{ fontSize: "clamp(3rem, 10vw, 8rem)" }}
+          style={{ fontSize: "clamp(3rem, 9.5vw, 7.5rem)" }}
         >
           {titleLines.map((line) => (
             <span key={line}>
@@ -99,6 +111,12 @@ export function HeroFullBleed({
           ))}
           <span className="text-[#5ec9f2]">{accentWord}</span>
         </h1>
+
+        {subtitle ? (
+          <p className="mb-8 max-w-xl text-lg leading-relaxed text-white/90 drop-shadow-[0_1px_8px_rgba(0,0,0,0.55)] md:text-xl">
+            {subtitle}
+          </p>
+        ) : null}
 
         <div className="flex flex-wrap items-center gap-4">
           <Link
@@ -133,6 +151,31 @@ export function HeroFullBleed({
           </Link>
         </div>
       </div>
+
+      {proof.length ? (
+        <div className="relative z-10 border-t border-white/20 bg-black/35 backdrop-blur-sm">
+          <dl
+            className={cn(
+              "mx-auto grid max-w-7xl grid-cols-2 gap-x-6 gap-y-5 px-6 py-6 sm:px-10 lg:px-16",
+              proof.length === 4 ? "lg:grid-cols-4" : "lg:grid-cols-3",
+            )}
+          >
+            {proof.map((stat) => (
+              <div
+                key={stat._key ?? `${stat.number}-${stat.label}`}
+                className="flex flex-col-reverse gap-1 lg:flex-row lg:items-center lg:gap-4"
+              >
+                <dt className="font-display text-xs leading-snug font-bold tracking-[0.15em] text-white/80 uppercase lg:order-2 lg:max-w-40">
+                  {stat.label}
+                </dt>
+                <dd className="font-display text-4xl leading-none font-black text-white tabular-nums lg:text-5xl">
+                  {stat.number}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      ) : null}
     </section>
   );
 }
