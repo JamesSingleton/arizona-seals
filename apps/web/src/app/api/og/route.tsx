@@ -1,330 +1,365 @@
-/* eslint-disable react/no-unknown-property */
 /* eslint-disable @next/next/no-img-element */
+import { createImageUrlBuilder } from "@sanity/image-url";
+import { dataset, projectId } from "@workspace/sanity/api";
+import { client } from "@workspace/sanity/client";
+import { queryOgData } from "@workspace/sanity/query";
+import type { QueryOgDataResult } from "@workspace/sanity/types";
 import { ImageResponse } from "next/og";
-import type { ImageResponseOptions } from "next/server";
 
-import type { Maybe } from "@/types";
+import { categoryLabel, formatEventWhen } from "@/lib/events";
 import { getOgMetaData } from "./og-config";
-import {
-  getBlogPageOGData,
-  getGenericPageOGData,
-  getHomePageOGData,
-  getSlugPageOGData,
-} from "./og-data";
 
-const BRAND = {
-  navy: "#1b3a6b",
-  navyDeep: "#0f2447",
-  cyan: "#5ec9f2",
-  cyanDeep: "#00abe2",
+/**
+ * Share image (Open Graph / Twitter card) in the site's "Race Day" style:
+ * a full-bleed club photo, the white logo, a heavy italic headline and a navy
+ * scoreboard bar along the bottom. Events show their dates and venue there.
+ */
+
+const COLORS = {
+  navy: "#0d2849",
+  deep: "#061428",
+  pool: "#5ec9f2",
   white: "#ffffff",
-  muted: "rgba(255,255,255,0.72)",
 } as const;
 
-type SeoImageRenderProps = {
-  seoImage: string;
-};
+const SITE = "arizonaseals.com";
 
-type ContentProps = Record<string, string>;
+const builder = createImageUrlBuilder({ projectId, dataset });
 
-type BrandOgRenderProps = {
-  image?: Maybe<string>;
-  title?: Maybe<string>;
-  logo?: Maybe<string>;
-  _type?: Maybe<string>;
-  description?: Maybe<string>;
-};
+/** Club photos used when a page has none of its own (Satori needs JPEG/PNG). */
+const FALLBACK_PHOTOS = [
+  "image-4853ac4449a8f1d89aa4d48bb5bc8338b243be1d-6000x4000-avif",
+  "image-5eab7ec38166ec7e22db4124e92ff6db561278dc-6000x4000-avif",
+  "image-809df70e47b9c4fa715daf212c690723f8eb4b78-2048x1365-avif",
+  "image-916535f31cba5e8265d5731e23dcd027523653a5-2048x1323-avif",
+];
 
-const errorContent = (
-  <div
-    tw="flex h-full w-full flex-col items-center justify-center"
-    style={{ backgroundColor: BRAND.navy }}
-  >
-    <div tw="flex flex-col items-center px-16 text-center">
-      <div tw="mb-6 h-1 w-24" style={{ backgroundColor: BRAND.cyan }} />
-      <h1
-        tw="text-5xl font-bold text-white"
-        style={{ fontFamily: "Barlow Condensed" }}
-      >
-        Arizona Seals Swimming
-      </h1>
-    </div>
-  </div>
-);
+const DEFAULT_LOGO =
+  "https://cdn.sanity.io/images/nck2qq2n/production/e370d00c09aa0f969ea5dfd8eace06a8362141b8-2000x2000.webp";
 
-const seoImageRender = ({ seoImage }: SeoImageRenderProps) => (
-  <div tw="flex h-full w-full items-center justify-center">
-    <img src={seoImage} alt="" width={1200} height={630} />
-  </div>
-);
-
-function eyebrowForType(_type?: Maybe<string>) {
-  if (_type === "blog") return "News";
-  if (_type === "homePage") return "Arizona Seals Swimming";
-  return "Arizona Seals";
+function photoUrl(
+  data: QueryOgDataResult,
+  id: string,
+  width: number,
+  height: number,
+) {
+  const source = data?.image?.asset
+    ? data.image
+    : {
+        asset: {
+          _ref: FALLBACK_PHOTOS[
+            [...id].reduce((sum, ch) => sum + ch.charCodeAt(0), 0) %
+              FALLBACK_PHOTOS.length
+          ],
+        },
+      };
+  return builder
+    .image(source as Parameters<typeof builder.image>[0])
+    .width(width)
+    .height(height)
+    .fit("crop")
+    .format("jpg")
+    .quality(82)
+    .url();
 }
 
-function Wordmark({ logo }: { logo?: Maybe<string> }) {
-  if (logo) {
-    // Fetch is ~4× display size so Satori downscales instead of upscaling.
-    return (
-      <img
-        src={logo}
-        alt="Arizona Seals"
-        width={240}
-        height={80}
-        style={{ objectFit: "contain" }}
-      />
-    );
-  }
-
-  return (
-    <div tw="flex flex-col">
-      <span
-        tw="text-3xl font-extrabold leading-[1.05] text-white"
-        style={{ fontFamily: "Barlow Condensed" }}
-      >
-        Arizona Seals
-      </span>
-      <span
-        tw="mt-1 text-sm font-bold "
-        style={{ color: BRAND.cyan, fontFamily: "Barlow Condensed" }}
-      >
-        Swimming
-      </span>
-    </div>
-  );
+/** Drop a trailing " | Arizona Seals…" so the headline is the page's own. */
+function cleanTitle(title?: string | null) {
+  const trimmed = (title ?? "").split(/\s+[|–—-]\s+Arizona Seals/i)[0]?.trim();
+  return trimmed || "Arizona Seals Swimming";
 }
 
-const brandOgRender = ({
-  image,
-  title,
+/** Bigger type for shorter headlines, so one-word titles fill the frame. */
+function headlineSize(text: string) {
+  if (text.length <= 12) return 150;
+  if (text.length <= 22) return 124;
+  if (text.length <= 34) return 100;
+  return 84;
+}
+
+function Card({
+  data,
+  photo,
   logo,
-  description,
-  _type,
-}: BrandOgRenderProps) => {
-  const eyebrow = eyebrowForType(_type);
-  const displayTitle =
-    title?.trim() ||
-    (_type === "homePage" ? "Arizona Seals Swimming" : "Arizona Seals");
+}: {
+  data: QueryOgDataResult;
+  photo: string;
+  logo: string;
+}) {
+  const isHome = data?._type === "homePage";
+  const isEvent = data?._type === "event";
+  const title = cleanTitle(data?.title);
+  const words = title.split(" ");
+  // Home: "Arizona Seals" white, last word ("Swimming") in pool cyan.
+  const lead =
+    isHome && words.length > 1 ? words.slice(0, -1).join(" ") : title;
+  const accent = isHome && words.length > 1 ? words.at(-1) : null;
+
+  const barMain = isEvent
+    ? formatEventWhen({
+        _id: data._id,
+        start: data.start,
+        end: data.end,
+        allDay: data.allDay,
+      })
+    : "Year-round competitive swim team";
+  const barSub = isEvent
+    ? [data.venue, data.city].filter(Boolean).join(" · ")
+    : "Copper Sky · Maricopa, AZ";
+  const tag = isEvent
+    ? data.status === "cancelled"
+      ? "Cancelled"
+      : data.status === "postponed"
+        ? "Postponed"
+        : categoryLabel(data.category)
+    : null;
 
   return (
     <div
-      tw="relative flex h-full w-full overflow-hidden"
-      style={{ backgroundColor: BRAND.navyDeep, fontFamily: "Inter" }}
+      style={{
+        display: "flex",
+        position: "relative",
+        width: "100%",
+        height: "100%",
+        backgroundColor: COLORS.deep,
+        fontFamily: "Barlow",
+      }}
     >
-      {image ? (
-        <img
-          src={image}
-          alt=""
-          width={1200}
-          height={630}
-          tw="absolute left-0 top-0 h-full w-full"
-          style={{ objectFit: "cover", objectPosition: "center" }}
-        />
-      ) : null}
-
-      <div
-        tw="absolute left-0 top-0 h-full w-full"
+      <img
+        src={photo}
+        alt=""
+        width={1200}
+        height={630}
         style={{
-          background: image
-            ? `linear-gradient(105deg, ${BRAND.navyDeep} 0%, ${BRAND.navyDeep}f2 40%, ${BRAND.navy}aa 70%, ${BRAND.navy}66 100%)`
-            : `linear-gradient(135deg, ${BRAND.navyDeep} 0%, ${BRAND.navy} 55%, #163a6e 100%)`,
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+        }}
+      />
+      {/* Shade the left and bottom for the words; keep the photo bright on the right. */}
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          backgroundImage: `linear-gradient(90deg, rgba(6,20,40,0.94) 0%, rgba(6,20,40,0.86) 42%, rgba(6,20,40,0.4) 72%, rgba(6,20,40,0.05) 100%)`,
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          backgroundImage: `linear-gradient(0deg, rgba(6,20,40,0.85) 0%, rgba(6,20,40,0) 50%)`,
         }}
       />
 
       <div
-        tw="absolute left-0 top-0 h-2 w-full"
-        style={{ backgroundColor: BRAND.cyanDeep }}
-      />
-
-      {!image ? (
-        <div
-          tw="absolute left-0 top-0 h-full w-full"
-          style={{
-            background:
-              "radial-gradient(ellipse at 85% 15%, rgba(94,201,242,0.18) 0%, transparent 55%)",
-          }}
-        />
-      ) : null}
-
-      <div tw="relative flex h-full w-full flex-col justify-between px-16 py-14">
-        <div tw="flex w-full items-center">
-          <Wordmark logo={logo} />
+        style={{
+          position: "relative",
+          display: "flex",
+          flexDirection: "column",
+          width: "100%",
+          height: "100%",
+        }}
+      >
+        {/* Logo */}
+        <div style={{ display: "flex", padding: "44px 64px 0" }}>
+          <img src={logo} alt="" width={116} height={116} />
         </div>
 
-        <div tw="flex max-w-[920px] flex-col">
-          <div tw="mb-5 flex items-center">
-            <div tw="mr-4 h-1 w-12" style={{ backgroundColor: BRAND.cyan }} />
-            <span
-              tw="text-xl font-bold "
-              style={{ color: BRAND.cyan, fontFamily: "Barlow Condensed" }}
-            >
-              {eyebrow}
-            </span>
-          </div>
-
-          <h1
-            tw="text-[72px] font-extrabold leading-[1.02] text-white"
-            style={{
-              fontFamily: "Barlow Condensed",
-              lineClamp: 3,
-            }}
-          >
-            {displayTitle}
-          </h1>
-
-          {description ? (
-            <p
-              tw="mt-6 max-w-[780px] text-2xl leading-snug"
+        {/* Headline */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            flex: 1,
+            justifyContent: "flex-end",
+            padding: "0 64px 40px",
+            maxWidth: 1000,
+          }}
+        >
+          {tag ? (
+            <div
               style={{
-                color: BRAND.muted,
-                fontFamily: "Inter",
-                lineClamp: 2,
+                display: "flex",
+                alignSelf: "flex-start",
+                marginBottom: 18,
+                padding: "6px 14px",
+                backgroundColor:
+                  data?.status === "cancelled" || data?.status === "postponed"
+                    ? "#b91c1c"
+                    : COLORS.pool,
+                color:
+                  data?.status === "cancelled" || data?.status === "postponed"
+                    ? COLORS.white
+                    : COLORS.navy,
+                fontFamily: "Barlow Condensed",
+                fontWeight: 800,
+                fontSize: 26,
+                letterSpacing: 3,
+                textTransform: "uppercase",
               }}
             >
-              {description}
-            </p>
+              {tag}
+            </div>
           ) : null}
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              color: COLORS.white,
+              fontFamily: "Barlow Condensed",
+              fontStyle: "italic",
+              fontWeight: 900,
+              fontSize: headlineSize(title),
+              lineHeight: 0.88,
+              textTransform: "uppercase",
+              letterSpacing: -1,
+            }}
+          >
+            {lead}
+            {accent ? (
+              <span style={{ color: COLORS.pool, marginLeft: 24 }}>
+                {accent}
+              </span>
+            ) : null}
+          </div>
         </div>
 
-        <div tw="flex w-full items-end justify-between">
-          <div
-            tw="text-lg font-bold "
-            style={{ color: BRAND.cyan, fontFamily: "Barlow Condensed" }}
-          >
-            Competitive Swimming · Maricopa, AZ
+        {/* Scoreboard bar */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            height: 112,
+            padding: "0 64px",
+            backgroundColor: COLORS.navy,
+            borderTop: `6px solid ${COLORS.pool}`,
+          }}
+        >
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <div
+              style={{
+                display: "flex",
+                color: COLORS.white,
+                fontFamily: "Barlow Condensed",
+                fontWeight: 800,
+                fontSize: 36,
+                letterSpacing: 1,
+                textTransform: "uppercase",
+              }}
+            >
+              {barMain}
+            </div>
+            {barSub ? (
+              <div
+                style={{
+                  display: "flex",
+                  marginTop: 2,
+                  color: "rgba(255,255,255,0.82)",
+                  fontSize: 24,
+                  fontWeight: 500,
+                }}
+              >
+                {barSub}
+              </div>
+            ) : null}
           </div>
-          <div tw="h-1 w-24" style={{ backgroundColor: BRAND.cyanDeep }} />
+          <div
+            style={{
+              display: "flex",
+              color: COLORS.pool,
+              fontFamily: "Barlow Condensed",
+              fontWeight: 800,
+              fontSize: 30,
+              letterSpacing: 2,
+              textTransform: "uppercase",
+            }}
+          >
+            {SITE}
+          </div>
         </div>
       </div>
     </div>
   );
-};
-
-async function getTtfFont(
-  family: string,
-  axes: string[],
-  value: number[],
-): Promise<ArrayBuffer> {
-  const familyParam = `${axes.join(",")}@${value.join(",")}`;
-
-  const cssCall = await fetch(
-    `https://fonts.googleapis.com/css2?family=${family}:${familyParam}&display=swap`,
-    {
-      headers: {
-        "User-Agent": "Mozilla/5.0 Firefox/1.0",
-      },
-    },
-  );
-
-  const css = await cssCall.text();
-  const ttfUrl = css.match(/url\(([^)]+)\)/)?.[1];
-
-  if (!ttfUrl) {
-    throw new Error("Failed to extract font URL from CSS");
-  }
-
-  return await fetch(ttfUrl).then((res) => res.arrayBuffer());
 }
 
-const getOptions = async ({
-  width,
-  height,
-}: {
-  width: number;
-  height: number;
-}): Promise<ImageResponseOptions> => {
-  const [interRegular, interSemiBold, barlowBold, barlowExtraBold] =
-    await Promise.all([
-      getTtfFont("Inter", ["wght"], [400]),
-      getTtfFont("Inter", ["wght"], [600]),
-      getTtfFont("Barlow%20Condensed", ["wght"], [700]),
-      getTtfFont("Barlow%20Condensed", ["wght"], [800]),
-    ]);
+async function googleFont(query: string): Promise<ArrayBuffer> {
+  const css = await fetch(
+    `https://fonts.googleapis.com/css2?family=${query}&display=swap`,
+    // An old user agent makes Google serve TTF, which Satori can read.
+    { headers: { "User-Agent": "Mozilla/5.0 Firefox/1.0" } },
+  ).then((res) => res.text());
+  const url = css.match(/url\(([^)]+)\)/)?.[1];
+  if (!url) throw new Error(`Font not found: ${query}`);
+  return fetch(url).then((res) => res.arrayBuffer());
+}
 
-  return {
-    width,
-    height,
-    fonts: [
-      {
-        name: "Inter",
-        data: interRegular,
-        style: "normal",
-        weight: 400,
-      },
-      {
-        name: "Inter",
-        data: interSemiBold,
-        style: "normal",
-        weight: 600,
-      },
-      {
-        name: "Barlow Condensed",
-        data: barlowBold,
-        style: "normal",
-        weight: 700,
-      },
-      {
-        name: "Barlow Condensed",
-        data: barlowExtraBold,
-        style: "normal",
-        weight: 800,
-      },
-    ],
-  };
-};
-
-const getHomePageContent = async ({ id }: ContentProps) => {
-  if (!id) return undefined;
-  const [result, err] = await getHomePageOGData(id);
-  if (err || !result) return undefined;
-  if (result?.seoImage) return seoImageRender({ seoImage: result.seoImage });
-  return brandOgRender(result);
-};
-
-const getSlugPageContent = async ({ id }: ContentProps) => {
-  if (!id) return undefined;
-  const [result, err] = await getSlugPageOGData(id);
-  if (err || !result) return undefined;
-  if (result?.seoImage) return seoImageRender({ seoImage: result.seoImage });
-  return brandOgRender(result);
-};
-
-const getBlogPageContent = async ({ id }: ContentProps) => {
-  if (!id) return undefined;
-  const [result, err] = await getBlogPageOGData(id);
-  if (err || !result) return undefined;
-  if (result?.seoImage) return seoImageRender({ seoImage: result.seoImage });
-  return brandOgRender(result);
-};
-
-const getGenericPageContent = async ({ id }: ContentProps) => {
-  if (!id) return undefined;
-  const [result, err] = await getGenericPageOGData(id);
-  if (err || !result) return undefined;
-  if (result?.seoImage) return seoImageRender({ seoImage: result.seoImage });
-  return brandOgRender(result);
-};
-
-const block = {
-  homePage: getHomePageContent,
-  page: getSlugPageContent,
-  blog: getBlogPageContent,
-} as const;
+async function fonts() {
+  const [display, displayBold, body, bodyStrong] = await Promise.all([
+    googleFont("Barlow+Condensed:ital,wght@1,900"),
+    googleFont("Barlow+Condensed:wght@800"),
+    googleFont("Barlow:wght@500"),
+    googleFont("Barlow:wght@600"),
+  ]);
+  return [
+    {
+      name: "Barlow Condensed",
+      data: display,
+      weight: 900 as const,
+      style: "italic" as const,
+    },
+    {
+      name: "Barlow Condensed",
+      data: displayBold,
+      weight: 800 as const,
+      style: "normal" as const,
+    },
+    {
+      name: "Barlow",
+      data: body,
+      weight: 500 as const,
+      style: "normal" as const,
+    },
+    {
+      name: "Barlow",
+      data: bodyStrong,
+      weight: 600 as const,
+      style: "normal" as const,
+    },
+  ];
+}
 
 export async function GET({ url }: Request): Promise<ImageResponse> {
   const { searchParams } = new URL(url);
-  const type = searchParams.get("type") as keyof typeof block;
+  const id = searchParams.get("id") ?? "homePage";
   const { width, height } = getOgMetaData(searchParams);
-  const para = Object.fromEntries(searchParams.entries());
-  const options = await getOptions({ width, height });
-  const image = block[type] ?? getGenericPageContent;
+  const fontList = await fonts();
+
+  let data: QueryOgDataResult = null;
   try {
-    const content = await image(para);
-    return new ImageResponse(content ? content : errorContent, options);
-  } catch (err) {
-    console.log({ err });
-    return new ImageResponse(errorContent, options);
+    data = await client.fetch(queryOgData, { id });
+  } catch (error) {
+    console.error("[og] Sanity fetch failed", error);
   }
+
+  const logo = `${data?.logo ?? DEFAULT_LOGO}?w=240&h=240&fit=max&fm=png`;
+  const photo = photoUrl(data, id, width, height);
+
+  return new ImageResponse(<Card data={data} photo={photo} logo={logo} />, {
+    width,
+    height,
+    fonts: fontList,
+  });
 }

@@ -732,48 +732,32 @@ export const queryBlogPaths = defineQuery(`
   *[_type == "blog" && defined(slug.current) && seoNoIndex != true].slug.current
 `);
 
-const ogFieldsFragment = /* groq */ `
-  _id,
-  _type,
-  "title": select(
-    defined(ogTitle) => ogTitle,
-    defined(seoTitle) => seoTitle,
-    title
-  ),
-  "description": select(
-    defined(ogDescription) => ogDescription,
-    defined(seoDescription) => seoDescription,
-    description
-  ),
-  "image": select(
-    defined(image.asset) => image.asset->url + "?w=1200&h=630&dpr=2&fit=crop",
-    defined(seoImage.asset) => seoImage.asset->url + "?w=1200&h=630&dpr=2&fit=crop"
-  ),
-  "seoImage": seoImage.asset->url + "?w=1200&h=630&dpr=2&fit=max",
-  "logo": *[_type == "settings"][0].logo.asset->url + "?w=960&h=320&fit=max&q=100"
-`;
+const ogImageFields = /* groq */ `{ asset, hotspot, crop }`;
 
-export const queryHomePageOGData = defineQuery(/* groq */ `
-  *[_type == "homePage" && _id == $id][0]{
-    ${ogFieldsFragment}
-  }
-`);
-
-export const querySlugPageOGData = defineQuery(/* groq */ `
-  *[_type == "page" && _id == $id][0]{
-    ${ogFieldsFragment}
-  }
-`);
-
-export const queryBlogPageOGData = defineQuery(/* groq */ `
-  *[_type == "blog" && _id == $id][0]{
-    ${ogFieldsFragment}
-  }
-`);
-
-export const queryGenericPageOGData = defineQuery(/* groq */ `
-  *[ defined(slug.current) && _id == $id][0]{
-    ${ogFieldsFragment}
+/**
+ * Everything the share-image route needs for any document, by id. The photo
+ * falls back from the document's own image to its hero / page header.
+ */
+export const queryOgData = defineQuery(/* groq */ `
+  *[_id == $id][0]{
+    _id,
+    _type,
+    "title": coalesce(ogTitle, title),
+    "description": coalesce(ogDescription, seoDescription, summary, description),
+    "image": select(
+      defined(seoImage.asset) => seoImage${ogImageFields},
+      defined(image.asset) => image${ogImageFields},
+      defined(pageBuilder[_type == "hero"][0].image.asset) => pageBuilder[_type == "hero"][0].image${ogImageFields},
+      defined(pageBuilder[_type == "pageHero"][0].backgroundImage.asset) => pageBuilder[_type == "pageHero"][0].backgroundImage${ogImageFields}
+    ),
+    category,
+    start,
+    end,
+    allDay,
+    status,
+    "venue": location.name,
+    "city": location.city,
+    "logo": *[_type == "settings"][0].alternateLogo.asset->url
   }
 `);
 
