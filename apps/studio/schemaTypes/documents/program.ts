@@ -58,6 +58,8 @@ export const program = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      // The site no longer shows small labels above titles.
+      hidden: true,
       name: "tagline",
       type: "string",
       title: "Tagline",

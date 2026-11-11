@@ -36,6 +36,8 @@ export const featureCardsIcon = defineType({
   icon: LayoutGrid,
   fields: [
     defineField({
+      // The site no longer shows small labels above titles.
+      hidden: true,
       name: "eyebrow",
       type: "string",
     }),

@@ -36,7 +36,6 @@ function resolveImageAtEnd(
 }
 
 export function AboutPreview({
-  eyebrow,
   title,
   richText,
   image,
@@ -55,18 +54,8 @@ export function AboutPreview({
     return (
       <section className={className ?? "bg-background py-20 md:py-28"}>
         <div className="mx-auto max-w-3xl px-6 text-center sm:px-10">
-          {eyebrow ? (
-            <p className="mb-3 font-display text-sm font-bold tracking-[0.25em] text-cyan-brand uppercase">
-              {eyebrow}
-            </p>
-          ) : null}
           {title ? (
-            <h2
-              className="mb-6 font-display font-black leading-none text-balance text-foreground uppercase"
-              style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)" }}
-            >
-              {title}
-            </h2>
+            <h2 className="section-title mb-6 text-foreground">{title}</h2>
           ) : null}
           {richText ? (
             <RichText
@@ -80,7 +69,7 @@ export function AboutPreview({
                 placement="about_preview"
                 buttons={buttons}
                 className="gap-4"
-                buttonClassName="inline-flex h-auto items-center gap-2 rounded-none border-0 border-b-2 border-foreground bg-transparent px-0 pb-0.5 font-display text-sm font-bold tracking-widest text-foreground uppercase shadow-none hover:border-cyan-brand hover:bg-transparent hover:text-cyan-brand"
+                buttonClassName=""
               />
             </div>
           ) : null}
@@ -91,57 +80,41 @@ export function AboutPreview({
 
   return (
     <section className={className ?? "bg-background py-20 md:py-28"}>
-      <div className="mx-auto max-w-7xl px-6 sm:px-10 lg:px-16">
-        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-20">
-          <div className={imageAtEnd ? "" : "lg:order-2"}>
-            {eyebrow ? (
-              <div className="mb-6 flex items-center gap-3">
-                <div className="h-0.5 w-8 bg-cyan-brand" />
-                <span className="font-display text-xs font-bold tracking-[0.25em] text-cyan-brand uppercase">
-                  {eyebrow}
-                </span>
-              </div>
-            ) : null}
+      <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-6 sm:px-10 lg:grid-cols-12 lg:gap-16 lg:px-16">
+        <div className={`lg:col-span-6 ${imageAtEnd ? "" : "lg:order-2"}`}>
+          {title ? (
+            <h2 className="section-title mb-7 text-foreground">{title}</h2>
+          ) : null}
 
-            {title ? (
-              <h2
-                className="mb-8 font-display font-black leading-none text-balance text-foreground uppercase"
-                style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)" }}
-              >
-                {title}
-              </h2>
-            ) : null}
-
-            {richText ? (
-              <RichText
-                richText={richText}
-                className="mb-8 text-base leading-relaxed text-seal-gray [&_p]:mb-5 [&_p:last-child]:mb-0"
-              />
-            ) : null}
-
-            {buttons && buttons.length > 0 ? (
-              <SanityButtons
-                placement="about_preview"
-                buttons={buttons}
-                className="gap-4"
-                buttonClassName="inline-flex h-auto items-center gap-2 rounded-none border-0 border-b-2 border-foreground bg-transparent px-0 pb-0.5 font-display text-sm font-bold tracking-widest text-foreground uppercase shadow-none hover:border-cyan-brand hover:bg-transparent hover:text-cyan-brand"
-              />
-            ) : null}
-          </div>
-
-          <div
-            className={`relative h-80 overflow-hidden bg-muted md:h-[460px] ${imageAtEnd ? "" : "lg:order-1"}`}
-          >
-            <SanityImage
-              image={image}
-              width={1200}
-              sizes="(min-width: 1024px) 50vw, 100vw"
-              className="absolute inset-0 size-full object-cover"
-              style={{
-                objectPosition: objectPositionFromHotspot(image?.hotspot),
-              }}
+          {richText ? (
+            <RichText
+              richText={richText}
+              className="mb-8 max-w-xl text-lg leading-relaxed text-seal-gray [&_p]:mb-5 [&_p:last-child]:mb-0"
             />
-          </div>
+          ) : null}
+
+          {buttons && buttons.length > 0 ? (
+            <SanityButtons
+              placement="about_preview"
+              buttons={buttons}
+              size="lg"
+              className="gap-3"
+            />
+          ) : null}
+        </div>
+
+        <div
+          className={`relative aspect-[4/3] overflow-hidden bg-water lg:col-span-6 lg:aspect-[5/6] ${imageAtEnd ? "" : "lg:order-1"}`}
+        >
+          <SanityImage
+            image={image}
+            width={1400}
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            className="absolute inset-0 size-full object-cover"
+            style={{
+              objectPosition: objectPositionFromHotspot(image?.hotspot),
+            }}
+          />
         </div>
       </div>
     </section>

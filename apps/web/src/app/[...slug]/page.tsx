@@ -40,6 +40,15 @@ export async function generateStaticParams() {
   }
 }
 
+async function fetchSlugMetadata(slug: string, isDraftMode: boolean) {
+  const { data } = await sanityFetchMetadata({
+    query: querySlugPageData,
+    params: { slug },
+    perspective: isDraftMode ? "drafts" : "published",
+  });
+  return data;
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -53,32 +62,28 @@ export async function generateMetadata({
     return getSEOMetadata({ slug: slugString });
   }
 
+  let pageData: Awaited<ReturnType<typeof fetchSlugMetadata>> = null;
   try {
-    const { data: pageData } = await sanityFetchMetadata({
-      query: querySlugPageData,
-      params: { slug: slugString },
-      perspective: isDraftMode ? "drafts" : "published",
-    });
-    return getSEOMetadata(
-      pageData
-        ? {
-            title: pageData.seoTitle ?? pageData.title ?? "",
-            description: pageData.seoDescription ?? pageData.description ?? "",
-            slug: pageData.slug?.startsWith("/")
-              ? pageData.slug
-              : `/${pageData.slug}`,
-            contentId: pageData._id,
-            contentType: pageData._type,
-            seoNoIndex: pageData.seoNoIndex ?? false,
-            ogTitle: pageData.ogTitle ?? undefined,
-            ogDescription: pageData.ogDescription ?? undefined,
-            seoImage: resolveSeoImageUrl(pageData.seoImage),
-          }
-        : { slug: slugString },
-    );
+    pageData = await fetchSlugMetadata(slugString, isDraftMode);
   } catch {
     return getSEOMetadata({ slug: slugString });
   }
+
+  // Unknown URL: a real 404 (blocking metadata for crawlers) instead of a
+  // soft 404 that search engines would index.
+  if (!pageData) notFound();
+
+  return getSEOMetadata({
+    title: pageData.seoTitle ?? pageData.title ?? "",
+    description: pageData.seoDescription ?? pageData.description ?? "",
+    slug: pageData.slug?.startsWith("/") ? pageData.slug : `/${pageData.slug}`,
+    contentId: pageData._id,
+    contentType: pageData._type,
+    seoNoIndex: pageData.seoNoIndex ?? false,
+    ogTitle: pageData.ogTitle ?? undefined,
+    ogDescription: pageData.ogDescription ?? undefined,
+    seoImage: resolveSeoImageUrl(pageData.seoImage),
+  });
 }
 
 export default function SlugPage({

@@ -35,7 +35,6 @@ export type ProgramsListProps = {
 };
 
 export function ProgramsList({
-  eyebrow,
   title,
   intro,
   requirementsLabel,
@@ -47,18 +46,11 @@ export function ProgramsList({
 
   return (
     <>
-      {(title || intro || eyebrow) && (
+      {(title || intro) && (
         <section className="bg-background py-16 md:py-20">
           <div className="mx-auto max-w-3xl px-6 text-center sm:px-10">
-            {eyebrow ? (
-              <p className="mb-3 font-display text-sm font-bold tracking-[0.2em] text-cyan-brand uppercase">
-                {eyebrow}
-              </p>
-            ) : null}
             {title ? (
-              <h2 className="font-display text-3xl font-bold text-foreground uppercase md:text-4xl">
-                {title}
-              </h2>
+              <h2 className="section-title text-foreground">{title}</h2>
             ) : null}
             {intro ? (
               <p className="mt-4 text-base leading-relaxed text-seal-gray">
@@ -90,7 +82,7 @@ export function ProgramsList({
               <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-2 lg:gap-16">
                 <div
                   className={cn(
-                    "relative h-72 overflow-hidden md:h-[420px] lg:sticky lg:top-28",
+                    "relative h-80 overflow-hidden md:h-[32rem] lg:sticky lg:top-28",
                     imageOnRight ? "lg:order-2" : "",
                   )}
                 >
@@ -109,14 +101,14 @@ export function ProgramsList({
                   ) : (
                     <div className="absolute inset-0 bg-muted" />
                   )}
-                  <div className="absolute top-4 left-4 flex flex-wrap gap-2">
+                  <div className="absolute top-0 left-0 flex flex-wrap">
                     {program.level ? (
-                      <span className="rounded bg-navy px-3 py-1 font-display text-xs font-bold tracking-wide text-white uppercase">
+                      <span className="label bg-navy px-3 py-1.5 text-sm text-white">
                         {program.level}
                       </span>
                     ) : null}
                     {program.sessions ? (
-                      <span className="rounded bg-navy/90 px-3 py-1 font-display text-xs font-bold tracking-wide text-white uppercase">
+                      <span className="label bg-navy px-3 py-1.5 text-sm text-white">
                         {program.sessions}
                       </span>
                     ) : null}
@@ -124,12 +116,7 @@ export function ProgramsList({
                 </div>
 
                 <div className={imageOnRight ? "lg:order-1" : ""}>
-                  {program.tagline ? (
-                    <p className="mb-2 font-display text-sm font-bold tracking-[0.2em] text-cyan-brand uppercase">
-                      {program.tagline}
-                    </p>
-                  ) : null}
-                  <h3 className="mb-4 font-display text-3xl font-bold text-foreground uppercase md:text-4xl">
+                  <h3 className="mb-4 text-5xl text-foreground md:text-6xl">
                     {program.name}
                   </h3>
                   {program.description ? (
@@ -141,7 +128,7 @@ export function ProgramsList({
                   {program.requirements?.length ? (
                     <div className="mb-6">
                       {requirementsLabel ? (
-                        <h4 className="mb-3 font-display text-lg font-bold text-foreground uppercase">
+                        <h4 className="label mb-3 text-base text-foreground">
                           {requirementsLabel}
                         </h4>
                       ) : null}
@@ -166,7 +153,7 @@ export function ProgramsList({
                   {program.equipment?.length ? (
                     <div className="mb-6">
                       {equipmentLabel ? (
-                        <h4 className="mb-3 font-display text-lg font-bold text-foreground uppercase">
+                        <h4 className="label mb-3 text-base text-foreground">
                           {equipmentLabel}
                         </h4>
                       ) : null}
@@ -191,7 +178,7 @@ export function ProgramsList({
                   {program.expectations?.length ? (
                     <div className="mb-8">
                       {expectationsLabel ? (
-                        <h4 className="mb-3 font-display text-lg font-bold text-foreground uppercase">
+                        <h4 className="label mb-3 text-base text-foreground">
                           {expectationsLabel}
                         </h4>
                       ) : null}
@@ -219,7 +206,7 @@ export function ProgramsList({
                       buttons={program.buttons}
                       size="lg"
                       className="gap-3"
-                      buttonClassName="font-display font-bold tracking-widest uppercase"
+                      buttonClassName=""
                     />
                   ) : null}
                 </div>

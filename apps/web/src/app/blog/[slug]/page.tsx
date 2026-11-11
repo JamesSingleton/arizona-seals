@@ -173,7 +173,7 @@ async function CachedBlogPost({
           size="tall"
           beforeTitle={
             category ? (
-              <span className="mb-3 inline-block bg-cyan-brand px-3 py-1 font-display text-xs font-bold tracking-widest text-primary-foreground uppercase">
+              <span className="label mb-4 inline-block bg-pool px-3 py-1.5 text-sm text-[#0d2849]">
                 {category}
               </span>
             ) : null
@@ -185,15 +185,13 @@ async function CachedBlogPost({
             {publishedAt ? (
               <time
                 dateTime={publishedAt}
-                className="font-display text-xs tracking-widest text-seal-gray uppercase"
+                className="label text-sm text-seal-gray"
               >
                 {formatDate(publishedAt)}
               </time>
             ) : null}
             {category ? (
-              <span className="font-display text-xs font-bold tracking-widest text-cyan-brand uppercase">
-                {category}
-              </span>
+              <span className="label text-sm text-cyan-brand">{category}</span>
             ) : null}
           </div>
           {description ? (
@@ -207,7 +205,7 @@ async function CachedBlogPost({
           />
           <Link
             href="/blog"
-            className="mt-12 inline-flex font-display text-sm font-bold tracking-widest text-cyan-brand uppercase transition-colors hover:text-foreground"
+            className="label mt-12 inline-flex text-base text-foreground underline decoration-cyan-brand decoration-[3px] underline-offset-[6px] hover:text-cyan-brand"
           >
             ← Back to News
           </Link>

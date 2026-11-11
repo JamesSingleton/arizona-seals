@@ -49,6 +49,7 @@ export async function isUnique(
 
 export const getDocTypePrefix = (type: string) => {
   if (["page"].includes(type)) return "";
+  if (type === "event") return "events";
   return type;
 };
 

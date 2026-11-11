@@ -201,7 +201,7 @@ const headerLabel: CSSProperties = {
   fontWeight: 700,
   letterSpacing: "0.16em",
   margin: 0,
-  textTransform: "uppercase",
+  textTransform: "",
 };
 
 const accentLine: CSSProperties = {
@@ -280,7 +280,7 @@ const messageLabel: CSSProperties = {
   fontWeight: 700,
   letterSpacing: "0.04em",
   margin: "22px 0 8px",
-  textTransform: "uppercase",
+  textTransform: "",
 };
 
 const messageBody: CSSProperties = {

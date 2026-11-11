@@ -1,8 +1,5 @@
 import { trackClick } from "@workspace/analytics";
-import {
-  buttonCtaClassName,
-  buttonVariants,
-} from "@workspace/ui/components/button";
+import { buttonVariants } from "@workspace/ui/components/button";
 import { cn } from "@workspace/ui/lib/utils";
 import Link from "next/link";
 
@@ -58,7 +55,6 @@ function resolveHeroImage(
 }
 
 export function HeroFullBleed({
-  eyebrow = "For the Team",
   titleLines = ["Arizona", "Seals"],
   accentWord = "Swimming",
   sanityImage,
@@ -72,103 +68,101 @@ export function HeroFullBleed({
   const proof = stats?.filter((s) => s?.number && s?.label).slice(0, 4) ?? [];
 
   return (
-    <section className="relative flex min-h-[max(100svh,37.5rem)] flex-col justify-end overflow-hidden lg:min-h-150 lg:h-screen lg:max-h-240">
-      <SanityImage
-        image={image}
-        width={2400}
-        sizes="100vw"
-        loading="eager"
-        className="absolute inset-0 size-full object-cover"
-        style={{
-          objectPosition: objectPositionFromHotspot(
-            image.hotspot,
-            `${DEFAULT_HOTSPOT.x * 100}% ${DEFAULT_HOTSPOT.y * 100}%`,
-          ),
-        }}
-      />
-
-      <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/45 to-black/25" />
-
+    <section className="bg-background">
       <div
-        className={cn(
-          "relative z-10 mx-auto w-full max-w-7xl px-6 pt-32 sm:px-10 lg:px-16",
-          proof.length ? "pb-10 md:pb-14" : "pb-16 md:pb-24",
-        )}
+        data-hero
+        className="on-dark relative flex min-h-[max(92svh,40rem)] flex-col justify-end overflow-hidden lg:max-h-[60rem]"
       >
-        <p className="mb-3 font-display text-xs font-bold tracking-[0.3em] text-[#5ec9f2] uppercase drop-shadow-[0_1px_8px_rgba(0,0,0,0.55)] sm:text-sm">
-          {eyebrow}
-        </p>
+        <SanityImage
+          image={image}
+          width={2400}
+          sizes="100vw"
+          loading="eager"
+          className="absolute inset-0 size-full object-cover"
+          style={{
+            objectPosition: objectPositionFromHotspot(
+              image.hotspot,
+              `${DEFAULT_HOTSPOT.x * 100}% ${DEFAULT_HOTSPOT.y * 100}%`,
+            ),
+          }}
+        />
+        <div className="absolute inset-0 bg-linear-to-t from-[#061428]/92 via-[#061428]/35 to-[#061428]/20" />
 
-        <h1
-          className="mb-6 font-display font-black leading-[0.9] text-balance text-white uppercase drop-shadow-[0_2px_16px_rgba(0,0,0,0.45)]"
-          style={{ fontSize: "clamp(3rem, 9.5vw, 7.5rem)" }}
+        <div
+          className={cn(
+            "relative z-10 mx-auto w-full max-w-7xl px-6 pt-36 sm:px-10 lg:px-16",
+            proof.length ? "pb-28 md:pb-36" : "pb-16 md:pb-24",
+          )}
         >
-          {titleLines.map((line) => (
-            <span key={line}>
-              {line}
-              <br />
-            </span>
-          ))}
-          <span className="text-[#5ec9f2]">{accentWord}</span>
-        </h1>
-
-        {subtitle ? (
-          <p className="mb-8 max-w-xl text-lg leading-relaxed text-white/90 drop-shadow-[0_1px_8px_rgba(0,0,0,0.55)] md:text-xl">
-            {subtitle}
-          </p>
-        ) : null}
-
-        <div className="flex flex-wrap items-center gap-4">
-          <Link
-            href={primaryCta.href}
-            {...trackClick("marketing_cta_clicked", {
-              cta_label: primaryCta.label,
-              cta_href: primaryCta.href,
-              cta_variant: "default",
-              placement: "hero_primary",
-            })}
-            className={cn(
-              buttonVariants({ variant: "default", size: "xl" }),
-              buttonCtaClassName,
-            )}
+          <h1
+            className="display text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.35)]"
+            style={{ fontSize: "clamp(4rem, 12.5vw, 11rem)" }}
           >
-            {primaryCta.label}
-          </Link>
-          <Link
-            href={secondaryCta.href}
-            {...trackClick("marketing_cta_clicked", {
-              cta_label: secondaryCta.label,
-              cta_href: secondaryCta.href,
-              cta_variant: "outlineInverse",
-              placement: "hero_secondary",
-            })}
-            className={cn(
-              buttonVariants({ variant: "outlineInverse", size: "xl" }),
-              buttonCtaClassName,
-            )}
-          >
-            {secondaryCta.label}
-          </Link>
+            {titleLines.join(" ")}{" "}
+            <span className="text-cyan-on-navy">{accentWord}</span>
+          </h1>
+
+          {subtitle ? (
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/90 md:text-xl">
+              {subtitle}
+            </p>
+          ) : null}
+
+          <div className="mt-8 flex flex-wrap items-center gap-4">
+            <Link
+              href={primaryCta.href}
+              {...trackClick("marketing_cta_clicked", {
+                cta_label: primaryCta.label,
+                cta_href: primaryCta.href,
+                cta_variant: "default",
+                placement: "hero_primary",
+              })}
+              className={buttonVariants({ variant: "default", size: "xl" })}
+            >
+              {primaryCta.label}
+            </Link>
+            <Link
+              href={secondaryCta.href}
+              {...trackClick("marketing_cta_clicked", {
+                cta_label: secondaryCta.label,
+                cta_href: secondaryCta.href,
+                cta_variant: "outlineInverse",
+                placement: "hero_secondary",
+              })}
+              className={buttonVariants({
+                variant: "outlineInverse",
+                size: "xl",
+              })}
+            >
+              {secondaryCta.label}
+            </Link>
+          </div>
         </div>
       </div>
 
       {proof.length ? (
-        <div className="relative z-10 border-t border-white/20 bg-black/35 backdrop-blur-sm">
+        // The scoreboard: a slanted navy bar that overlaps the photo.
+        <div className="relative z-10 mx-auto -mt-16 max-w-7xl px-4 sm:px-8 md:-mt-20 lg:px-14">
           <dl
             className={cn(
-              "mx-auto grid max-w-7xl grid-cols-2 gap-x-6 gap-y-5 px-6 py-6 sm:px-10 lg:px-16",
+              "on-dark grid grid-cols-2 bg-navy px-3 text-white sm:px-8 lg:slant-lg",
               proof.length === 4 ? "lg:grid-cols-4" : "lg:grid-cols-3",
             )}
           >
-            {proof.map((stat) => (
+            {proof.map((stat, index) => (
               <div
                 key={stat._key ?? `${stat.number}-${stat.label}`}
-                className="flex flex-col-reverse gap-1 lg:flex-row lg:items-center lg:gap-4"
+                className={cn(
+                  "flex flex-col-reverse gap-2 px-4 py-6 md:px-7 md:py-8",
+                  index % 2 === 1 && "border-l-2 border-white/15",
+                  index >= 2 && "border-t-2 border-white/15 lg:border-t-0",
+                  index === 2 && "lg:border-l-2",
+                )}
               >
-                <dt className="font-display text-xs leading-snug font-bold tracking-[0.15em] text-white/80 uppercase lg:order-2 lg:max-w-40">
+                <dt className="label text-sm text-white/85 md:text-[0.9375rem]">
                   {stat.label}
                 </dt>
-                <dd className="font-display text-4xl leading-none font-black text-white tabular-nums lg:text-5xl">
+                <dd className="display text-5xl text-white tabular-nums md:text-6xl">
                   {stat.number}
                 </dd>
               </div>

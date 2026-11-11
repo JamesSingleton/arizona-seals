@@ -93,7 +93,6 @@ function buildMapUrls(options: {
 }
 
 export function ContactInfoBlock({
-  eyebrow = "Get in Touch",
   title = "We're Here to Help",
   description = "Have a question about tryouts, programs, or the club? Fill out the form and one of our staff members will respond as soon as possible.",
   useSiteSettings = true,
@@ -131,14 +130,7 @@ export function ContactInfoBlock({
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
             <div className="lg:col-span-1">
-              {eyebrow ? (
-                <p className="mb-3 font-display text-sm font-bold tracking-[0.2em] text-cyan-brand uppercase">
-                  {eyebrow}
-                </p>
-              ) : null}
-              <h2 className="mb-5 font-display text-3xl font-bold text-balance text-foreground uppercase">
-                {title}
-              </h2>
+              <h2 className="section-title mb-5 text-foreground">{title}</h2>
               {description ? (
                 <p className="mb-8 leading-relaxed text-seal-gray">
                   {description}
@@ -236,16 +228,14 @@ export function ContactInfoBlock({
                 ) : null}
               </div>
 
-              <div className="rounded-xl bg-navy p-6">
-                <p className="mb-4 font-display text-sm font-bold tracking-wide text-white uppercase">
-                  Quick Links
-                </p>
+              <div className="on-dark bg-navy p-7">
+                <p className="label mb-4 text-base text-pool">Quick Links</p>
                 <div className="flex flex-col gap-2">
                   {quickLinks.map((l) => (
                     <Link
                       key={l.label}
                       href={l.href}
-                      className="flex items-center gap-2 text-sm text-white/80 transition-colors hover:text-cyan-on-navy"
+                      className="flex items-center gap-2 text-base text-white/85 underline-offset-4 transition-colors hover:text-pool hover:underline"
                     >
                       <span className="size-1 rounded-full bg-cyan-on-navy" />
                       {l.label}
@@ -269,41 +259,43 @@ export function ContactInfoBlock({
       </section>
 
       {showMap === false ? null : (
-        <section className="relative flex h-72 items-center justify-center overflow-hidden bg-muted sm:h-80">
-          <iframe
-            title="Map of Copper Sky Aquatic Center"
-            src={mapEmbedUrl}
-            className="absolute inset-0 size-full border-0"
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            allowFullScreen
-          />
-          <div className="relative z-10 mx-4 max-w-md rounded-xl bg-background/95 p-6 text-center shadow-lg backdrop-blur">
-            <p className="mb-1 font-display text-lg font-bold text-foreground uppercase">
-              Copper Sky Aquatic Center
-            </p>
-            <p className="mb-4 text-sm text-seal-gray">
-              {resolvedAddress?.street}
-              <br />
-              {[resolvedAddress?.city, resolvedAddress?.state]
-                .filter(Boolean)
-                .join(", ")}{" "}
-              {resolvedAddress?.zip}
-            </p>
-            <a
-              href={mapUrl}
-              {...trackClick("outbound_link_clicked", {
-                link_type: "map",
-                placement: "contact_info",
-                url: mapUrl,
-              })}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 font-display text-sm font-bold tracking-wide text-cyan-brand uppercase"
-            >
-              <MapPin size={14} />
-              Open in Google Maps
-            </a>
+        <section className="bg-background">
+          <div className="relative flex h-80 items-center justify-center overflow-hidden bg-muted sm:h-96">
+            <iframe
+              title="Map of Copper Sky Aquatic Center"
+              src={mapEmbedUrl}
+              className="absolute inset-0 size-full border-0"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              allowFullScreen
+            />
+            <div className="relative z-10 mx-4 max-w-md rounded-sm bg-background/95 p-7 text-center shadow-lg backdrop-blur">
+              <p className="mb-1 text-2xl font-display font-black uppercase italic text-foreground">
+                Copper Sky Aquatic Center
+              </p>
+              <p className="mb-4 text-sm text-seal-gray">
+                {resolvedAddress?.street}
+                <br />
+                {[resolvedAddress?.city, resolvedAddress?.state]
+                  .filter(Boolean)
+                  .join(", ")}{" "}
+                {resolvedAddress?.zip}
+              </p>
+              <a
+                href={mapUrl}
+                {...trackClick("outbound_link_clicked", {
+                  link_type: "map",
+                  placement: "contact_info",
+                  url: mapUrl,
+                })}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="label inline-flex items-center gap-2 text-base text-cyan-brand underline decoration-2 underline-offset-4"
+              >
+                <MapPin size={14} />
+                Open in Google Maps
+              </a>
+            </div>
           </div>
         </section>
       )}

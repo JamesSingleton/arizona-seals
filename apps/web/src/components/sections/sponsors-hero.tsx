@@ -1,5 +1,3 @@
-import { Star } from "lucide-react";
-
 export type SponsorsHeroProps = {
   title?: string | null;
   paragraphs?: (string | null)[] | null;
@@ -12,25 +10,24 @@ export function SponsorsHero({
   const lines = paragraphs?.filter(Boolean) ?? [];
 
   return (
-    <section className="bg-navy py-20 md:py-28">
-      <div className="mx-auto max-w-3xl px-6 text-center sm:px-10">
-        <div className="mb-6 flex items-center justify-center gap-2">
-          <Star className="size-5 fill-cyan-on-navy text-cyan-on-navy" />
-          <Star className="size-4 fill-cyan-on-navy/70 text-cyan-on-navy/70" />
-          <Star className="size-5 fill-cyan-on-navy text-cyan-on-navy" />
-        </div>
-        <h1 className="font-display text-4xl font-bold text-white uppercase md:text-6xl">
+    <section data-hero className="on-dark relative bg-navy">
+      <div className="mx-auto max-w-7xl px-6 pt-40 pb-16 sm:px-10 md:pb-20 lg:px-16">
+        <h1
+          className="display text-white"
+          style={{ fontSize: "clamp(3.25rem, 9vw, 7.5rem)" }}
+        >
           {title}
         </h1>
         {lines.map((p) => (
           <p
             key={p!.slice(0, 40)}
-            className="mt-5 text-base leading-relaxed text-white/75"
+            className="mt-5 max-w-2xl text-lg leading-relaxed text-white/85 md:text-xl"
           >
             {p}
           </p>
         ))}
       </div>
+      <div aria-hidden className="h-1.5 bg-pool" />
     </section>
   );
 }

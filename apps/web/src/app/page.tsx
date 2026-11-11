@@ -64,7 +64,7 @@ async function CachedHome({ perspective, stega }: DynamicFetchOptions) {
   if (!data) {
     return (
       <div className="flex min-h-[50vh] flex-col items-center justify-center p-4 text-center">
-        <h1 className="mb-4 font-display text-2xl font-semibold uppercase">
+        <h1 className="mb-4 font-display text-2xl font-semibold">
           Arizona Seals Swimming
         </h1>
         <p className="text-muted-foreground">
@@ -80,9 +80,7 @@ async function CachedHome({ perspective, stega }: DynamicFetchOptions) {
   if (!Array.isArray(pageBuilder) || pageBuilder.length === 0) {
     return (
       <div className="flex min-h-[50vh] flex-col items-center justify-center p-4 text-center">
-        <h1 className="mb-4 font-display text-2xl font-semibold uppercase">
-          {title}
-        </h1>
+        <h1 className="mb-4 font-display text-2xl font-semibold">{title}</h1>
         <p className="text-muted-foreground">
           This page has no content blocks yet.
         </p>

@@ -1,209 +1,363 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { track } from "@workspace/analytics";
-import { Send } from "lucide-react";
-import { useActionState, useEffect, useRef, useState } from "react";
-
+import { Button } from "@workspace/ui/components/button";
 import {
-  type ContactFormState,
-  submitContactForm,
-} from "@/action/contact-submission";
-import { HONEYPOT_FIELD, STARTED_AT_FIELD } from "@/lib/spam-guard";
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@workspace/ui/components/field";
+import { Input } from "@workspace/ui/components/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@workspace/ui/components/select";
+import { Textarea } from "@workspace/ui/components/textarea";
+import { cn } from "@workspace/ui/lib/utils";
+import { CheckCircle2, LoaderCircle } from "lucide-react";
+import { useEffect, useId, useRef, useState, useTransition } from "react";
+import { Controller, useForm } from "react-hook-form";
 
-const initialState: ContactFormState = { ok: false, message: "" };
+import { submitContactForm } from "@/action/contact-submission";
+import {
+  type ContactFormValues,
+  contactFormSchema,
+} from "@/lib/contact-schema";
+
+type ContactFormProps = {
+  inquiryTypes?: string[];
+  title?: string;
+  /** Preselects the inquiry dropdown when it matches one of `inquiryTypes`. */
+  defaultInquiryType?: string;
+};
 
 export function ContactForm({
   inquiryTypes = [],
   title = "Send Us a Message",
   defaultInquiryType,
-}: {
-  inquiryTypes?: string[];
-  title?: string;
-  /** Preselects the inquiry dropdown when it matches one of `inquiryTypes`. */
-  defaultInquiryType?: string;
-}) {
-  const [state, formAction, pending] = useActionState(
-    submitContactForm,
-    initialState,
-  );
-  const [resetKey, setResetKey] = useState(0);
-  const [showSuccess, setShowSuccess] = useState(false);
-  // Inquiry type of the in-flight submission, so the result event can carry it.
-  const inquiryTypeRef = useRef("");
-  // Stamped after hydration: script-less bots never get one (see spam-guard).
-  // Held in state (not a ref) so React's post-action form reset keeps it.
-  const [startedAt, setStartedAt] = useState("");
+}: ContactFormProps) {
+  const formId = useId();
+  const id = (name: string) => `${formId}-${name}`;
   const preselected =
     defaultInquiryType && inquiryTypes.includes(defaultInquiryType)
       ? defaultInquiryType
       : "";
 
-  // Restamp when the form remounts after "Send Another".
-  useEffect(() => {
-    setStartedAt(String(Date.now()));
-  }, [resetKey]);
+  const form = useForm<ContactFormValues>({
+    resolver: zodResolver(contactFormSchema),
+    mode: "onTouched",
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      subject: preselected,
+      message: "",
+      website: "",
+    },
+  });
 
-  useEffect(() => {
-    if (state === initialState) return;
+  const [pending, startTransition] = useTransition();
+  const [result, setResult] = useState<{ ok: boolean; message: string }>();
+  const successRef = useRef<HTMLDivElement>(null);
+  const subject = form.watch("subject");
 
-    const inquiry_type = inquiryTypeRef.current;
-    if (state.ok) {
-      setShowSuccess(true);
-      track("contact_form_succeeded", { inquiry_type });
-      if (/tryout/i.test(inquiry_type)) {
-        track("tryout_inquiry_submitted", { inquiry_type });
+  // Stamped after hydration: script-less bots never get one (see spam-guard).
+  useEffect(() => {
+    if (!result?.ok) form.setValue("startedAt", Date.now());
+  }, [form, result?.ok]);
+
+  // Move focus to the confirmation so screen readers announce it.
+  useEffect(() => {
+    if (result?.ok) successRef.current?.focus();
+  }, [result?.ok]);
+
+  const onSubmit = (values: ContactFormValues) => {
+    const inquiry_type = values.subject;
+    track("contact_form_submitted", { inquiry_type });
+    startTransition(async () => {
+      const response = await submitContactForm(values);
+      if (response.ok) {
+        track("contact_form_succeeded", { inquiry_type });
+        if (/tryout/i.test(inquiry_type)) {
+          track("tryout_inquiry_submitted", { inquiry_type });
+        }
+        form.reset({ ...form.formState.defaultValues, subject: preselected });
+      } else {
+        track("contact_form_failed", {
+          inquiry_type,
+          error: response.message,
+        });
+        for (const [field, message] of Object.entries(
+          response.fieldErrors ?? {},
+        )) {
+          form.setError(field as keyof ContactFormValues, { message });
+        }
       }
-    } else {
-      track("contact_form_failed", { inquiry_type, error: state.message });
-    }
-  }, [state]);
+      setResult({ ok: response.ok, message: response.message });
+    });
+  };
 
-  if (showSuccess) {
+  if (result?.ok) {
     return (
-      <div className="flex h-full flex-col items-center justify-center rounded-2xl border border-border bg-muted px-6 py-16 text-center">
-        <div className="mb-5 flex size-16 items-center justify-center rounded-full bg-cyan-brand">
-          <Send size={28} className="text-white" />
-        </div>
-        <h3 className="mb-3 font-display text-2xl font-bold text-foreground uppercase">
-          Message Sent!
-        </h3>
-        <p className="mb-6 max-w-sm leading-relaxed text-seal-gray">
-          {state.message}
+      <div
+        ref={successRef}
+        tabIndex={-1}
+        role="status"
+        className="flex h-full flex-col items-start justify-center bg-water px-6 py-14 outline-none md:px-10"
+      >
+        <CheckCircle2 aria-hidden className="mb-5 size-12 text-cyan-brand" />
+        <h3 className="mb-3 text-4xl text-foreground">Message sent</h3>
+        <p className="mb-8 max-w-md text-lg leading-relaxed text-seal-gray">
+          {result.message}
         </p>
-        <button
+        <Button
           type="button"
-          onClick={() => {
-            setShowSuccess(false);
-            setResetKey((k) => k + 1);
-          }}
-          className="rounded border-2 border-foreground px-6 py-2 text-sm font-bold tracking-wide text-foreground uppercase transition-colors hover:bg-foreground hover:text-background"
+          variant="secondary"
+          onClick={() => setResult(undefined)}
         >
-          Send Another
-        </button>
+          Send another message
+        </Button>
       </div>
     );
   }
 
   return (
     <form
-      key={resetKey}
-      action={formAction}
-      onSubmit={(event) => {
-        const formData = new FormData(event.currentTarget);
-        const inquiry_type = String(formData.get("subject") ?? "");
-        inquiryTypeRef.current = inquiry_type;
-        track("contact_form_submitted", { inquiry_type });
-      }}
-      className="relative space-y-5 rounded-2xl border border-border bg-background p-6 md:p-8"
+      noValidate
+      onSubmit={form.handleSubmit(onSubmit)}
+      aria-labelledby={id("title")}
+      className="relative bg-water p-6 md:p-10"
     >
-      <h3 className="font-display text-2xl font-bold text-foreground uppercase">
+      <h3 id={id("title")} className="mb-2 text-4xl text-foreground">
         {title}
       </h3>
+      <p className="mb-8 text-base text-seal-gray">
+        Fields marked <span aria-hidden>*</span>
+        <span className="sr-only">with an asterisk</span> are required.
+      </p>
 
-      <input type="hidden" name={STARTED_AT_FIELD} value={startedAt} readOnly />
       {/* Honeypot: hidden from people and assistive tech; bots fill it in. */}
       <div
         aria-hidden
         className="absolute -left-[9999px] size-px overflow-hidden"
       >
         <label>
-          Company website (leave blank)
+          Website (leave blank)
           <input
-            name={HONEYPOT_FIELD}
-            type="text"
             tabIndex={-1}
             autoComplete="off"
+            {...form.register("website")}
           />
         </label>
       </div>
 
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-        <label className="block space-y-1.5">
-          <span className="text-sm font-semibold text-foreground">
-            Name <span className="text-cyan-brand">*</span>
-          </span>
-          <input
+      <FieldGroup className="gap-6">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <Controller
             name="name"
-            required
-            autoComplete="name"
-            maxLength={120}
-            className="w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm outline-none focus:border-cyan-brand"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={id("name")}>
+                  Name <Required />
+                </FieldLabel>
+                <Input
+                  {...field}
+                  id={id("name")}
+                  autoComplete="name"
+                  aria-required
+                  aria-invalid={fieldState.invalid}
+                  aria-describedby={
+                    fieldState.invalid ? id("name-error") : undefined
+                  }
+                />
+                {fieldState.invalid ? (
+                  <FieldError
+                    id={id("name-error")}
+                    errors={[fieldState.error]}
+                  />
+                ) : null}
+              </Field>
+            )}
           />
-        </label>
-        <label className="block space-y-1.5">
-          <span className="text-sm font-semibold text-foreground">
-            Email <span className="text-cyan-brand">*</span>
-          </span>
-          <input
+          <Controller
             name="email"
-            type="email"
-            required
-            autoComplete="email"
-            className="w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm outline-none focus:border-cyan-brand"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={id("email")}>
+                  Email <Required />
+                </FieldLabel>
+                <Input
+                  {...field}
+                  id={id("email")}
+                  type="email"
+                  inputMode="email"
+                  autoComplete="email"
+                  aria-required
+                  aria-invalid={fieldState.invalid}
+                  aria-describedby={
+                    fieldState.invalid ? id("email-error") : undefined
+                  }
+                />
+                {fieldState.invalid ? (
+                  <FieldError
+                    id={id("email-error")}
+                    errors={[fieldState.error]}
+                  />
+                ) : null}
+              </Field>
+            )}
           />
-        </label>
-      </div>
+        </div>
 
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-        <label className="block space-y-1.5">
-          <span className="text-sm font-semibold text-foreground">Phone</span>
-          <input
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <Controller
             name="phone"
-            type="tel"
-            autoComplete="tel"
-            maxLength={40}
-            className="w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm outline-none focus:border-cyan-brand"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={id("phone")}>Phone</FieldLabel>
+                <Input
+                  {...field}
+                  id={id("phone")}
+                  type="tel"
+                  inputMode="tel"
+                  autoComplete="tel"
+                  aria-invalid={fieldState.invalid}
+                  aria-describedby={cn(
+                    id("phone-hint"),
+                    fieldState.invalid && id("phone-error"),
+                  )}
+                />
+                <FieldDescription id={id("phone-hint")}>
+                  Optional. Helpful if you'd like a call back.
+                </FieldDescription>
+                {fieldState.invalid ? (
+                  <FieldError
+                    id={id("phone-error")}
+                    errors={[fieldState.error]}
+                  />
+                ) : null}
+              </Field>
+            )}
           />
-        </label>
-        <label className="block space-y-1.5">
-          <span className="text-sm font-semibold text-foreground">
-            Inquiry Type <span className="text-cyan-brand">*</span>
-          </span>
-          <select
+          <Controller
             name="subject"
-            required
-            defaultValue={preselected}
-            className="w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm outline-none focus:border-cyan-brand"
-          >
-            <option value="" disabled>
-              Select a topic
-            </option>
-            {inquiryTypes.map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={id("subject")}>
+                  What's this about? <Required />
+                </FieldLabel>
+                <Select
+                  name={field.name}
+                  value={field.value || null}
+                  onValueChange={(value) => {
+                    field.onChange(value ?? "");
+                    field.onBlur();
+                  }}
+                >
+                  <SelectTrigger
+                    id={id("subject")}
+                    ref={field.ref}
+                    className="w-full"
+                    aria-required
+                    aria-invalid={fieldState.invalid}
+                    aria-describedby={
+                      fieldState.invalid ? id("subject-error") : undefined
+                    }
+                    onBlur={field.onBlur}
+                  >
+                    <SelectValue placeholder="Choose a topic">
+                      {subject || undefined}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {inquiryTypes.map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {type}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {fieldState.invalid ? (
+                  <FieldError
+                    id={id("subject-error")}
+                    errors={[fieldState.error]}
+                  />
+                ) : null}
+              </Field>
+            )}
+          />
+        </div>
 
-      <label className="block space-y-1.5">
-        <span className="text-sm font-semibold text-foreground">
-          Message <span className="text-cyan-brand">*</span>
-        </span>
-        <textarea
+        <Controller
           name="message"
-          required
-          rows={6}
-          maxLength={5000}
-          className="w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm outline-none focus:border-cyan-brand"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={id("message")}>
+                Message <Required />
+              </FieldLabel>
+              <Textarea
+                {...field}
+                id={id("message")}
+                rows={6}
+                aria-required
+                aria-invalid={fieldState.invalid}
+                aria-describedby={cn(
+                  id("message-hint"),
+                  fieldState.invalid && id("message-error"),
+                )}
+              />
+              <FieldDescription id={id("message-hint")}>
+                For tryouts, include your swimmer's age and any swim team or
+                lesson experience.
+              </FieldDescription>
+              {fieldState.invalid ? (
+                <FieldError
+                  id={id("message-error")}
+                  errors={[fieldState.error]}
+                />
+              ) : null}
+            </Field>
+          )}
         />
-      </label>
 
-      {!state.ok && state.message ? (
-        <p className="text-sm text-red-600" role="alert">
-          {state.message}
-        </p>
-      ) : null}
+        {result && !result.ok ? (
+          <p role="alert" className="text-base font-medium text-destructive">
+            {result.message}
+          </p>
+        ) : null}
 
-      <button
-        type="submit"
-        disabled={pending}
-        className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 font-display text-sm font-bold tracking-widest text-primary-foreground uppercase transition-colors hover:bg-primary/90 disabled:opacity-60"
-      >
-        <Send size={14} />
-        {pending ? "Sending…" : "Send Message"}
-      </button>
+        <div>
+          <Button type="submit" size="lg" disabled={pending}>
+            {pending ? (
+              <>
+                <LoaderCircle aria-hidden className="size-5 animate-spin" />
+                Sending…
+              </>
+            ) : (
+              "Send message"
+            )}
+          </Button>
+        </div>
+      </FieldGroup>
     </form>
+  );
+}
+
+function Required() {
+  return (
+    <span aria-hidden className="text-destructive">
+      *
+    </span>
   );
 }

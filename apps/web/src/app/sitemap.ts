@@ -35,6 +35,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     const slugPages = data?.slugPages ?? [];
     const blogPages = data?.blogPages ?? [];
+    const eventPages = data?.eventPages ?? [];
 
     return [
       ...entries,
@@ -43,6 +44,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: new Date(page.lastModified ?? new Date()),
         changeFrequency: "weekly" as const,
         priority: 0.8,
+      })),
+      ...eventPages.map((page) => ({
+        url: `${baseUrl}${page.slug?.startsWith("/") ? page.slug : `/${page.slug}`}`,
+        lastModified: new Date(page.lastModified ?? new Date()),
+        changeFrequency: "weekly" as const,
+        priority: 0.6,
       })),
       ...blogPages.map((page) => ({
         url: `${baseUrl}${page.slug?.startsWith("/") ? page.slug : `/${page.slug}`}`,

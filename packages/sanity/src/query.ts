@@ -422,6 +422,51 @@ const resultsBoardBlock = /* groq */ `
   }
 `;
 
+const eventCardFragment = /* groq */ `
+  _id,
+  title,
+  "slug": slug.current,
+  category,
+  start,
+  end,
+  allDay,
+  status,
+  summary,
+  host,
+  location{
+    name,
+    street,
+    city,
+    state,
+    zip
+  },
+  linkLabel,
+  "link": link{
+    ${customUrlFragment}
+  },
+  ${imageFragment}
+`;
+
+const eventsCalendarBlock = /* groq */ `
+  _type == "eventsCalendar" => {
+    ...,
+    viewAllUrl{
+      ${customUrlFragment}
+    },
+    // Server time of the query: the calendar splits upcoming/past from this
+    // until the browser takes over with its own clock.
+    "snapshotAt": now(),
+    "events": *[
+      _type == "event"
+      && defined(start)
+      && defined(slug.current)
+      && (!defined(^.categories) || count(^.categories) == 0 || category in ^.categories)
+    ] | order(start asc)[0...200]{
+      ${eventCardFragment}
+    }
+  }
+`;
+
 const sponsorsHeroBlock = /* groq */ `
   _type == "sponsorsHero" => {
     ...
@@ -608,6 +653,7 @@ const pageBuilderFragment = /* groq */ `
     ${programsPreviewBlock},
     ${programsListBlock},
     ${scheduleDuesBlock},
+    ${eventsCalendarBlock},
     ${processStepsBlock},
     ${pathwaysBlock},
     ${resultsBoardBlock},
@@ -686,48 +732,32 @@ export const queryBlogPaths = defineQuery(`
   *[_type == "blog" && defined(slug.current) && seoNoIndex != true].slug.current
 `);
 
-const ogFieldsFragment = /* groq */ `
-  _id,
-  _type,
-  "title": select(
-    defined(ogTitle) => ogTitle,
-    defined(seoTitle) => seoTitle,
-    title
-  ),
-  "description": select(
-    defined(ogDescription) => ogDescription,
-    defined(seoDescription) => seoDescription,
-    description
-  ),
-  "image": select(
-    defined(image.asset) => image.asset->url + "?w=1200&h=630&dpr=2&fit=crop",
-    defined(seoImage.asset) => seoImage.asset->url + "?w=1200&h=630&dpr=2&fit=crop"
-  ),
-  "seoImage": seoImage.asset->url + "?w=1200&h=630&dpr=2&fit=max",
-  "logo": *[_type == "settings"][0].logo.asset->url + "?w=960&h=320&fit=max&q=100"
-`;
+const ogImageFields = /* groq */ `{ asset, hotspot, crop }`;
 
-export const queryHomePageOGData = defineQuery(/* groq */ `
-  *[_type == "homePage" && _id == $id][0]{
-    ${ogFieldsFragment}
-  }
-`);
-
-export const querySlugPageOGData = defineQuery(/* groq */ `
-  *[_type == "page" && _id == $id][0]{
-    ${ogFieldsFragment}
-  }
-`);
-
-export const queryBlogPageOGData = defineQuery(/* groq */ `
-  *[_type == "blog" && _id == $id][0]{
-    ${ogFieldsFragment}
-  }
-`);
-
-export const queryGenericPageOGData = defineQuery(/* groq */ `
-  *[ defined(slug.current) && _id == $id][0]{
-    ${ogFieldsFragment}
+/**
+ * Everything the share-image route needs for any document, by id. The photo
+ * falls back from the document's own image to its hero / page header.
+ */
+export const queryOgData = defineQuery(/* groq */ `
+  *[_id == $id][0]{
+    _id,
+    _type,
+    "title": coalesce(ogTitle, title),
+    "description": coalesce(ogDescription, seoDescription, summary, description),
+    "image": select(
+      defined(seoImage.asset) => seoImage${ogImageFields},
+      defined(image.asset) => image${ogImageFields},
+      defined(pageBuilder[_type == "hero"][0].image.asset) => pageBuilder[_type == "hero"][0].image${ogImageFields},
+      defined(pageBuilder[_type == "pageHero"][0].backgroundImage.asset) => pageBuilder[_type == "pageHero"][0].backgroundImage${ogImageFields}
+    ),
+    category,
+    start,
+    end,
+    allDay,
+    status,
+    "venue": location.name,
+    "city": location.city,
+    "logo": *[_type == "settings"][0].alternateLogo.asset->url
   }
 `);
 
@@ -813,8 +843,29 @@ export const querySitemapData = defineQuery(/* groq */ `{
   "blogPages": *[_type == "blog" && defined(slug.current) && seoNoIndex != true]{
     "slug": slug.current,
     "lastModified": _updatedAt
+  },
+  "eventPages": *[_type == "event" && defined(slug.current) && seoNoIndex != true]{
+    "slug": slug.current,
+    "lastModified": _updatedAt
   }
 }`);
+
+export const queryEventPaths = defineQuery(/* groq */ `
+  *[_type == "event" && defined(slug.current)].slug.current
+`);
+
+export const queryEventBySlug = defineQuery(/* groq */ `
+  *[_type == "event" && slug.current == $slug][0]{
+    ${eventCardFragment},
+    _type,
+    _updatedAt,
+    seoNoIndex,
+    "body": body[]{
+      ...,
+      ${markDefsFragment}
+    }
+  }
+`);
 
 export const queryGlobalSeoSettings = defineQuery(`
   *[_type == "settings"][0]{

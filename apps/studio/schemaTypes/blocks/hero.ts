@@ -24,6 +24,8 @@ export const hero = defineType({
     }),
 
     defineField({
+      // The site no longer shows small labels above titles.
+      hidden: true,
       name: "badge",
       type: "string",
       title: "Eyebrow / Badge",

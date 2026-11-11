@@ -23,6 +23,9 @@ const ContactInfoBlock = dynamic(() =>
 const CTABlock = dynamic(() =>
   import("./sections/cta").then((m) => m.CTABlock),
 );
+const EventsCalendar = dynamic(() =>
+  import("./sections/events-calendar").then((m) => m.EventsCalendar),
+);
 const FacilitiesList = dynamic(() =>
   import("./sections/facilities-list").then((m) => m.FacilitiesList),
 );
@@ -136,6 +139,7 @@ const FULL_BLEED_TYPES = new Set<string>([
   "processSteps",
   "pathways",
   "resultsBoard",
+  "eventsCalendar",
 ]);
 
 const BLOCK_COMPONENTS = {
@@ -175,6 +179,7 @@ const BLOCK_COMPONENTS = {
   processSteps: ProcessSteps as React.ComponentType<any>,
   pathways: Pathways as React.ComponentType<any>,
   resultsBoard: ResultsBoard as React.ComponentType<any>,
+  eventsCalendar: EventsCalendar as React.ComponentType<any>,
 } as const;
 
 function createSanityDataAttribute(config: SanityDataAttributeConfig): string {

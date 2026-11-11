@@ -11,7 +11,6 @@ export type CTABlockProps = PagebuilderType<"cta"> & {
 export function CTABlock({
   richText,
   title,
-  eyebrow,
   buttons,
   image,
   layout = "card",
@@ -21,7 +20,6 @@ export function CTABlock({
     const secondary = buttons?.[1];
     return (
       <CtaFullBleed
-        eyebrow={eyebrow ?? undefined}
         titleLines={title ? title.split("\n").filter(Boolean) : undefined}
         image={image}
         primaryCta={
@@ -41,7 +39,6 @@ export function CTABlock({
   if (layout === "cyanBand" || layout === "navyBand") {
     return (
       <CtaBand
-        eyebrow={eyebrow}
         title={title}
         richText={richText}
         buttons={buttons}
@@ -50,12 +47,5 @@ export function CTABlock({
     );
   }
 
-  return (
-    <CtaCard
-      eyebrow={eyebrow}
-      title={title}
-      richText={richText}
-      buttons={buttons}
-    />
-  );
+  return <CtaCard title={title} richText={richText} buttons={buttons} />;
 }

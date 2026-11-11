@@ -25,6 +25,8 @@ export const cta = defineType({
     }),
 
     defineField({
+      // The site no longer shows small labels above titles.
+      hidden: true,
       name: "eyebrow",
       title: "Eyebrow",
       type: "string",

@@ -49,7 +49,6 @@ function groupSponsorsByLevel(sponsors: SponsorsGridSponsor[]): SponsorGroup[] {
 }
 
 export function SponsorsGrid({
-  eyebrow = "Thank You",
   title = "Our Sponsors & Partners",
   sponsors,
   footerNote,
@@ -64,21 +63,14 @@ export function SponsorsGrid({
     <section className="bg-background py-20 md:py-28">
       <div className="mx-auto max-w-7xl px-6 sm:px-10 lg:px-16">
         <div className="mb-14 text-center">
-          {eyebrow ? (
-            <p className="mb-2 font-display text-sm font-bold tracking-[0.2em] text-cyan-brand uppercase">
-              {eyebrow}
-            </p>
-          ) : null}
-          <h2 className="font-display text-4xl font-bold text-foreground uppercase md:text-5xl">
-            {title}
-          </h2>
+          <h2 className="section-title text-foreground">{title}</h2>
         </div>
 
         <div className="space-y-14">
           {groups.map((group) => (
             <div key={group.key}>
               {showGroupHeadings ? (
-                <h3 className="mb-6 text-center font-display text-sm font-bold tracking-[0.25em] text-cyan-brand uppercase">
+                <h3 className="mb-6 text-center label text-sm font-semibold text-cyan-brand">
                   {group.name}
                 </h3>
               ) : null}

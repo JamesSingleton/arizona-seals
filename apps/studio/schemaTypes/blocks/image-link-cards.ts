@@ -87,6 +87,8 @@ export const imageLinkCards = defineType({
   title: "Image Link Cards",
   fields: [
     defineField({
+      // The site no longer shows small labels above titles.
+      hidden: true,
       name: "eyebrow",
       title: "Eyebrow Text",
       type: "string",

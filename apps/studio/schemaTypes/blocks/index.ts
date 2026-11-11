@@ -1,6 +1,7 @@
 import { checklistSplit } from "./checklist-split";
 import { contactInfo } from "./contact-info";
 import { cta } from "./cta";
+import { eventsCalendar } from "./events-calendar";
 import { facilitiesList } from "./facilities-list";
 import { faqAccordion } from "./faq-accordion";
 import { featureCardsIcon } from "./feature-cards-icon";
@@ -34,6 +35,7 @@ export const pageBuilderBlocks = [
   programsPreview,
   programsList,
   scheduleDues,
+  eventsCalendar,
   processSteps,
   pathways,
   resultsBoard,
