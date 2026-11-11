@@ -1,100 +1,116 @@
 "use client";
+
+import { zodResolver } from "@hookform/resolvers/zod";
 import { track } from "@workspace/analytics";
 import { Button } from "@workspace/ui/components/button";
-import { ChevronRight, LoaderCircle } from "lucide-react";
-import Form from "next/form";
-import { useFormStatus } from "react-dom";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from "@workspace/ui/components/field";
+import { Input } from "@workspace/ui/components/input";
+import { LoaderCircle } from "lucide-react";
+import { useId, useState, useTransition } from "react";
+import { Controller, useForm } from "react-hook-form";
 
 import { newsletterSubmission } from "@/action/newsletter-submission";
+import {
+  type NewsletterValues,
+  newsletterSchema,
+} from "@/lib/newsletter-schema";
 import type { PagebuilderType } from "@/types";
 import { RichText } from "../elements/rich-text";
 
 type SubscribeNewsletterProps = PagebuilderType<"subscribeNewsletter">;
-
-export default function SubscribeNewsletterButton() {
-  const { pending } = useFormStatus();
-  return (
-    <Button
-      size="icon"
-      type="submit"
-      disabled={pending}
-      className="size-8 aspect-square bg-zinc-200 hover:bg-zinc-300 dark:bg-zinc-800 dark:hover:bg-zinc-700"
-      aria-label={pending ? "Subscribing..." : "Subscribe to newsletter"}
-    >
-      <span className="flex items-center justify-center gap-2">
-        {pending ? (
-          <LoaderCircle
-            className="animate-spin text-black"
-            size={16}
-            strokeWidth={2}
-            aria-hidden="true"
-          />
-        ) : (
-          <ChevronRight
-            className="text-black dark:text-neutral-300"
-            size={16}
-            strokeWidth={2}
-            aria-hidden="true"
-          />
-        )}
-      </span>
-    </Button>
-  );
-}
 
 export function SubscribeNewsletter({
   title,
   subTitle,
   helperText,
 }: SubscribeNewsletterProps) {
+  const inputId = useId();
+  const [pending, startTransition] = useTransition();
+  const [result, setResult] = useState<{ ok: boolean; message: string }>();
+  const form = useForm<NewsletterValues>({
+    resolver: zodResolver(newsletterSchema),
+    mode: "onTouched",
+    defaultValues: { email: "" },
+  });
+
+  const onSubmit = (values: NewsletterValues) => {
+    track("newsletter_subscription_submitted", {
+      placement: "subscribe_newsletter",
+    });
+    startTransition(async () => {
+      setResult(await newsletterSubmission(values));
+    });
+  };
+
   return (
-    <section id="subscribe" className="px-4 py-8 sm:py-12 md:py-16">
-      <div className="relative container mx-auto px-4 md:px-8 py-8 sm:py-16 md:py-24 lg:py-32 bg-gray-50 dark:bg-zinc-900 rounded-3xl overflow-hidden">
-        <div className="relative z-10 mx-auto text-center">
-          <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-neutral-300 sm:text-3xl md:text-5xl text-balance">
-            {title}
-          </h2>
-          {subTitle && (
-            <RichText
-              richText={subTitle}
-              className="mb-6 text-sm text-gray-600 sm:mb-8 text-balance sm:text-base dark:text-neutral-300"
-            />
-          )}
-          <Form
-            className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-2"
-            action={newsletterSubmission}
-            onSubmit={() => {
-              track("newsletter_subscription_submitted", {
-                placement: "subscribe_newsletter",
-              });
-            }}
-          >
-            <div className="flex items-center justify-between rounded-xl border bg-background p-2 pl-4 drop-shadow-lg md:w-96 dark:bg-zinc-200">
-              <label htmlFor="newsletter-email" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="newsletter-email"
-                type="email"
-                name="email"
-                required
-                autoComplete="email"
-                placeholder="Enter your email address"
-                aria-describedby={helperText ? "newsletter-helper" : undefined}
-                className="w-full rounded-e-none border-e-0 bg-transparent outline-none focus-visible:ring-2 focus-visible:ring-cyan-brand dark:text-zinc-900 dark:placeholder:text-zinc-900"
-              />
-              <SubscribeNewsletterButton />
-            </div>
-          </Form>
-          {helperText ? (
-            <div id="newsletter-helper">
-              <RichText
-                richText={helperText}
-                className="mt-3 text-sm text-gray-800 opacity-80 sm:mt-4 dark:text-neutral-300"
-              />
-            </div>
+    <section id="subscribe" className="bg-water py-20 md:py-24">
+      <div className="mx-auto max-w-2xl px-6 sm:px-10">
+        {title ? (
+          <h2 className="section-title mb-4 text-foreground">{title}</h2>
+        ) : null}
+        {subTitle ? (
+          <RichText
+            richText={subTitle}
+            className="mb-8 text-lg text-seal-gray"
+          />
+        ) : null}
+
+        <form noValidate onSubmit={form.handleSubmit(onSubmit)}>
+          <Controller
+            name="email"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={inputId}>Email address</FieldLabel>
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <Input
+                    {...field}
+                    id={inputId}
+                    type="email"
+                    inputMode="email"
+                    autoComplete="email"
+                    aria-invalid={fieldState.invalid}
+                    aria-describedby={
+                      helperText ? `${inputId}-helper` : undefined
+                    }
+                  />
+                  <Button
+                    type="submit"
+                    size="lg"
+                    disabled={pending}
+                    className="shrink-0"
+                  >
+                    {pending ? (
+                      <LoaderCircle
+                        aria-hidden
+                        className="size-5 animate-spin"
+                      />
+                    ) : null}
+                    Subscribe
+                  </Button>
+                </div>
+                {helperText ? (
+                  <FieldDescription id={`${inputId}-helper`}>
+                    <RichText richText={helperText} />
+                  </FieldDescription>
+                ) : null}
+                {fieldState.invalid ? (
+                  <FieldError errors={[fieldState.error]} />
+                ) : null}
+              </Field>
+            )}
+          />
+          {result ? (
+            <p role="status" className="mt-4 text-base text-foreground">
+              {result.message}
+            </p>
           ) : null}
-        </div>
+        </form>
       </div>
     </section>
   );

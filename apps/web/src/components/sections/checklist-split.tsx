@@ -20,12 +20,11 @@ export type ChecklistSplitProps = {
 
 const bgClass = {
   default: "bg-background",
-  muted: "bg-muted",
+  muted: "bg-water",
   soft: "bg-accent",
 } as const;
 
 export function ChecklistSplit({
-  eyebrow,
   title,
   paragraphs,
   items,
@@ -45,23 +44,13 @@ export function ChecklistSplit({
       <div className="mx-auto max-w-7xl px-6 sm:px-10 lg:px-16">
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16">
           <div className={imageAtEnd ? "" : "lg:order-2"}>
-            {eyebrow ? (
-              <div className="mb-4 flex items-center gap-3">
-                <div className="h-0.5 w-8 bg-cyan-brand" />
-                <span className="font-display text-xs font-bold tracking-[0.25em] text-cyan-brand uppercase">
-                  {eyebrow}
-                </span>
-              </div>
-            ) : null}
             {title ? (
-              <h2 className="mb-6 font-display text-3xl font-bold text-foreground uppercase md:text-4xl">
-                {title}
-              </h2>
+              <h2 className="section-title mb-6 text-foreground">{title}</h2>
             ) : null}
             {lines.map((p) => (
               <p
                 key={p!.slice(0, 40)}
-                className="mb-4 text-base leading-relaxed text-seal-gray last:mb-6"
+                className="mb-4 max-w-xl text-lg leading-relaxed text-seal-gray last:mb-6"
               >
                 {p}
               </p>
@@ -71,7 +60,7 @@ export function ChecklistSplit({
                 {checks.map((item) => (
                   <li
                     key={item!}
-                    className="flex items-start gap-3 text-sm text-seal-gray"
+                    className="flex items-start gap-3 text-base text-foreground"
                   >
                     <Star
                       size={14}
@@ -87,13 +76,13 @@ export function ChecklistSplit({
                 placement="checklist_split"
                 buttons={buttons}
                 className="gap-3"
-                buttonClassName="font-display text-sm font-bold tracking-widest uppercase"
+                buttonClassName=""
               />
             ) : null}
           </div>
 
           <div
-            className={`relative h-72 overflow-hidden bg-muted md:h-[420px] ${imageAtEnd ? "" : "lg:order-1"}`}
+            className={`relative h-80 overflow-hidden rounded-sm bg-muted md:h-[30rem] ${imageAtEnd ? "" : "lg:order-1"}`}
           >
             {image?.id ? (
               <SanityImage

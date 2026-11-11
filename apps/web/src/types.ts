@@ -31,7 +31,8 @@ export type SealsPageBuilderBlockTypes =
   | "scheduleDues"
   | "processSteps"
   | "pathways"
-  | "resultsBoard";
+  | "resultsBoard"
+  | "eventsCalendar";
 
 export type PageBuilderBlockTypes =
   | NonNullable<

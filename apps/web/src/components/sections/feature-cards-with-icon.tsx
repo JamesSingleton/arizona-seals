@@ -15,18 +15,16 @@ function FeatureCard({ card, navy }: FeatureCardProps) {
   const { icon, title, richText } = card ?? {};
   if (navy) {
     return (
-      <div className="rounded-xl border border-white/10 bg-white/5 p-6 transition-colors hover:bg-white/10">
+      <div className="border-t-[6px] border-pool bg-white/5 p-7">
         {icon ? (
           <span className="mb-5 flex size-12 items-center justify-center rounded-full bg-cyan-on-navy/20 text-cyan-on-navy">
             <SanityIcon icon={icon} />
           </span>
         ) : null}
-        <h3 className="mb-2 font-display text-lg font-bold text-white uppercase">
-          {title}
-        </h3>
+        <h3 className="mb-3 text-3xl text-white">{title}</h3>
         <RichText
           richText={richText}
-          className="text-sm leading-relaxed text-white/70 [&_p]:mb-0"
+          className="text-base leading-relaxed text-white/80 [&_p]:mb-0"
         />
       </div>
     );
@@ -51,7 +49,6 @@ function FeatureCard({ card, navy }: FeatureCardProps) {
 }
 
 export function FeatureCardsWithIcon({
-  eyebrow,
   title,
   richText,
   cards,
@@ -62,7 +59,7 @@ export function FeatureCardsWithIcon({
   return (
     <section
       id="features"
-      className={navy ? "bg-navy py-20 md:py-28" : "my-6 md:my-16"}
+      className={navy ? "on-dark bg-navy py-20 md:py-28" : "my-6 md:my-16"}
     >
       <div
         className={
@@ -73,21 +70,10 @@ export function FeatureCardsWithIcon({
       >
         <div className="flex w-full flex-col items-center">
           <div className="flex flex-col items-center space-y-4 text-center sm:space-y-6">
-            {eyebrow ? (
-              <p
-                className={
-                  navy
-                    ? "font-display text-sm font-bold tracking-[0.2em] text-cyan-on-navy uppercase"
-                    : "rounded-full bg-muted px-3 py-1 text-sm"
-                }
-              >
-                {eyebrow}
-              </p>
-            ) : null}
             <h2
               className={
                 navy
-                  ? "font-display text-4xl font-bold text-white uppercase md:text-5xl"
+                  ? "section-title text-white"
                   : "text-3xl font-semibold md:text-5xl"
               }
             >

@@ -31,7 +31,7 @@ export function FeaturedBlogCard({ blog }: BlogCardProps) {
 
   return (
     <Link href={href} className="group block">
-      <article className="grid grid-cols-1 overflow-hidden border border-border bg-background lg:grid-cols-2">
+      <article className="grid grid-cols-1 overflow-hidden border-b-[6px] border-cyan-brand bg-water lg:grid-cols-2">
         <div className="relative aspect-16/10 overflow-hidden bg-muted lg:aspect-auto lg:min-h-88">
           {image?.id ? (
             <SanityImage
@@ -47,18 +47,18 @@ export function FeaturedBlogCard({ blog }: BlogCardProps) {
             <div className="absolute inset-0 bg-navy" />
           )}
           {category ? (
-            <span className="absolute top-4 left-4 bg-cyan-brand px-3 py-1 font-display text-xs font-bold tracking-widest text-primary-foreground uppercase">
+            <span className="absolute top-4 left-4 bg-navy px-3 py-1.5 label text-sm text-white">
               {category}
             </span>
           ) : null}
         </div>
         <div className="flex flex-col justify-center p-8 md:p-10">
           {publishedAt ? (
-            <p className="mb-3 font-display text-xs tracking-widest text-seal-gray uppercase">
+            <p className="mb-3 label text-sm text-seal-gray">
               {formatDate(publishedAt)}
             </p>
           ) : null}
-          <h2 className="mb-4 font-display text-2xl leading-tight font-black text-balance text-foreground uppercase transition-colors group-hover:text-cyan-brand md:text-3xl">
+          <h2 className="mb-4 text-4xl text-balance text-foreground transition-colors group-hover:text-cyan-brand md:text-5xl">
             {title}
           </h2>
           {description ? (
@@ -66,7 +66,7 @@ export function FeaturedBlogCard({ blog }: BlogCardProps) {
               {description}
             </p>
           ) : null}
-          <p className="font-display text-xs font-bold tracking-widest text-cyan-brand uppercase transition-colors group-hover:text-foreground">
+          <p className="label text-sm text-cyan-brand transition-colors group-hover:text-foreground">
             Read More →
           </p>
         </div>
@@ -78,7 +78,7 @@ export function FeaturedBlogCard({ blog }: BlogCardProps) {
 export function BlogCard({ blog }: BlogCardProps) {
   if (!blog) {
     return (
-      <article className="flex flex-col border border-border bg-background">
+      <article className="flex flex-col border-b-[6px] border-cyan-brand bg-water">
         <div className="h-52 animate-pulse bg-muted" />
         <div className="space-y-3 p-6">
           <div className="h-3 w-24 animate-pulse bg-muted" />
@@ -94,8 +94,8 @@ export function BlogCard({ blog }: BlogCardProps) {
 
   return (
     <Link href={href} className="group flex flex-col">
-      <article className="flex flex-1 flex-col border border-border bg-background">
-        <div className="relative h-52 shrink-0 overflow-hidden bg-muted">
+      <article className="flex flex-1 flex-col border-b-[6px] border-cyan-brand bg-water">
+        <div className="relative h-56 shrink-0 overflow-hidden bg-muted">
           {image?.id ? (
             <SanityImage
               image={image}
@@ -108,26 +108,26 @@ export function BlogCard({ blog }: BlogCardProps) {
             />
           ) : null}
           {category ? (
-            <span className="absolute top-4 left-4 bg-cyan-brand px-3 py-1 font-display text-xs font-bold tracking-widest text-primary-foreground uppercase">
+            <span className="absolute top-4 left-4 bg-navy px-3 py-1.5 label text-sm text-white">
               {category}
             </span>
           ) : null}
         </div>
         <div className="flex flex-1 flex-col p-6">
           {publishedAt ? (
-            <p className="mb-3 font-display text-xs tracking-widest text-seal-gray uppercase">
+            <p className="mb-3 label text-sm text-seal-gray">
               {formatDate(publishedAt)}
             </p>
           ) : null}
-          <h3 className="mb-3 font-display text-lg leading-tight font-black text-balance text-foreground uppercase transition-colors group-hover:text-cyan-brand">
+          <h3 className="mb-3 text-3xl text-balance text-foreground transition-colors group-hover:text-cyan-brand">
             {title}
           </h3>
           {description ? (
-            <p className="flex-1 text-sm leading-relaxed text-seal-gray">
+            <p className="flex-1 text-base leading-relaxed text-seal-gray">
               {description}
             </p>
           ) : null}
-          <p className="mt-4 font-display text-xs font-bold tracking-widest text-cyan-brand uppercase transition-colors group-hover:text-foreground">
+          <p className="mt-4 label text-sm text-cyan-brand transition-colors group-hover:text-foreground">
             Read More →
           </p>
         </div>

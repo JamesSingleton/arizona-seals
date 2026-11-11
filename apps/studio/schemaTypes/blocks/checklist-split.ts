@@ -10,6 +10,8 @@ export const checklistSplit = defineType({
   icon: ListChecks,
   fields: [
     defineField({
+      // The site no longer shows small labels above titles.
+      hidden: true,
       name: "eyebrow",
       type: "string",
       title: "Eyebrow",

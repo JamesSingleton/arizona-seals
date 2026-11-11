@@ -2,7 +2,7 @@ import "@workspace/ui/globals.css";
 
 import { SanityLive } from "@workspace/sanity/live";
 import type { Metadata, Viewport } from "next";
-import { Barlow_Condensed, Inter } from "next/font/google";
+import { Barlow, Barlow_Condensed } from "next/font/google";
 import { draftMode } from "next/headers";
 import { VisualEditing } from "next-sanity/visual-editing";
 import { Suspense } from "react";
@@ -14,15 +14,18 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteNavbarServer } from "@/components/site-navbar-server";
 import { getBaseUrl } from "@/utils";
 
-const inter = Inter({
+// Barlow for reading; Barlow Condensed (heavy italic) for headlines and buttons.
+const barlow = Barlow({
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
   variable: "--font-sans",
   display: "swap",
 });
 
 const barlowCondensed = Barlow_Condensed({
   subsets: ["latin"],
-  weight: ["400", "600", "700", "800", "900"],
+  weight: ["600", "800", "900"],
+  style: ["normal", "italic"],
   variable: "--font-display",
   display: "swap",
 });
@@ -78,8 +81,8 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   colorScheme: "light dark",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#006f9a" },
-    { media: "(prefers-color-scheme: dark)", color: "#0D1520" },
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#081526" },
   ],
 };
 
@@ -93,7 +96,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${barlowCondensed.variable}`}
+      className={`${barlow.variable} ${barlowCondensed.variable}`}
       suppressHydrationWarning
     >
       <body className="font-sans antialiased">

@@ -15,7 +15,6 @@ import { FaqJsonLd } from "../json-ld";
 type FaqAccordionProps = PagebuilderType<"faqAccordion">;
 
 export function FaqAccordion({
-  eyebrow,
   title,
   subtitle,
   faqs,
@@ -29,22 +28,8 @@ export function FaqAccordion({
       <FaqJsonLd faqs={stegaClean(faqs) ?? []} />
       <div className="mx-auto max-w-7xl px-6 sm:px-10 lg:px-16">
         <div className="mx-auto mb-14 max-w-3xl text-center">
-          {eyebrow ? (
-            <div className="mb-4 flex items-center justify-center gap-3">
-              <div className="h-0.5 w-8 bg-cyan-brand" />
-              <span className="font-display text-xs font-bold tracking-[0.25em] text-cyan-brand uppercase">
-                {eyebrow}
-              </span>
-              <div className="h-0.5 w-8 bg-cyan-brand" />
-            </div>
-          ) : null}
           {title ? (
-            <h2
-              className="font-display font-black leading-none text-foreground uppercase"
-              style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)" }}
-            >
-              {title}
-            </h2>
+            <h2 className="section-title text-foreground">{title}</h2>
           ) : null}
           {subtitle ? (
             <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-seal-gray md:text-lg">
@@ -55,7 +40,7 @@ export function FaqAccordion({
 
         <div className="mx-auto max-w-3xl">
           <Accordion
-            className="w-full overflow-visible rounded-none border-0 border-t border-border"
+            className="w-full overflow-visible rounded-none border-0 border-t-2 border-foreground"
             defaultValue={firstFaqId ? [firstFaqId] : undefined}
           >
             {faqs?.map((faq, index) => (
@@ -64,7 +49,7 @@ export function FaqAccordion({
                 key={`AccordionItem-${faq?._id}-${index}`}
                 className="border-b border-border py-0 data-open:bg-transparent"
               >
-                <AccordionTrigger className="gap-4 px-0 py-5 text-left font-display text-base font-bold tracking-wide text-foreground uppercase hover:no-underline hover:text-cyan-brand aria-expanded:text-cyan-brand md:text-lg **:data-[slot=accordion-trigger-icon]:size-5 **:data-[slot=accordion-trigger-icon]:text-cyan-brand">
+                <AccordionTrigger className="gap-4 px-0 py-5 text-left font-display text-xl font-extrabold tracking-[0.02em] text-foreground uppercase hover:no-underline hover:text-cyan-brand aria-expanded:text-cyan-brand md:text-lg **:data-[slot=accordion-trigger-icon]:size-5 **:data-[slot=accordion-trigger-icon]:text-cyan-brand">
                   {faq?.title}
                 </AccordionTrigger>
                 <AccordionContent className="px-0 pb-6 text-base leading-relaxed text-seal-gray">
@@ -80,7 +65,7 @@ export function FaqAccordion({
           {showLink ? (
             <div className="mt-10 border-t border-border pt-8 text-center">
               {link?.title ? (
-                <p className="mb-2 font-display text-xs font-bold tracking-[0.2em] text-seal-gray uppercase">
+                <p className="mb-2 label text-sm text-seal-gray">
                   {link.title}
                 </p>
               ) : null}
@@ -88,7 +73,7 @@ export function FaqAccordion({
                 href={link?.href ?? "#"}
                 target={link?.openInNewTab ? "_blank" : undefined}
                 rel={link?.openInNewTab ? "noopener noreferrer" : undefined}
-                className="inline-flex items-center gap-2 border-b-2 border-foreground pb-0.5 font-display text-sm font-bold tracking-widest text-foreground uppercase transition-colors hover:border-cyan-brand hover:text-cyan-brand"
+                className="label inline-flex items-center gap-2 border-b-[3px] border-cyan-brand pb-0.5 text-base font-extrabold text-foreground transition-colors hover:border-cyan-brand hover:text-cyan-brand"
               >
                 {link?.description || "Learn more"}
                 <ArrowUpRight size={16} aria-hidden />

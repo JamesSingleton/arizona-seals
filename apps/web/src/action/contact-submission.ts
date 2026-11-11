@@ -6,7 +6,18 @@ import { render } from "react-email";
 import { Resend } from "resend";
 
 import { ContactFormNotification } from "@/emails/contact-form-notification";
-import { inspectSubmission, isValidEmail } from "@/lib/spam-guard";
+import {
+  type ContactFormValues,
+  contactFormSchema,
+} from "@/lib/contact-schema";
+import { inspectSubmission } from "@/lib/spam-guard";
+
+export type ContactFormState = {
+  ok: boolean;
+  message: string;
+  /** Per-field messages when server validation disagrees with the browser. */
+  fieldErrors?: Partial<Record<keyof ContactFormValues, string>>;
+};
 
 const SUCCESS: ContactFormState = {
   ok: true,
@@ -14,48 +25,37 @@ const SUCCESS: ContactFormState = {
     "Thank you for reaching out. A member of our team will be in touch as soon as possible.",
 };
 
-const LIMITS = { name: 120, phone: 40, subject: 120, message: 5000 } as const;
-
-export type ContactFormState = {
-  ok: boolean;
-  message: string;
+const SEND_FAILED: ContactFormState = {
+  ok: false,
+  message:
+    "We couldn't send your message. Please try again, or email info@arizonaseals.com.",
 };
 
 export async function submitContactForm(
-  _prev: ContactFormState,
-  formData: FormData,
+  values: ContactFormValues,
 ): Promise<ContactFormState> {
-  const name = String(formData.get("name") ?? "").trim();
-  const email = String(formData.get("email") ?? "").trim();
-  const phone = String(formData.get("phone") ?? "").trim();
-  const subject = String(formData.get("subject") ?? "").trim();
-  const message = String(formData.get("message") ?? "").trim();
-
-  if (!name || !email || !subject || !message) {
+  // Layer 0: the same zod schema the browser used. Never trust the client.
+  const parsed = contactFormSchema.safeParse(values);
+  if (!parsed.success) {
+    const fieldErrors: ContactFormState["fieldErrors"] = {};
+    for (const issue of parsed.error.issues) {
+      const key = issue.path[0] as keyof ContactFormValues;
+      fieldErrors[key] ??= issue.message;
+    }
     return {
       ok: false,
-      message: "Please fill in all required fields.",
+      message: "Please fix the highlighted fields.",
+      fieldErrors,
     };
   }
-
-  if (!isValidEmail(email)) {
-    return { ok: false, message: "Please enter a valid email address." };
-  }
-
-  if (
-    name.length > LIMITS.name ||
-    phone.length > LIMITS.phone ||
-    subject.length > LIMITS.subject ||
-    message.length > LIMITS.message
-  ) {
-    return {
-      ok: false,
-      message: "Your message is too long. Please shorten it and try again.",
-    };
-  }
+  const { name, email, phone, subject, message, website, startedAt } =
+    parsed.data;
 
   // Layer 1: honeypot, fill-time and link heuristics (free, no network).
-  const verdict = inspectSubmission(formData, { name, message });
+  const verdict = inspectSubmission(
+    { honeypot: website, startedAt },
+    { name, message },
+  );
   if (verdict.kind === "bot") {
     // Report success so automated senders get no signal to adapt to.
     console.warn(`[contact] dropped bot submission (${verdict.reason})`);
@@ -80,10 +80,7 @@ export async function submitContactForm(
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
     console.error("[contact] RESEND_API_KEY is not set");
-    return {
-      ok: false,
-      message: "Unable to send your message right now. Please try again later.",
-    };
+    return SEND_FAILED;
   }
 
   // From must be a Resend-verified domain address — not the Zoho group inbox.
@@ -105,8 +102,6 @@ export async function submitContactForm(
   ]);
 
   const resend = new Resend(apiKey);
-  const idempotencyKey = `contact-form/${crypto.randomUUID()}`;
-
   const { error } = await resend.emails.send(
     {
       from,
@@ -116,15 +111,12 @@ export async function submitContactForm(
       html,
       text,
     },
-    { idempotencyKey },
+    { idempotencyKey: `contact-form/${crypto.randomUUID()}` },
   );
 
   if (error) {
     console.error("[contact] Resend error:", error);
-    return {
-      ok: false,
-      message: "Unable to send your message right now. Please try again later.",
-    };
+    return SEND_FAILED;
   }
 
   return SUCCESS;

@@ -11,7 +11,13 @@ export const resultsBoard = defineType({
   type: "object",
   icon: Trophy,
   fields: [
-    defineField({ name: "eyebrow", type: "string", title: "Eyebrow" }),
+    defineField({
+      // The site no longer shows small labels above titles.
+      hidden: true,
+      name: "eyebrow",
+      type: "string",
+      title: "Eyebrow",
+    }),
     defineField({
       name: "title",
       type: "string",

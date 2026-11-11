@@ -107,7 +107,6 @@ export function HeroBlock({
     const secondary = buttons?.[1];
     return (
       <HeroFullBleed
-        eyebrow={badge ?? undefined}
         titleLines={title ? title.split("\n").filter(Boolean) : undefined}
         accentWord={titleAccent ?? undefined}
         subtitle={plainText(richText)}

@@ -1,4 +1,3 @@
-import { buttonCtaClassName } from "@workspace/ui/components/button";
 import { cn } from "@workspace/ui/lib/utils";
 
 import type { SanityButtonProps, SanityImageProps } from "@/types";
@@ -26,7 +25,6 @@ export type ResultsBoardProps = {
 };
 
 export function ResultsBoard({
-  eyebrow,
   title,
   intro,
   results,
@@ -38,47 +36,37 @@ export function ResultsBoard({
   const hasImage = Boolean(image?.id);
 
   return (
-    <section className="relative overflow-hidden bg-navy py-20 md:py-28">
-      {/* Lane-line texture: thin horizontal rules echo a pool's lane ropes. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.06]"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(to bottom, #fff 0 2px, transparent 2px 96px)",
-        }}
-      />
-      <div className="relative mx-auto max-w-7xl px-6 sm:px-10 lg:px-16">
+    <section className="on-dark bg-navy py-20 md:py-28">
+      <div className="mx-auto max-w-7xl px-6 sm:px-10 lg:px-16">
         <div
           className={cn(
             "grid grid-cols-1 gap-12 lg:gap-16",
-            hasImage && "lg:grid-cols-[minmax(0,5fr)_minmax(0,4fr)]",
+            hasImage && "lg:grid-cols-[minmax(0,7fr)_minmax(0,4fr)]",
           )}
         >
           <div>
             <SectionHeading
-              eyebrow={eyebrow}
               title={title}
               intro={intro}
               onNavy
               className="mb-10 md:mb-12"
             />
 
-            <ol className="border-t border-white/15">
+            <ol>
               {rows.map((row) => (
                 <li
                   key={row._key ?? `${row.year}-${row.meet}`}
-                  className="grid grid-cols-[4.5rem_1fr] items-baseline gap-x-5 border-b border-white/15 py-5 sm:grid-cols-[6.5rem_1fr] sm:gap-x-8 md:py-6"
+                  className="grid grid-cols-[5.5rem_1fr] items-baseline gap-x-5 border-t-2 border-white/15 py-5 sm:grid-cols-[8rem_1fr] sm:gap-x-8 md:py-6"
                 >
-                  <span className="font-display text-3xl leading-none font-black text-cyan-on-navy tabular-nums sm:text-5xl">
+                  <span className="display text-5xl text-cyan-on-navy tabular-nums sm:text-6xl">
                     {row.year}
                   </span>
                   <div>
-                    <h3 className="font-display text-xl leading-tight font-bold text-white uppercase md:text-2xl">
+                    <h3 className="text-2xl not-italic text-white md:text-3xl">
                       {row.meet}
                     </h3>
                     {row.detail ? (
-                      <p className="mt-1.5 text-sm leading-relaxed text-white/75 md:text-base">
+                      <p className="mt-1.5 leading-relaxed text-white/75">
                         {row.detail}
                       </p>
                     ) : null}
@@ -91,24 +79,23 @@ export function ResultsBoard({
               <SanityButtons
                 placement="results_board"
                 buttons={buttons}
+                size="lg"
                 className="mt-10 gap-3"
-                buttonClassName={cn(buttonCtaClassName, "h-12 px-8")}
               />
             ) : null}
           </div>
 
           {hasImage ? (
-            <div className="relative min-h-80 overflow-hidden lg:min-h-0">
+            <div className="relative min-h-96 overflow-hidden lg:min-h-0">
               <SanityImage
                 image={image}
                 width={1200}
-                sizes="(min-width: 1024px) 45vw, 100vw"
+                sizes="(min-width: 1024px) 35vw, 100vw"
                 className="absolute inset-0 size-full object-cover"
                 style={{
                   objectPosition: objectPositionFromHotspot(image?.hotspot),
                 }}
               />
-              <div className="absolute inset-0 bg-linear-to-t from-navy/60 to-transparent" />
             </div>
           ) : null}
         </div>

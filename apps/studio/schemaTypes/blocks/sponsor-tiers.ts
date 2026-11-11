@@ -8,6 +8,8 @@ export const sponsorTiers = defineType({
   icon: BadgeDollarSign,
   fields: [
     defineField({
+      // The site no longer shows small labels above titles.
+      hidden: true,
       name: "eyebrow",
       type: "string",
       title: "Eyebrow",

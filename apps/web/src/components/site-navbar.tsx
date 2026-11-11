@@ -25,6 +25,7 @@ import {
 import { cn } from "@workspace/ui/lib/utils";
 import { Menu } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { stegaClean } from "next-sanity";
 import { useEffect, useState } from "react";
 
@@ -156,7 +157,10 @@ function resolveButtonVariant(
   solid: boolean,
 ): NonNullable<Parameters<typeof buttonVariants>[0]>["variant"] {
   const cleaned = stegaClean(variant);
-  if (cleaned === "outline" && !solid) return "outlineInverse";
+  if (!solid) {
+    // On the dark header: Seals cyan for the main action, translucent for the rest.
+    return !cleaned || cleaned === "default" ? "default" : "outlineInverse";
+  }
   if (cleaned === "link" || cleaned === "secondary" || cleaned === "outline") {
     return cleaned;
   }
@@ -239,6 +243,7 @@ function BrandMark({
           image={primary as SanityImageProps}
           width={56}
           height={56}
+          loading="eager"
           className={cn(
             "size-12 object-contain transition-opacity duration-300 md:size-14 dark:brightness-110",
             solid ? "opacity-100" : "absolute opacity-0",
@@ -250,6 +255,7 @@ function BrandMark({
           image={alternate as SanityImageProps}
           width={56}
           height={56}
+          loading="eager"
           className={cn(
             "size-12 object-contain transition-opacity duration-300 md:size-14",
             solid ? "absolute opacity-0" : "opacity-100",
@@ -270,7 +276,11 @@ export function SiteNavbar({
   const [scrolled, setScrolled] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+
+  // The clear header is only readable over a dark hero; any page that starts
+  // with a light section (an editor's choice in Sanity) gets the solid bar.
+  const pathname = usePathname();
+  const [overHero, setOverHero] = useState(true);
 
   useEffect(() => {
     setMounted(true);
@@ -280,8 +290,22 @@ export function SiteNavbar({
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    // Re-check on navigation and as streamed sections arrive.
+    const main = document.getElementById("main-content");
+    const check = () =>
+      setOverHero(Boolean(main?.querySelector("[data-hero]")));
+    check();
+    if (!main) return;
+    const observer = new MutationObserver(check);
+    observer.observe(main, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, [pathname]);
+
   const isScrolled = mounted && scrolled;
-  const solid = isScrolled || menuOpen || sheetOpen;
+  // Always white-on-dark: clear over the hero photo, navy once scrolled.
+  const solid = false;
+  const pinned = isScrolled || sheetOpen || (mounted && !overHero);
   const navColumns = columns && columns.length > 0 ? columns : FALLBACK_COLUMNS;
   const navButtons = buttons && buttons.length > 0 ? buttons : FALLBACK_BUTTONS;
   const brandTitle = siteTitle || "Arizona Seals Swimming";
@@ -293,14 +317,14 @@ export function SiteNavbar({
     : brandTitle;
 
   const linkClass = cn(
-    "text-sm font-semibold tracking-wide uppercase transition-colors",
+    "font-display text-[1.0625rem] font-semibold tracking-[0.06em] whitespace-nowrap uppercase transition-colors",
     solid
       ? "text-foreground hover:text-cyan-brand"
       : "text-white hover:text-white/90",
   );
 
   const triggerClass = cn(
-    "h-auto bg-transparent px-3 py-2 text-sm font-semibold tracking-wide uppercase",
+    "h-auto rounded-none bg-transparent px-2.5 py-2 font-display text-[1.0625rem] font-semibold tracking-[0.06em] whitespace-nowrap uppercase",
     solid
       ? "text-foreground hover:bg-muted hover:text-cyan-brand focus:bg-muted data-popup-open:bg-muted data-popup-open:text-cyan-brand data-open:bg-muted data-open:text-cyan-brand"
       : "text-white hover:bg-white/20 hover:text-white focus:bg-white/20 data-popup-open:bg-white/20 data-popup-open:text-white data-open:bg-white/20 data-open:text-white",
@@ -312,19 +336,19 @@ export function SiteNavbar({
   return (
     <header
       className={cn(
-        "fixed top-0 right-0 left-0 z-50 transition-all duration-300",
-        solid
-          ? "border-b border-border bg-background/98 py-2 shadow-sm backdrop-blur-sm"
-          : "bg-transparent py-4",
+        "on-dark fixed top-0 right-0 left-0 z-50 transition-[background-color,padding] duration-300",
+        pinned
+          ? "bg-navy/95 py-2.5 shadow-lg backdrop-blur-md"
+          : "bg-linear-to-b from-[#061428]/60 to-transparent py-5",
       )}
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex max-w-[92rem] items-center justify-between gap-6 px-6 sm:px-10 lg:px-14">
         <Link href="/" className="relative flex shrink-0 items-center gap-3">
           <BrandMark logo={logo} alternateLogo={alternateLogo} solid={solid} />
-          <div className="hidden leading-none sm:block">
+          <div className="hidden leading-[1.05] sm:block">
             <p
               className={cn(
-                "font-display text-lg leading-tight font-bold tracking-wide uppercase",
+                "font-display text-2xl leading-none font-extrabold tracking-[0.04em] uppercase",
                 solid ? "text-foreground" : "text-white",
               )}
             >
@@ -333,8 +357,8 @@ export function SiteNavbar({
             {brandAccent ? (
               <p
                 className={cn(
-                  "font-display mt-0.5 text-xs font-bold tracking-[0.18em] uppercase",
-                  solid ? "text-cyan-brand" : "text-[#5ec9f2]",
+                  "label mt-1 text-[0.8125rem] leading-none",
+                  solid ? "text-seal-gray" : "text-cyan-on-navy",
                 )}
               >
                 {brandAccent}
@@ -343,11 +367,8 @@ export function SiteNavbar({
           </div>
         </Link>
 
-        <div className="hidden items-center gap-1 lg:flex">
-          <NavigationMenu
-            aria-label="Main"
-            onValueChange={(value) => setMenuOpen(Boolean(value))}
-          >
+        <div className="hidden items-center gap-1 xl:flex">
+          <NavigationMenu aria-label="Main">
             <NavigationMenuList className="gap-0">
               {navColumns.map((item) => (
                 <DesktopNavItem
@@ -381,7 +402,7 @@ export function SiteNavbar({
         >
           <SheetTrigger
             className={cn(
-              "inline-flex size-7 items-center justify-center rounded-md lg:hidden",
+              "inline-flex size-11 items-center justify-center rounded-none xl:hidden",
               solid
                 ? "text-foreground hover:bg-muted"
                 : "text-white hover:bg-white/10",
@@ -407,11 +428,11 @@ export function SiteNavbar({
                   />
                 ) : null}
                 <div>
-                  <p className="font-display text-base leading-tight font-bold text-foreground uppercase">
+                  <p className="font-display text-base leading-tight font-bold text-foreground">
                     {brandName}
                   </p>
                   {brandAccent ? (
-                    <p className="font-display text-xs font-bold tracking-widest text-cyan-brand uppercase">
+                    <p className="label text-sm text-cyan-brand">
                       {brandAccent}
                     </p>
                   ) : null}
@@ -428,7 +449,7 @@ export function SiteNavbar({
                   key={`${link.href}-${link.label}`}
                   href={link.href}
                   onClick={() => setSheetOpen(false)}
-                  className="flex items-center rounded-md px-3 py-3 text-sm font-semibold tracking-wide text-foreground uppercase transition-colors hover:bg-muted hover:text-cyan-brand"
+                  className="flex items-center rounded-md px-3 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted hover:text-cyan-brand"
                 >
                   {link.label}
                 </Link>
@@ -444,7 +465,7 @@ export function SiteNavbar({
               />
               <Separator className="my-3" />
               <div className="flex items-center justify-between px-3 py-1">
-                <span className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+                <span className="text-sm font-semibold text-muted-foreground">
                   Appearance
                 </span>
                 <ThemeToggle className="text-foreground hover:bg-muted" />
@@ -507,9 +528,7 @@ function DesktopNavItem({
                   <p
                     className={cn(
                       "text-sm font-semibold text-popover-foreground",
-                      index === 0 &&
-                        columnTitle === "Programs" &&
-                        "font-bold tracking-wide uppercase",
+                      index === 0 && columnTitle === "Programs" && "font-bold ",
                     )}
                   >
                     {link.name}

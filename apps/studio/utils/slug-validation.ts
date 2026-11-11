@@ -62,6 +62,13 @@ const CONFIGS: Record<string, SlugValidationOptions> = {
     segmentCount: 2,
     sanityDocumentType: "blog",
   },
+  event: {
+    documentType: "Event",
+    requiredPrefix: "/events/",
+    requireSlash: true,
+    segmentCount: 2,
+    sanityDocumentType: "event",
+  },
   blogIndex: {
     documentType: "Blog index",
     requireSlash: true,
@@ -86,6 +93,7 @@ const CONFIGS: Record<string, SlugValidationOptions> = {
       (slug) => {
         const reserved = [
           ["/blog", "blog content"],
+          ["/events/", "event pages"],
           ["/author", "authors"],
           ["/admin", "admin"],
           ["/api", "API routes"],
@@ -275,6 +283,8 @@ export function generateSlugFromTitle(
       return `/author/${clean}`;
     case "blog":
       return `/blog/${clean}`;
+    case "event":
+      return `/events/${clean}`;
     case "page": {
       if (currentSlug?.includes("/")) {
         const segments = currentSlug.split("/").filter(Boolean);

@@ -109,12 +109,12 @@ function initialsFromName(name?: string | null): string {
 function BioText({ bio }: { bio?: TeamMember["bio"] }) {
   if (!hasMeaningfulBio(bio)) return null;
   if (typeof bio === "string") {
-    return <p className="text-sm leading-relaxed text-seal-gray">{bio}</p>;
+    return <p className="text-base leading-relaxed text-seal-gray">{bio}</p>;
   }
   return (
     <RichText
       richText={bio}
-      className="text-sm leading-relaxed text-seal-gray [&_p]:mb-3"
+      className="text-base leading-relaxed text-seal-gray [&_p]:mb-3"
     />
   );
 }
@@ -148,13 +148,9 @@ function PersonIdentity({ member }: { member: TeamMember }) {
   return (
     <>
       {member.position ? (
-        <p className="mb-1.5 font-display text-sm font-bold tracking-[0.12em] text-cyan-on-navy uppercase md:text-base">
-          {member.position}
-        </p>
+        <p className="label mb-1.5 text-sm text-pool">{member.position}</p>
       ) : null}
-      <h3 className="font-display text-2xl font-bold text-white uppercase md:text-3xl">
-        {member.name}
-      </h3>
+      <h3 className="text-4xl text-white md:text-5xl">{member.name}</h3>
     </>
   );
 }
@@ -174,7 +170,7 @@ function PersonBody({
           {member.specialties.map((s) => (
             <span
               key={s}
-              className="rounded-full bg-muted px-3 py-1 text-xs font-semibold text-foreground"
+              className="label bg-navy px-3 py-1.5 text-sm text-white"
             >
               {s}
             </span>
@@ -186,7 +182,7 @@ function PersonBody({
           {member.certifications.map((c) => (
             <li
               key={c}
-              className="flex items-center gap-2 text-xs text-seal-gray"
+              className="flex items-center gap-2 text-sm text-seal-gray"
             >
               <Award size={14} className="shrink-0 text-cyan-brand" />
               {c}
@@ -235,7 +231,7 @@ function TeamMemberPhoto({
         "absolute inset-0 flex items-center justify-center bg-linear-to-br from-navy to-[#132847]"
       }
     >
-      <span className="font-display text-6xl font-bold tracking-wide text-cyan-on-navy/40 uppercase md:text-7xl">
+      <span className="font-display text-6xl font-bold text-cyan-on-navy/40 md:text-7xl">
         {initialsFromName(member.name)}
       </span>
     </div>
@@ -259,7 +255,7 @@ function PersonCard({
     hasExpandedBody(member, { includeBio: showBio }) || Boolean(member.email);
 
   return (
-    <article className="flex h-full flex-col overflow-hidden border border-border bg-background">
+    <article className="flex h-full flex-col overflow-hidden border-b-[6px] border-cyan-brand bg-background">
       <div
         className={
           showBody
@@ -290,7 +286,7 @@ function SupportingPersonRow({ member }: { member: TeamMember }) {
         ) : (
           <span
             aria-hidden
-            className="font-display text-2xl font-bold tracking-wide text-cyan-brand uppercase sm:text-3xl"
+            className="font-display text-2xl font-bold text-cyan-brand sm:text-3xl"
           >
             {initialsFromName(member.name)}
           </span>
@@ -298,11 +294,9 @@ function SupportingPersonRow({ member }: { member: TeamMember }) {
       </div>
       <div className="flex-1 space-y-3">
         <div>
-          <h3 className="font-display text-xl font-bold text-foreground uppercase">
-            {member.name}
-          </h3>
+          <h3 className="text-3xl text-foreground">{member.name}</h3>
           {member.position ? (
-            <p className="text-sm font-semibold text-cyan-brand">
+            <p className="label mt-1 text-sm text-cyan-brand">
               {member.position}
             </p>
           ) : null}
@@ -312,7 +306,7 @@ function SupportingPersonRow({ member }: { member: TeamMember }) {
           {member.certifications?.map((c) => (
             <span
               key={c}
-              className="inline-flex items-center gap-1.5 text-xs text-seal-gray"
+              className="inline-flex items-center gap-1.5 text-sm text-seal-gray"
             >
               <Award size={12} className="text-cyan-brand" />
               {c}
@@ -325,7 +319,7 @@ function SupportingPersonRow({ member }: { member: TeamMember }) {
                 method: "email",
                 placement: "team",
               })}
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-cyan-brand"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-cyan-brand"
             >
               <Mail size={12} />
               {member.email}
@@ -338,7 +332,6 @@ function SupportingPersonRow({ member }: { member: TeamMember }) {
 }
 
 function PersonGrid({
-  eyebrow,
   title,
   members,
   showBio = true,
@@ -352,14 +345,7 @@ function PersonGrid({
     <section className="bg-muted py-20 md:py-28">
       <div className="mx-auto max-w-7xl px-6 sm:px-10 lg:px-16">
         <div className="mb-12 text-center">
-          {eyebrow ? (
-            <p className="mb-2 font-display text-sm font-bold tracking-[0.2em] text-cyan-brand uppercase">
-              {eyebrow}
-            </p>
-          ) : null}
-          <h2 className="font-display text-4xl font-bold text-foreground uppercase md:text-5xl">
-            {title}
-          </h2>
+          <h2 className="section-title text-foreground">{title}</h2>
         </div>
         <div className="grid grid-cols-1 items-stretch gap-8 md:grid-cols-2">
           {members.map((member) => (
@@ -376,9 +362,7 @@ function PersonGrid({
 }
 
 export function TeamBlock({
-  eyebrow = "Leadership",
   title = "Featured",
-  assistantsEyebrow = "The Full Staff",
   assistantsTitle = "Team Members",
   roleFilter,
   layout,
@@ -395,12 +379,7 @@ export function TeamBlock({
 
   if (resolvedLayout === "uniform") {
     return (
-      <PersonGrid
-        eyebrow={eyebrow}
-        title={title}
-        members={membersForDisplay}
-        showBio={showBio}
-      />
+      <PersonGrid title={title} members={membersForDisplay} showBio={showBio} />
     );
   }
 
@@ -411,23 +390,13 @@ export function TeamBlock({
 
   return (
     <>
-      <PersonGrid
-        eyebrow={eyebrow}
-        title={title}
-        members={featuredList}
-        showBio={showBio}
-      />
+      <PersonGrid title={title} members={featuredList} showBio={showBio} />
 
       {supportingList.length > 0 ? (
         <section className="bg-background py-20 md:py-28">
           <div className="mx-auto max-w-7xl px-6 sm:px-10 lg:px-16">
             <div className="mb-10">
-              {assistantsEyebrow ? (
-                <p className="mb-2 font-display text-sm font-bold tracking-[0.2em] text-cyan-brand uppercase">
-                  {assistantsEyebrow}
-                </p>
-              ) : null}
-              <h2 className="font-display text-3xl font-bold text-foreground uppercase md:text-4xl">
+              <h2 className="section-title text-foreground">
                 {assistantsTitle}
               </h2>
             </div>

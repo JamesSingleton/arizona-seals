@@ -43,11 +43,7 @@ function SanityButton({
         cta_variant: variant ?? "default",
         placement,
       })}
-      className={cn(
-        buttonVariants({ variant, size }),
-        "rounded-[10px]",
-        className,
-      )}
+      className={cn(buttonVariants({ variant, size }), className)}
     >
       {text}
     </Link>

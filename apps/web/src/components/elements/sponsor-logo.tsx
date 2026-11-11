@@ -44,7 +44,7 @@ export function SponsorLogo({
           )}
         />
       ) : (
-        <span className="font-display text-sm font-bold tracking-wide text-foreground uppercase">
+        <span className="label text-sm font-semibold text-foreground">
           {name}
         </span>
       )}

@@ -6,6 +6,7 @@ import {
   BadgeDollarSign,
   BookMarked,
   Building2,
+  CalendarDays,
   CogIcon,
   File,
   FileText,
@@ -148,6 +149,14 @@ export const structure = (
                 title: "Programs",
                 icon: Waves,
               }),
+              S.listItem()
+                .title("Events")
+                .icon(CalendarDays)
+                .child(
+                  S.documentTypeList("event")
+                    .title("Events")
+                    .defaultOrdering([{ field: "start", direction: "desc" }]),
+                ),
               S.listItem()
                 .title("People")
                 .icon(User)

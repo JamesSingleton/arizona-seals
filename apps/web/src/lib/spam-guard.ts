@@ -8,9 +8,6 @@
  * - content: link-stuffed or markup-laden messages are almost always spam.
  */
 
-export const HONEYPOT_FIELD = "company_website";
-export const STARTED_AT_FIELD = "form_started_at";
-
 const MIN_FILL_MS = 3_000;
 const MAX_FORM_AGE_MS = 24 * 60 * 60 * 1000;
 const MAX_LINKS_IN_MESSAGE = 2;
@@ -32,16 +29,23 @@ export function isValidEmail(email: string): boolean {
   return email.length <= 254 && EMAIL_PATTERN.test(email);
 }
 
+export type SpamSignals = {
+  /** Value of the hidden honeypot input; anything non-empty is a bot. */
+  honeypot?: string;
+  /** Epoch ms stamped when the form mounted in the browser. */
+  startedAt?: number | string;
+};
+
 export function inspectSubmission(
-  formData: FormData,
+  signals: SpamSignals,
   fields: { name: string; message: string },
   now: number = Date.now(),
 ): SpamVerdict {
-  if (String(formData.get(HONEYPOT_FIELD) ?? "").trim() !== "") {
+  if (String(signals.honeypot ?? "").trim() !== "") {
     return { kind: "bot", reason: "honeypot" };
   }
 
-  const startedAt = Number(formData.get(STARTED_AT_FIELD));
+  const startedAt = Number(signals.startedAt);
   if (!Number.isFinite(startedAt) || startedAt <= 0) {
     return { kind: "bot", reason: "no_timestamp" };
   }

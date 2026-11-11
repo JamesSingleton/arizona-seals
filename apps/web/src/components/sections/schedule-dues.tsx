@@ -65,9 +65,7 @@ function PracticeTimes({ program }: { program: ScheduleProgram }) {
 
 function GroupName({ program }: { program: ScheduleProgram }) {
   const name = (
-    <span className="font-display text-2xl leading-none font-black text-foreground uppercase">
-      {program.name}
-    </span>
+    <span className="display text-3xl text-foreground">{program.name}</span>
   );
   return (
     <div className="flex items-center gap-3">
@@ -88,9 +86,7 @@ function GroupName({ program }: { program: ScheduleProgram }) {
           name
         )}
         {program.level ? (
-          <p className="mt-1 font-display text-xs font-bold tracking-[0.2em] text-seal-gray uppercase">
-            {program.level}
-          </p>
+          <p className="mt-1 label text-sm text-seal-gray">{program.level}</p>
         ) : null}
       </div>
     </div>
@@ -98,7 +94,6 @@ function GroupName({ program }: { program: ScheduleProgram }) {
 }
 
 export function ScheduleDues({
-  eyebrow,
   title,
   intro,
   programs,
@@ -114,8 +109,7 @@ export function ScheduleDues({
   const withDues = showDues !== false;
   const fallback = duesFallback || "Shared at your tryout";
   const feeRows = fees?.filter((fee) => fee?.label) ?? [];
-  const th =
-    "px-5 py-4 text-left font-display text-xs font-bold tracking-[0.2em] text-white uppercase";
+  const th = "label px-5 py-4 text-left text-sm text-white";
 
   return (
     <section
@@ -124,7 +118,6 @@ export function ScheduleDues({
     >
       <div className="mx-auto max-w-7xl px-6 sm:px-10 lg:px-16">
         <SectionHeading
-          eyebrow={eyebrow}
           title={title}
           intro={intro}
           className="mb-10 md:mb-12"
@@ -169,7 +162,7 @@ export function ScheduleDues({
                   {withDues ? (
                     <td className="px-5 py-6 text-right">
                       {program.monthlyDues ? (
-                        <span className="font-display text-2xl leading-none font-black text-foreground">
+                        <span className="display text-3xl text-foreground">
                           {program.monthlyDues}
                         </span>
                       ) : (
@@ -190,12 +183,12 @@ export function ScheduleDues({
           {groups.map((program) => (
             <li
               key={program._id ?? program.name}
-              className="bg-background p-5 ring-1 ring-border"
+              className="border-t-[6px] border-cyan-brand bg-water p-5"
             >
               <div className="mb-4 flex items-start justify-between gap-4">
                 <GroupName program={program} />
                 {program.ageRange ? (
-                  <span className="shrink-0 bg-muted px-2.5 py-1 font-display text-xs font-bold tracking-widest text-foreground uppercase">
+                  <span className="label shrink-0 bg-navy px-3 py-1.5 text-sm text-white">
                     Ages {program.ageRange}
                   </span>
                 ) : null}
@@ -203,11 +196,11 @@ export function ScheduleDues({
               <PracticeTimes program={program} />
               {withDues ? (
                 <p className="mt-4 flex items-baseline justify-between gap-4 border-t border-border pt-4">
-                  <span className="font-display text-xs font-bold tracking-[0.2em] text-seal-gray uppercase">
+                  <span className="label text-sm text-seal-gray">
                     Monthly dues
                   </span>
                   {program.monthlyDues ? (
-                    <span className="font-display text-2xl leading-none font-black text-foreground">
+                    <span className="display text-3xl text-foreground">
                       {program.monthlyDues}
                     </span>
                   ) : (
@@ -222,15 +215,16 @@ export function ScheduleDues({
         </ul>
 
         {feeRows.length ? (
-          <dl className="mt-8 grid grid-cols-1 gap-px bg-border ring-1 ring-border sm:grid-cols-2 lg:grid-cols-3">
+          <dl className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {feeRows.map((fee) => (
-              <div key={fee._key ?? fee.label} className="bg-background p-5">
-                <dt className="font-display text-xs font-bold tracking-[0.2em] text-seal-gray uppercase">
-                  {fee.label}
-                </dt>
+              <div
+                key={fee._key ?? fee.label}
+                className="border-t-[6px] border-cyan-brand bg-water p-6"
+              >
+                <dt className="label text-sm text-seal-gray">{fee.label}</dt>
                 <dd className="mt-2">
                   {fee.amount ? (
-                    <span className="font-display text-2xl leading-none font-black text-foreground">
+                    <span className="display text-3xl text-foreground">
                       {fee.amount}
                     </span>
                   ) : null}

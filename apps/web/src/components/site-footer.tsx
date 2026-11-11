@@ -6,6 +6,11 @@ import {
 } from "@workspace/sanity/live";
 import { queryFooterData, querySettingsData } from "@workspace/sanity/query";
 import type { QuerySettingsDataResult } from "@workspace/sanity/types";
+import {
+  buttonCtaClassName,
+  buttonVariants,
+} from "@workspace/ui/components/button";
+import { cn } from "@workspace/ui/lib/utils";
 import { Mail, MapPin } from "lucide-react";
 import { draftMode } from "next/headers";
 import Link from "next/link";
@@ -161,150 +166,183 @@ function SiteFooterView({
   ];
 
   return (
-    <footer className="bg-navy text-white">
-      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4">
-          <div className="lg:col-span-1">
-            <Link href="/" className="mb-4 flex items-center gap-3">
-              {footerLogo ? (
-                <SanityImage
-                  image={footerLogo as SanityImageProps}
-                  width={56}
-                  height={56}
-                  className="h-14 w-14 object-contain"
-                />
-              ) : null}
-              <div>
-                <p className="font-display text-lg leading-tight font-bold text-white uppercase">
-                  Arizona Seals
+    <footer className="on-dark border-t-[6px] border-pool bg-navy text-white">
+      <div>
+        <div className="mx-auto max-w-7xl px-6 pt-16 sm:px-10 md:pt-20 lg:px-16">
+          <div className="flex flex-col gap-8 border-b border-white/15 pb-12 md:flex-row md:items-end md:justify-between md:pb-16">
+            <div>
+              <p
+                className="display max-w-2xl text-white"
+                style={{ fontSize: "clamp(3.25rem, 8vw, 7rem)" }}
+              >
+                Come swim with us.
+              </p>
+              <p className="mt-4 max-w-xl text-lg text-white/80">
+                Every new Seal starts with a tryout at Copper Sky.
+              </p>
+            </div>
+            <Link
+              href="/tryouts"
+              {...trackClick("marketing_cta_clicked", {
+                cta_label: "Schedule a tryout",
+                cta_href: "/tryouts",
+                cta_variant: "inverse",
+                placement: "footer",
+              })}
+              className={cn(
+                buttonVariants({ variant: "default", size: "xl" }),
+                buttonCtaClassName,
+                "shrink-0",
+              )}
+            >
+              Schedule a tryout
+            </Link>
+          </div>
+        </div>
+        <div className="mx-auto max-w-7xl px-6 py-14 sm:px-10 lg:px-16">
+          <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4">
+            <div className="lg:col-span-1">
+              <Link href="/" className="mb-4 flex items-center gap-3">
+                {footerLogo ? (
+                  <SanityImage
+                    image={footerLogo as SanityImageProps}
+                    width={56}
+                    height={56}
+                    className="h-14 w-14 object-contain"
+                  />
+                ) : null}
+                <div>
+                  <p className="font-display text-lg leading-tight font-bold text-white">
+                    Arizona Seals
+                  </p>
+                  <p className="label text-sm font-semibold text-cyan-on-navy">
+                    Swimming
+                  </p>
+                </div>
+              </Link>
+              <p className="mb-5 text-sm leading-relaxed text-white/70">
+                {subtitle}
+              </p>
+              <div className="flex items-center gap-3">
+                {social.map((s) => (
+                  <a
+                    key={s.ariaLabel}
+                    href={s.href}
+                    {...trackClick("outbound_link_clicked", {
+                      link_type: "social",
+                      placement: "footer",
+                      url: s.href,
+                      label: s.ariaLabel,
+                    })}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={s.ariaLabel}
+                    className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-cyan-brand hover:text-primary-foreground"
+                  >
+                    <s.icon className="h-4 w-4" />
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h2 className="label mb-4 text-base font-extrabold text-white">
+                Quick Links
+              </h2>
+              <ul className="space-y-2">
+                {quickLinks.map((l) => (
+                  <li key={l.href}>
+                    <Link
+                      href={l.href}
+                      className="text-base text-white/80 transition-colors hover:text-cyan-on-navy"
+                    >
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h2 className="label mb-4 text-base font-extrabold text-white">
+                Programs
+              </h2>
+              <ul className="space-y-2">
+                {programLinks.map((l) => (
+                  <li key={l.label}>
+                    <Link
+                      href={l.href}
+                      className="text-base text-white/80 transition-colors hover:text-cyan-on-navy"
+                    >
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h2 className="label mb-4 text-base font-extrabold text-white">
+                Contact Us
+              </h2>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-3">
+                  <MapPin
+                    size={16}
+                    className="mt-0.5 shrink-0 text-cyan-on-navy"
+                  />
+                  <span className="text-sm text-white/80">
+                    {street}
+                    <br />
+                    {cityLine} {zip}
+                  </span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <Mail size={16} className="shrink-0 text-cyan-on-navy" />
+                  <a
+                    href={`mailto:${resolvedEmail}`}
+                    {...trackClick("contact_method_clicked", {
+                      method: "email",
+                      placement: "footer",
+                    })}
+                    className="text-base text-white/80 transition-colors hover:text-cyan-on-navy"
+                  >
+                    {resolvedEmail}
+                  </a>
+                </li>
+              </ul>
+              <div className="mt-5">
+                <p className="label mb-1 text-sm text-pool">Member of</p>
+                <p className="text-sm font-medium text-white/90">
+                  USA Swimming
                 </p>
-                <p className="font-display text-sm font-bold tracking-widest text-cyan-on-navy uppercase">
-                  Swimming
+                <p className="text-sm font-medium text-white/90">
+                  Arizona Swimming
                 </p>
               </div>
-            </Link>
-            <p className="mb-5 text-sm leading-relaxed text-white/70">
-              {subtitle}
-            </p>
-            <div className="flex items-center gap-3">
-              {social.map((s) => (
-                <a
-                  key={s.ariaLabel}
-                  href={s.href}
-                  {...trackClick("outbound_link_clicked", {
-                    link_type: "social",
-                    placement: "footer",
-                    url: s.href,
-                    label: s.ariaLabel,
-                  })}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={s.ariaLabel}
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-cyan-brand hover:text-primary-foreground"
-                >
-                  <s.icon className="h-4 w-4" />
-                </a>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <h2 className="font-display mb-4 text-base font-bold tracking-widest text-white uppercase">
-              Quick Links
-            </h2>
-            <ul className="space-y-2">
-              {quickLinks.map((l) => (
-                <li key={l.href}>
-                  <Link
-                    href={l.href}
-                    className="text-sm text-white/80 transition-colors hover:text-cyan-on-navy"
-                  >
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h2 className="font-display mb-4 text-base font-bold tracking-widest text-white uppercase">
-              Programs
-            </h2>
-            <ul className="space-y-2">
-              {programLinks.map((l) => (
-                <li key={l.label}>
-                  <Link
-                    href={l.href}
-                    className="text-sm text-white/80 transition-colors hover:text-cyan-on-navy"
-                  >
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h2 className="font-display mb-4 text-base font-bold tracking-widest text-white uppercase">
-              Contact Us
-            </h2>
-            <ul className="space-y-3">
-              <li className="flex items-start gap-3">
-                <MapPin
-                  size={16}
-                  className="mt-0.5 shrink-0 text-cyan-on-navy"
-                />
-                <span className="text-sm text-white/80">
-                  {street}
-                  <br />
-                  {cityLine} {zip}
-                </span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Mail size={16} className="shrink-0 text-cyan-on-navy" />
-                <a
-                  href={`mailto:${resolvedEmail}`}
-                  {...trackClick("contact_method_clicked", {
-                    method: "email",
-                    placement: "footer",
-                  })}
-                  className="text-sm text-white/80 transition-colors hover:text-cyan-on-navy"
-                >
-                  {resolvedEmail}
-                </a>
-              </li>
-            </ul>
-            <div className="mt-5">
-              <p className="mb-1 text-xs tracking-widest text-white uppercase">
-                Member Of
-              </p>
-              <p className="text-sm font-medium text-white/90">USA Swimming</p>
-              <p className="text-sm font-medium text-white/90">
-                Arizona Swimming
-              </p>
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="border-t border-white/10">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-5 sm:flex-row sm:px-6 lg:px-8">
-          <p className="text-xs text-white/70">
-            &copy; 2026 Arizona Seals Swimming. All rights reserved.
-          </p>
-          <div className="flex items-center gap-4">
-            <Link
-              href="/privacy"
-              className="text-xs text-white/70 transition-colors hover:text-white/70"
-            >
-              Privacy Policy
-            </Link>
-            <Link
-              href="/terms"
-              className="text-xs text-white/70 transition-colors hover:text-white/70"
-            >
-              Terms of Use
-            </Link>
+        <div className="border-t border-white/10">
+          <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-6 py-5 sm:flex-row sm:px-10 lg:px-16">
+            <p className="text-sm text-white/75">
+              &copy; 2026 Arizona Seals Swimming. All rights reserved.
+            </p>
+            <div className="flex items-center gap-4">
+              <Link
+                href="/privacy"
+                className="text-sm text-white/75 transition-colors hover:text-white"
+              >
+                Privacy Policy
+              </Link>
+              <Link
+                href="/terms"
+                className="text-sm text-white/75 transition-colors hover:text-white"
+              >
+                Terms of Use
+              </Link>
+            </div>
           </div>
         </div>
       </div>

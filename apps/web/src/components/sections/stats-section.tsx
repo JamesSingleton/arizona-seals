@@ -28,7 +28,6 @@ export type StatsSectionProps = {
 };
 
 export function StatsSection({
-  eyebrow = "By the Numbers",
   title = "We've Got a Lot to Be Proud About",
   stats,
   image,
@@ -38,22 +37,10 @@ export function StatsSection({
   const resolvedImage = image?.id ? image : DEFAULT_STATS_IMAGE;
 
   return (
-    <section className="bg-navy py-20 md:py-28">
+    <section className="on-dark bg-navy py-20 md:py-28">
       <div className="mx-auto max-w-7xl px-6 sm:px-10 lg:px-16">
         <div className="mb-16 text-center">
-          <div className="mb-4 flex items-center justify-center gap-4">
-            <div className="h-0.5 w-12 bg-cyan-on-navy" />
-            <span className="font-display text-xs font-bold tracking-[0.3em] text-cyan-on-navy uppercase">
-              {eyebrow}
-            </span>
-            <div className="h-0.5 w-12 bg-cyan-on-navy" />
-          </div>
-          <h2
-            className="font-display font-black leading-none text-white uppercase"
-            style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)" }}
-          >
-            {title}
-          </h2>
+          <h2 className="section-title text-white">{title}</h2>
         </div>
 
         <div className="grid grid-cols-1 items-center gap-0 lg:grid-cols-2 lg:gap-16">
@@ -63,22 +50,17 @@ export function StatsSection({
                 key={s._key ?? `${s.number}-${s.label}`}
                 className="flex items-center gap-6 py-5"
               >
-                <span
-                  className="w-32 shrink-0 text-right font-display leading-none font-black text-white"
-                  style={{ fontSize: "clamp(2.5rem, 7vw, 5rem)" }}
-                >
+                <span className="display w-36 shrink-0 text-right text-6xl text-white tabular-nums md:text-7xl">
                   {s.number}
                 </span>
-                <div className="h-0.5 w-6 shrink-0 bg-cyan-on-navy" />
-                <span className="font-display text-sm font-bold tracking-wide text-white/80 uppercase">
-                  {s.label}
-                </span>
+                <div aria-hidden className="h-1 w-6 shrink-0 bg-pool" />
+                <span className="label text-base text-white/85">{s.label}</span>
               </div>
             ))}
           </div>
 
           <div className="mt-12 lg:mt-0 lg:sticky lg:top-24 lg:self-start">
-            <div className="relative h-64 overflow-hidden lg:h-130">
+            <div className="relative h-72 overflow-hidden rounded-sm lg:h-130">
               <SanityImage
                 image={resolvedImage}
                 width={1200}

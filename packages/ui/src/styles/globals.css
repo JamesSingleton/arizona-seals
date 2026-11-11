@@ -4,6 +4,8 @@
 @plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
+/* Inside a navy or photo surface (marked .on-dark), or anywhere in dark mode. */
+@custom-variant on-dark (&:where(.on-dark *, .on-dark, .dark *));
 @source "../../../apps/**/*.{ts,tsx}";
 @source "../../../components/**/*.{ts,tsx}";
 @source "../**/*.{ts,tsx}";
@@ -26,6 +28,13 @@
   --color-cyan-band: var(--cyan-band);
   --color-navy: var(--navy);
   --color-seal-gray: var(--seal-gray);
+  --color-water: var(--water);
+  /* pool: Seals cyan used as the accent on navy and photo surfaces (7.9:1 on navy). */
+  --color-pool: var(--pool);
+  --color-pool-hover: var(--pool-hover);
+  /* signal: lane-rope red. Primary calls to action only (constant in both themes). */
+  --color-signal: var(--signal);
+  --color-signal-hover: var(--signal-hover);
 
   /* Semantic design tokens */
   --color-background: var(--background);
@@ -70,92 +79,102 @@
 }
 
 :root {
-  /* Deep brand navy stays constant — used for bg-navy surfaces */
-  --navy: #1b3a6b;
-  /* AA normal text on white/muted; white on this cyan ≈ 5.6:1 */
-  --cyan-brand: #006f9a;
-  /* Solid cyan band fill — always deep enough for white text (do not theme) */
-  --cyan-band: #006f9a;
-  /* AA on navy (~6:1) — use for eyebrows/accents on bg-navy */
+  /*
+   * Palette taken from the pool: deep-end navy, shallow-water blue, white deck.
+   * Red is the team's third colour and is used only as a small accent.
+   */
+  --navy: #0d2849;
+  --signal: #d8343f;
+  --signal-hover: #b92a34;
+  /* AA on white (5.0:1): links, labels, small accents */
+  --cyan-brand: #0b6fb3;
+  --cyan-band: #0b6fb3;
+  /* AA on navy: labels and accents on dark panels */
   --cyan-on-navy: #5ec9f2;
-  --seal-gray: #4a5a6a;
+  --seal-gray: #44566c;
+  /* Shallow-water tint for soft panels */
+  --water: #ecf4fb;
+  --pool: #5ec9f2;
+  --pool-hover: #8fd9f7;
 
   --background: #ffffff;
-  --foreground: #0f1c2e;
+  --foreground: #0d2849;
   --card: #ffffff;
-  --card-foreground: #0f1c2e;
+  --card-foreground: #0d2849;
   --popover: #ffffff;
-  --popover-foreground: #0f1c2e;
-  --primary: #006f9a;
+  --popover-foreground: #0d2849;
+  --primary: #0d2849;
   --primary-foreground: #ffffff;
-  --secondary: #1b3a6b;
-  --secondary-foreground: #ffffff;
-  --muted: #e8eff5;
-  --muted-foreground: #4a5a6a;
-  --accent: #e8f6fd;
-  --accent-foreground: #0a4f6e;
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: #c5d0db;
-  --input: #c5d0db;
-  --ring: #006f9a;
-  --chart-1: #006f9a;
-  --chart-2: #1b3a6b;
-  --chart-3: #4a5a6a;
-  --chart-4: #4a7ab5;
-  --chart-5: #0d1520;
-  --radius: 0.5rem;
+  --secondary: #ecf4fb;
+  --secondary-foreground: #0d2849;
+  --muted: #ecf4fb;
+  --muted-foreground: #44566c;
+  --accent: #ecf4fb;
+  --accent-foreground: #0d2849;
+  /* Darker than the shadcn default so error text passes 4.5:1 on the pale-blue form panel. */
+  --destructive: #b91c1c;
+  --border: #d5e2ee;
+  --input: #c3d3e2;
+  --ring: #0b6fb3;
+  --chart-1: #0b6fb3;
+  --chart-2: #0d2849;
+  --chart-3: #44566c;
+  --chart-4: #8fd3f7;
+  --chart-5: #d8343f;
+  --radius: 0.25rem;
   --sidebar: #ffffff;
-  --sidebar-foreground: #0f1c2e;
-  --sidebar-primary: #006f9a;
+  --sidebar-foreground: #0d2849;
+  --sidebar-primary: #0d2849;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #e8eff5;
-  --sidebar-accent-foreground: #0f1c2e;
-  --sidebar-border: #c5d0db;
-  --sidebar-ring: #006f9a;
+  --sidebar-accent: #ecf4fb;
+  --sidebar-accent-foreground: #0d2849;
+  --sidebar-border: #d5e2ee;
+  --sidebar-ring: #0b6fb3;
 }
 
 .dark {
-  /* Keep deep navy for brand bands (footer, stats, CTAs) */
-  --navy: #1b3a6b;
-  /* Brighter cyan for AA on dark app surfaces */
-  --cyan-brand: #5ec9f2;
-  /* Band fill stays deep so white text remains AA */
-  --cyan-band: #006f9a;
+  --navy: #0d2849;
+  --signal: #e8525c;
+  --signal-hover: #d8343f;
+  --cyan-brand: #8fd3f7;
+  --cyan-band: #0b6fb3;
   --cyan-on-navy: #5ec9f2;
-  /* Body secondary text — AA on #0d1520 / #131e2e */
-  --seal-gray: #b8c7d6;
+  --seal-gray: #b9c8d8;
+  --water: #12233c;
+  --pool: #5ec9f2;
+  --pool-hover: #8fd9f7;
 
-  --background: #0d1520;
-  --foreground: #eef3f8;
-  --card: #131e2e;
-  --card-foreground: #eef3f8;
-  --popover: #1a2638;
-  --popover-foreground: #eef3f8;
-  --primary: #5ec9f2;
-  --primary-foreground: #0d1520;
-  --secondary: #243b5a;
-  --secondary-foreground: #eef3f8;
-  --muted: #1a2838;
-  --muted-foreground: #b8c7d6;
-  --accent: #1a3a4d;
-  --accent-foreground: #eef3f8;
+  --background: #081526;
+  --foreground: #eef4fa;
+  --card: #0f2037;
+  --card-foreground: #eef4fa;
+  --popover: #12233c;
+  --popover-foreground: #eef4fa;
+  --primary: #ecf4fb;
+  --primary-foreground: #0d2849;
+  --secondary: #1a3050;
+  --secondary-foreground: #eef4fa;
+  --muted: #12233c;
+  --muted-foreground: #b9c8d8;
+  --accent: #1a3050;
+  --accent-foreground: #eef4fa;
   --destructive: oklch(0.704 0.191 22.216);
-  --border: #3a5168;
-  --input: #3a5168;
-  --ring: #5ec9f2;
-  --chart-1: #5ec9f2;
-  --chart-2: #8fb4d9;
-  --chart-3: #b8c7d6;
-  --chart-4: #243b5a;
-  --chart-5: #eef3f8;
-  --sidebar: #131e2e;
-  --sidebar-foreground: #eef3f8;
-  --sidebar-primary: #5ec9f2;
-  --sidebar-primary-foreground: #0d1520;
-  --sidebar-accent: #1a2838;
-  --sidebar-accent-foreground: #eef3f8;
-  --sidebar-border: #3a5168;
-  --sidebar-ring: #5ec9f2;
+  --border: #29405e;
+  --input: #29405e;
+  --ring: #8fd3f7;
+  --chart-1: #8fd3f7;
+  --chart-2: #b9c8d8;
+  --chart-3: #29405e;
+  --chart-4: #0b6fb3;
+  --chart-5: #e8525c;
+  --sidebar: #0f2037;
+  --sidebar-foreground: #eef4fa;
+  --sidebar-primary: #8fd3f7;
+  --sidebar-primary-foreground: #0d2849;
+  --sidebar-accent: #12233c;
+  --sidebar-accent-foreground: #eef4fa;
+  --sidebar-border: #29405e;
+  --sidebar-ring: #8fd3f7;
 }
 
 @layer base {
@@ -164,23 +183,82 @@
   }
   body {
     @apply bg-background text-foreground font-sans;
-    line-height: 1.6;
+    font-size: 1.0625rem;
+    line-height: 1.65;
   }
   h1,
   h2,
-  h3,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-style: italic;
+    text-transform: uppercase;
+    line-height: 0.95;
+    letter-spacing: 0;
+  }
   h4,
   h5,
   h6 {
     font-family: var(--font-display);
-    font-weight: 700;
-    line-height: 1.15;
-    letter-spacing: 0.01em;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.1;
+  }
+  /* One visible focus ring everywhere (WCAG 2.4.7 / 2.4.11). */
+  :focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 3px;
+  }
+  .on-dark :focus-visible {
+    outline-color: var(--pool);
   }
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
   }
+}
+
+/* Race Day display type: heavy italic condensed caps. */
+.display {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-style: italic;
+  text-transform: uppercase;
+  line-height: 0.84;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+/* One section-title treatment for every page-builder block. */
+.section-title {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-style: italic;
+  text-transform: uppercase;
+  font-size: clamp(2.125rem, 3.6vw, 3.5rem);
+  line-height: 0.95;
+  text-wrap: balance;
+}
+
+/* Small tracked label in the display face (eyebrows, table heads, tags). */
+.label {
+  font-family: var(--font-display);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  line-height: 1.2;
+}
+
+/* Parallelogram edge shared by buttons and the stats bar: forward lean. */
+.slant {
+  clip-path: polygon(0.7em 0, 100% 0, calc(100% - 0.7em) 100%, 0 100%);
+}
+.slant:focus-visible {
+  clip-path: none;
+}
+.slant-lg {
+  clip-path: polygon(1.75rem 0, 100% 0, calc(100% - 1.75rem) 100%, 0 100%);
 }
 
 @media (prefers-reduced-motion: reduce) {

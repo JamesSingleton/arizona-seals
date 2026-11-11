@@ -1,5 +1,6 @@
 import { blog } from "./blog";
 import { blogIndex } from "./blog-index";
+import { event } from "./event";
 import { facility } from "./facility";
 import { faq } from "./faq";
 import { footer } from "./footer";
@@ -17,6 +18,7 @@ export const singletons = [homePage, blogIndex, settings, footer, navbar];
 export const documents = [
   blog,
   page,
+  event,
   faq,
   staff,
   program,

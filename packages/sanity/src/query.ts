@@ -422,6 +422,51 @@ const resultsBoardBlock = /* groq */ `
   }
 `;
 
+const eventCardFragment = /* groq */ `
+  _id,
+  title,
+  "slug": slug.current,
+  category,
+  start,
+  end,
+  allDay,
+  status,
+  summary,
+  host,
+  location{
+    name,
+    street,
+    city,
+    state,
+    zip
+  },
+  linkLabel,
+  "link": link{
+    ${customUrlFragment}
+  },
+  ${imageFragment}
+`;
+
+const eventsCalendarBlock = /* groq */ `
+  _type == "eventsCalendar" => {
+    ...,
+    viewAllUrl{
+      ${customUrlFragment}
+    },
+    // Server time of the query: the calendar splits upcoming/past from this
+    // until the browser takes over with its own clock.
+    "snapshotAt": now(),
+    "events": *[
+      _type == "event"
+      && defined(start)
+      && defined(slug.current)
+      && (!defined(^.categories) || count(^.categories) == 0 || category in ^.categories)
+    ] | order(start asc)[0...200]{
+      ${eventCardFragment}
+    }
+  }
+`;
+
 const sponsorsHeroBlock = /* groq */ `
   _type == "sponsorsHero" => {
     ...
@@ -608,6 +653,7 @@ const pageBuilderFragment = /* groq */ `
     ${programsPreviewBlock},
     ${programsListBlock},
     ${scheduleDuesBlock},
+    ${eventsCalendarBlock},
     ${processStepsBlock},
     ${pathwaysBlock},
     ${resultsBoardBlock},
@@ -813,8 +859,29 @@ export const querySitemapData = defineQuery(/* groq */ `{
   "blogPages": *[_type == "blog" && defined(slug.current) && seoNoIndex != true]{
     "slug": slug.current,
     "lastModified": _updatedAt
+  },
+  "eventPages": *[_type == "event" && defined(slug.current) && seoNoIndex != true]{
+    "slug": slug.current,
+    "lastModified": _updatedAt
   }
 }`);
+
+export const queryEventPaths = defineQuery(/* groq */ `
+  *[_type == "event" && defined(slug.current)].slug.current
+`);
+
+export const queryEventBySlug = defineQuery(/* groq */ `
+  *[_type == "event" && slug.current == $slug][0]{
+    ${eventCardFragment},
+    _type,
+    _updatedAt,
+    seoNoIndex,
+    "body": body[]{
+      ...,
+      ${markDefsFragment}
+    }
+  }
+`);
 
 export const queryGlobalSeoSettings = defineQuery(`
   *[_type == "settings"][0]{

@@ -37,7 +37,6 @@ function SponsorItem({ sponsor }: { sponsor: SponsorsMarqueeSponsor }) {
 }
 
 export function SponsorsMarquee({
-  eyebrow = "Proudly Supported By",
   title = "Our Sponsors & Partners",
   viewAllLabel = "View All Sponsors →",
   viewAllUrl,
@@ -61,10 +60,7 @@ export function SponsorsMarquee({
     <section className="overflow-hidden border-t border-border bg-muted py-16">
       <div className="mx-auto mb-8 flex max-w-7xl flex-col items-center justify-between gap-4 px-4 sm:flex-row sm:px-6 lg:px-8">
         <div>
-          <p className="mb-1 font-display text-sm font-bold tracking-[0.2em] text-cyan-brand uppercase">
-            {eyebrow}
-          </p>
-          <h2 className="font-display text-2xl font-bold text-foreground uppercase">
+          <h2 className="font-display text-2xl font-bold text-foreground">
             {title}
           </h2>
         </div>
@@ -75,7 +71,7 @@ export function SponsorsMarquee({
             cta_href: viewAllHref,
             placement: "sponsors_marquee_view_all",
           })}
-          className="shrink-0 text-sm font-bold tracking-wide text-cyan-brand uppercase transition-colors hover:text-foreground"
+          className="shrink-0 text-sm font-bold text-cyan-brand transition-colors hover:text-foreground"
         >
           {viewAllLabel}
         </Link>

@@ -9,7 +9,6 @@ import { capitalize, getBaseUrl } from "@/utils";
 interface SiteConfig {
   title: string;
   description: string;
-  twitterHandle: string;
   keywords: string[];
 }
 
@@ -40,7 +39,6 @@ const siteConfig: SiteConfig = {
   title: "Arizona Seals Swimming",
   description:
     "Competitive swim team in Maricopa, AZ serving all of Pinal County. USA Swimming sanctioned, four training groups for ages 5 and up. Schedule a tryout today.",
-  twitterHandle: "@arizonaseals",
   keywords: [
     "competitive swim team",
     "swim club",
@@ -158,27 +156,12 @@ export function getSEOMetadata(page: PageSeoData = {}): Metadata {
     metadataBase: new URL(baseUrl),
     creator: siteConfig.title,
     authors: [{ name: siteConfig.title }],
-    icons: {
-      icon: [
-        { url: "/favicon.ico" },
-        {
-          url: "/icon-light-32x32.png",
-          media: "(prefers-color-scheme: light)",
-        },
-        {
-          url: "/icon-dark-32x32.png",
-          media: "(prefers-color-scheme: dark)",
-        },
-      ],
-      apple: "/apple-icon.png",
-    },
 
     keywords: allKeywords,
     robots: seoNoIndex ? "noindex, nofollow" : "index, follow",
     twitter: {
       card: "summary_large_image",
       images: [ogImage],
-      creator: siteConfig.twitterHandle,
       title: socialTitle,
       description: socialDescription,
     },

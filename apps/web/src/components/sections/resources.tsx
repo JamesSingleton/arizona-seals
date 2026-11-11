@@ -37,7 +37,6 @@ function ResourceRow({ item }: { item: ResourceItem }) {
   if (!href || !item.title) return null;
 
   const meta = resourceMeta(item);
-  const isExternal = item.kind === "external";
 
   return (
     <li>
@@ -57,7 +56,7 @@ function ResourceRow({ item }: { item: ResourceItem }) {
         </span>
         <span className="min-w-0 flex-1">
           <span className="flex items-start justify-between gap-4">
-            <span className="font-display text-base font-bold tracking-wide text-foreground uppercase transition-colors group-hover:text-cyan-brand md:text-lg">
+            <span className="text-lg font-semibold text-foreground transition-colors group-hover:text-cyan-brand md:text-xl">
               {item.title}
             </span>
             <ArrowUpRight
@@ -66,18 +65,16 @@ function ResourceRow({ item }: { item: ResourceItem }) {
             />
           </span>
           {item.description ? (
-            <span className="mt-1 block text-sm leading-relaxed text-seal-gray">
+            <span className="mt-1 block text-base leading-relaxed text-seal-gray">
               {item.description}
             </span>
           ) : null}
           {meta ? (
-            <span className="mt-2 block font-display text-xs font-bold tracking-[0.18em] text-seal-gray uppercase">
+            <span className="mt-2 block label text-sm text-seal-gray">
               {meta}
-              {isExternal ? null : (
-                <span className="sr-only"> (opens in a new tab)</span>
-              )}
             </span>
           ) : null}
+          <span className="sr-only"> (opens in a new tab)</span>
         </span>
       </a>
     </li>
@@ -85,7 +82,6 @@ function ResourceRow({ item }: { item: ResourceItem }) {
 }
 
 export function ResourcesBlock({
-  eyebrow,
   title,
   subtitle,
   groups,
@@ -101,22 +97,8 @@ export function ResourcesBlock({
     <section className="bg-background py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-6 sm:px-10 lg:px-16">
         <div className="mx-auto mb-14 max-w-3xl text-center">
-          {eyebrow ? (
-            <div className="mb-4 flex items-center justify-center gap-3">
-              <div className="h-0.5 w-8 bg-cyan-brand" />
-              <span className="font-display text-xs font-bold tracking-[0.25em] text-cyan-brand uppercase">
-                {eyebrow}
-              </span>
-              <div className="h-0.5 w-8 bg-cyan-brand" />
-            </div>
-          ) : null}
           {title ? (
-            <h2
-              className="font-display font-black leading-none text-foreground uppercase"
-              style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)" }}
-            >
-              {title}
-            </h2>
+            <h2 className="section-title text-foreground">{title}</h2>
           ) : null}
           {subtitle ? (
             <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-seal-gray md:text-lg">
@@ -129,11 +111,9 @@ export function ResourcesBlock({
           {visibleGroups.map((group) => (
             <div key={group._key}>
               {group.title ? (
-                <h3 className="mb-2 font-display text-sm font-bold tracking-[0.2em] text-cyan-brand uppercase md:text-base">
-                  {group.title}
-                </h3>
+                <h3 className="mb-3 text-3xl text-foreground">{group.title}</h3>
               ) : null}
-              <ul className="border-t border-border">
+              <ul className="border-t-2 border-foreground">
                 {group.items?.map((item) => (
                   <ResourceRow key={item._key} item={item} />
                 ))}

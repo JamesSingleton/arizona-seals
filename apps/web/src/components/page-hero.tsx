@@ -28,41 +28,47 @@ export function PageHero({
   beforeTitle,
   loading = "eager",
 }: PageHeroProps) {
-  const heightClass = size === "tall" ? "h-72 md:h-96" : "h-64 md:h-80";
   const hasImage = Boolean(image?.id);
+  const tall = size === "tall";
 
   return (
     <section
-      className={`relative flex items-end overflow-hidden ${heightClass} ${hasImage ? "" : "bg-navy"}`}
+      data-hero
+      className={`on-dark relative flex items-end overflow-hidden bg-navy ${tall ? "min-h-[30rem] md:min-h-[36rem]" : "min-h-[24rem] md:min-h-[28rem]"}`}
     >
       {hasImage ? (
-        <SanityImage
-          image={image}
-          width={1600}
-          sizes="100vw"
-          loading={loading}
-          className="absolute inset-0 size-full object-cover"
-          style={{
-            objectPosition: objectPositionFromHotspot(image?.hotspot),
-          }}
-        />
-      ) : null}
-      {overlay && hasImage ? (
-        <div className="absolute inset-0 bg-navy/70" />
-      ) : null}
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
-        <div className="border-l-4 border-cyan-brand pl-5">
-          {beforeTitle}
-          <h1 className="font-display text-balance text-4xl font-bold tracking-wide text-white uppercase md:text-6xl">
-            {title}
-          </h1>
-          {subtitle ? (
-            <p className="mt-2 font-sans text-base leading-relaxed text-white/80 md:text-lg">
-              {subtitle}
-            </p>
+        <>
+          <SanityImage
+            image={image}
+            width={2400}
+            sizes="100vw"
+            loading={loading}
+            className="absolute inset-0 size-full object-cover"
+            style={{
+              objectPosition: objectPositionFromHotspot(image?.hotspot),
+            }}
+          />
+          {overlay ? (
+            <div className="absolute inset-0 bg-linear-to-t from-[#061428]/92 via-[#061428]/45 to-[#061428]/25" />
           ) : null}
-        </div>
+        </>
+      ) : null}
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-6 pt-36 pb-12 sm:px-10 md:pb-16 lg:px-16">
+        {beforeTitle}
+        <h1
+          className="display text-white"
+          style={{ fontSize: "clamp(3.25rem, 9vw, 7.5rem)" }}
+        >
+          {title}
+        </h1>
+        {subtitle ? (
+          <p className="mt-5 max-w-2xl text-lg leading-relaxed text-white/90 md:text-xl">
+            {subtitle}
+          </p>
+        ) : null}
       </div>
+      {/* Sun stripe: the same accent that marks every primary action. */}
+      <div className="absolute inset-x-0 bottom-0 z-10 h-1.5 bg-pool" />
     </section>
   );
 }

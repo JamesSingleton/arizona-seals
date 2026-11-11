@@ -1,4 +1,3 @@
-import { buttonCtaClassName } from "@workspace/ui/components/button";
 import { cn } from "@workspace/ui/lib/utils";
 
 import type { SanityButtonProps } from "@/types";
@@ -16,10 +15,10 @@ export type ProcessStepsProps = {
   buttons?: SanityButtonProps[] | null;
 };
 
-const bgClass = {
+const panelClass = {
   default: "bg-background",
-  muted: "bg-muted",
-  navy: "bg-navy",
+  muted: "bg-water",
+  navy: "on-dark bg-navy",
 } as const;
 
 const gridCols: Record<number, string> = {
@@ -31,7 +30,6 @@ const gridCols: Record<number, string> = {
 };
 
 export function ProcessSteps({
-  eyebrow,
   title,
   intro,
   steps,
@@ -45,10 +43,9 @@ export function ProcessSteps({
   const onNavy = tone === "navy";
 
   return (
-    <section className={cn(bgClass[tone], "py-20 md:py-28")}>
+    <section className={cn(panelClass[tone], "py-20 md:py-28")}>
       <div className="mx-auto max-w-7xl px-6 sm:px-10 lg:px-16">
         <SectionHeading
-          eyebrow={eyebrow}
           title={title}
           intro={intro}
           onNavy={onNavy}
@@ -65,29 +62,22 @@ export function ProcessSteps({
             <li
               key={step._key ?? step.title}
               className={cn(
-                "relative border-t-2 pt-6",
-                onNavy ? "border-white/20" : "border-border",
+                "border-t-2 pt-5",
+                onNavy ? "border-white/25" : "border-foreground",
               )}
             >
               <span
                 aria-hidden
                 className={cn(
-                  "absolute -top-0.5 left-0 h-0.5 w-12",
-                  onNavy ? "bg-cyan-on-navy" : "bg-cyan-brand",
-                )}
-              />
-              <span
-                aria-hidden
-                className={cn(
-                  "mb-3 block font-display text-6xl leading-none font-black tabular-nums",
-                  onNavy ? "text-cyan-on-navy" : "text-cyan-brand",
+                  "display mb-4 block text-7xl tabular-nums",
+                  onNavy ? "text-pool" : "text-cyan-brand",
                 )}
               >
-                {String(index + 1).padStart(2, "0")}
+                {index + 1}
               </span>
               <h3
                 className={cn(
-                  "mb-2 font-display text-xl leading-tight font-bold uppercase md:text-2xl",
+                  "mb-2 text-3xl not-italic",
                   onNavy ? "text-white" : "text-foreground",
                 )}
               >
@@ -96,7 +86,7 @@ export function ProcessSteps({
               {step.description ? (
                 <p
                   className={cn(
-                    "text-sm leading-relaxed md:text-base",
+                    "leading-relaxed",
                     onNavy ? "text-white/80" : "text-seal-gray",
                   )}
                 >
@@ -111,8 +101,8 @@ export function ProcessSteps({
           <SanityButtons
             placement="process_steps"
             buttons={buttons}
+            size="lg"
             className="mt-12 gap-3"
-            buttonClassName={cn(buttonCtaClassName, "h-12 px-8")}
           />
         ) : null}
       </div>

@@ -43,7 +43,7 @@ const errorContent = (
     <div tw="flex flex-col items-center px-16 text-center">
       <div tw="mb-6 h-1 w-24" style={{ backgroundColor: BRAND.cyan }} />
       <h1
-        tw="text-5xl font-bold uppercase tracking-wide text-white"
+        tw="text-5xl font-bold text-white"
         style={{ fontFamily: "Barlow Condensed" }}
       >
         Arizona Seals Swimming
@@ -81,13 +81,13 @@ function Wordmark({ logo }: { logo?: Maybe<string> }) {
   return (
     <div tw="flex flex-col">
       <span
-        tw="text-3xl font-extrabold uppercase leading-none tracking-[0.08em] text-white"
+        tw="text-3xl font-extrabold leading-[1.05] text-white"
         style={{ fontFamily: "Barlow Condensed" }}
       >
         Arizona Seals
       </span>
       <span
-        tw="mt-1 text-sm font-bold uppercase tracking-[0.28em]"
+        tw="mt-1 text-sm font-bold "
         style={{ color: BRAND.cyan, fontFamily: "Barlow Condensed" }}
       >
         Swimming
@@ -157,7 +157,7 @@ const brandOgRender = ({
           <div tw="mb-5 flex items-center">
             <div tw="mr-4 h-1 w-12" style={{ backgroundColor: BRAND.cyan }} />
             <span
-              tw="text-xl font-bold uppercase tracking-[0.22em]"
+              tw="text-xl font-bold "
               style={{ color: BRAND.cyan, fontFamily: "Barlow Condensed" }}
             >
               {eyebrow}
@@ -165,7 +165,7 @@ const brandOgRender = ({
           </div>
 
           <h1
-            tw="text-[72px] font-extrabold uppercase leading-[0.95] tracking-wide text-white"
+            tw="text-[72px] font-extrabold leading-[1.02] text-white"
             style={{
               fontFamily: "Barlow Condensed",
               lineClamp: 3,
@@ -190,7 +190,7 @@ const brandOgRender = ({
 
         <div tw="flex w-full items-end justify-between">
           <div
-            tw="text-lg font-bold uppercase tracking-[0.18em]"
+            tw="text-lg font-bold "
             style={{ color: BRAND.cyan, fontFamily: "Barlow Condensed" }}
           >
             Competitive Swimming · Maricopa, AZ

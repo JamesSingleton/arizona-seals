@@ -426,3 +426,75 @@ export async function CombinedJsonLd({
     </>
   );
 }
+
+// Event JSON-LD (Google event rich results)
+type EventJsonLdInput = {
+  title?: string | null;
+  slug?: string | null;
+  summary?: string | null;
+  start?: string | null;
+  end?: string | null;
+  status?: string | null;
+  host?: string | null;
+  imageUrl?: string;
+  location?: {
+    name?: string | null;
+    street?: string | null;
+    city?: string | null;
+    state?: string | null;
+    zip?: string | null;
+  } | null;
+};
+
+const EVENT_STATUS: Record<string, string> = {
+  scheduled: "https://schema.org/EventScheduled",
+  postponed: "https://schema.org/EventPostponed",
+  cancelled: "https://schema.org/EventCancelled",
+};
+
+export function EventJsonLd({ event }: { event: EventJsonLdInput }) {
+  if (!event?.title || !event.start) return null;
+  const baseUrl = getBaseUrl();
+  const path = event.slug?.startsWith("/")
+    ? event.slug
+    : `/events/${event.slug}`;
+  const loc = event.location;
+
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "Event",
+    name: event.title,
+    description: event.summary || undefined,
+    startDate: event.start,
+    endDate: event.end || undefined,
+    eventStatus: EVENT_STATUS[event.status ?? "scheduled"],
+    eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+    url: `${baseUrl}${path}`,
+    image: event.imageUrl ? [event.imageUrl] : undefined,
+    location:
+      loc?.name || loc?.street
+        ? {
+            "@type": "Place",
+            name: loc?.name || loc?.city || "Maricopa, AZ",
+            address: {
+              "@type": "PostalAddress",
+              streetAddress: loc?.street || undefined,
+              addressLocality: loc?.city || undefined,
+              addressRegion: loc?.state || "AZ",
+              postalCode: loc?.zip || undefined,
+              addressCountry: "US",
+            },
+          }
+        : undefined,
+    organizer: event.host
+      ? { "@type": "Organization", name: event.host }
+      : {
+          "@type": "SportsOrganization",
+          name: "Arizona Seals Swimming",
+          url: baseUrl,
+        },
+    performer: { "@type": "SportsTeam", name: "Arizona Seals Swimming" },
+  };
+
+  return <JsonLdScript data={data} id={`event-json-ld-${event.slug}`} />;
+}
